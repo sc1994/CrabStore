@@ -1,0 +1,42 @@
+.index-head {
+    height: 60px;
+    background-color: #324157;
+}
+
+.layout-right {
+    text-align: right;
+    padding-top: 6px;
+}
+
+.table-where {
+    background-color: #f9fafc;
+    padding-top: 40px;
+    padding-bottom: 15px;
+    padding-right: 50px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: .2s;
+    margin-top: 20px;
+}
+
+.table-btn {
+    text-align: right;
+}
+
+.table-content {
+    margin-top: 25px;
+    background-color: #f9fafc;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: .2s;
+    padding: 10px;
+    padding-top: 0px;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.table-page {
+    padding-top: 15px;
+    padding-bottom: 5px;
+    text-align: right;
+}

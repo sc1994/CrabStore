@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/element.css")
+    @Styles.Render("~/Content/main.css")
+</head>
+<body>
+    @Scripts.Render("~/Scripts/vue/vue.js")
+    @Scripts.Render("~/Scripts/element/index.js")
+    <div class="index-head"></div>
+    <div class="el-row" style="margin-left: -10px; margin-right: -10px;">
+        <div class="el-col-4" style="padding-left: 10px; padding-right: 10px;">
+            @* ReSharper disable once UnknownCssClass *@
+            <ul class="el-menu  el-menu--dark el-menu-vertical">
+                <li class="el-menu-item is-active" style="padding-left: 20px;">
+                    <i class="el-icon-picture"></i> 首页设置
+                </li>
+                <li class="el-menu-item" style="padding-left: 20px;">
+                    <i class="el-icon-menu"></i> 产品管理
+                </li>
+                <li class="el-menu-item" style="padding-left: 20px;">
+                    <i class="el-icon-edit"></i> 基地掠影
+                </li>
+                <li class="el-menu-item" style="padding-left: 20px;">
+                    <i class="el-icon-upload"></i> 视频管理
+                </li>
+                <li class="el-menu-item" style="padding-left: 20px;">
+                    <i class="el-icon-document"></i> 新闻管理
+                </li>
+            </ul>
+        </div>
+        <div class="el-col-20" style="padding-left: 10px; padding-right: 10px;">
+            @RenderBody()
+        </div>
+    </div>
+
+    @Scripts.Render("~/Scripts/app/menu.js")
+    @Scripts.Render("~/Scripts/main.js")
+    @RenderSection("script", false)
+</body>
+</html>

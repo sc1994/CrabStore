@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "订单查询";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="app">
+    
+</div>
+
+@section script{
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                where: {
+                    OrderId: '12312312'
+                }
+            }
+        })
+    </script>
+}
+
