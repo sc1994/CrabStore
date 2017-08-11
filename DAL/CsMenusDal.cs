@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsMenus] (");
-            strSql.Append("MenuName,MenuUrl,MenuIcon,MenuParId,MenuState,Remarks");
+            strSql.Append("MenuName,MenuUrl,MenuIcon,MenuParId,MenuState,Remarks,MenuOrder");
             strSql.Append(") VALUES (");
-            strSql.Append("@MenuName,@MenuUrl,@MenuIcon,@MenuParId,@MenuState,@Remarks);");
+            strSql.Append("@MenuName,@MenuUrl,@MenuIcon,@MenuParId,@MenuState,@Remarks,@MenuOrder);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsMenus] SET ");
-            strSql.Append("MenuName = @MenuName,MenuUrl = @MenuUrl,MenuIcon = @MenuIcon,MenuParId = @MenuParId,MenuState = @MenuState,Remarks = @Remarks");
+            strSql.Append("MenuName = @MenuName,MenuUrl = @MenuUrl,MenuIcon = @MenuIcon,MenuParId = @MenuParId,MenuState = @MenuState,Remarks = @Remarks,MenuOrder = @MenuOrder");
             strSql.Append(" WHERE MenuId = @MenuId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

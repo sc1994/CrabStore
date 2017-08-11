@@ -4,19 +4,95 @@
 }
 
 <div id="app">
-    
+    <div class="table-where">
+        <el-row :gutter="20">
+            <el-col :span="2" class="layout-right">
+                订单编号：
+            </el-col>
+            <el-col :span="6">
+                <el-input v-model="where.OrderId" placeholder="请输入订单编号"></el-input>
+            </el-col>
+            <el-col :span="2" class="layout-right">
+                下单用户：
+            </el-col>
+            <el-col :span="6">
+                <el-input v-model="where.UserName" placeholder="请输入下单用户"></el-input>
+            </el-col>
+            <el-col :span="2" class="layout-right">
+                订单状态：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="where.Status" placeholder="请选择订单状态" :clearable='true'>
+                    <el-option key="0" label="取消订单" value="0">
+                    </el-option>
+                    <el-option key="1" label="已下单未至支付" value="1">
+                    </el-option>
+                    <el-option key="2" label="支付成功" value="2">
+                    </el-option>
+                    <el-option key="3" label="配货中" value="3">
+                    </el-option>
+                    <el-option key="4" label="已发货" value="4">
+                    </el-option>
+                </el-select>
+            </el-col>
+        </el-row> 
+        <el-row :gutter="20">
+            <el-col :span="2" class="layout-right">
+                总金额：
+            </el-col>
+            <el-col :span="2">
+                <el-input v-model="where.TotalStart" placeholder="最小金额"></el-input>
+            </el-col>
+            <el-col :span="4">
+                 <el-input v-model="where.TotalEnd" placeholder="最大金额" style="width:50%"></el-input> 
+            </el-col>
+            <el-col :span="2" class="layout-right">
+                优惠金额：
+            </el-col>
+            <el-col :span="2" class="number">
+                <el-input v-model="where.DiscountStart" placeholder="最小金额"></el-input>
+            </el-col>
+            <el-col :span="4">
+                 <el-input v-model="where.DiscountEnd" placeholder="最大金额" style="width:50%"></el-input> 
+            </el-col>
+
+            <el-col :span="2" class="layout-right">
+                实际金额：
+            </el-col>
+            <el-col :span="2">
+                <el-input v-model="where.ActualStart" placeholder="最小金额"></el-input>
+            </el-col>
+            <el-col :span="4">
+                 <el-input v-model="where.ActualEnd" placeholder="最大金额" style="width:50%"></el-input> 
+            </el-col>
+        </el-row> 
+        <el-row :gutter="20">
+            <el-col :span="2" class="layout-right">
+                下单时间：
+            </el-col>
+            <el-col :span="6">
+                <el-date-picker v-model="where.Time" type="datetimerange" placeholder="选择时间范围">
+                </el-date-picker>
+            </el-col>
+            <el-col :span="2" class="layout-right">
+                数据状态：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="where.RowStatus" placeholder="请选择有效性" :clearable='true'>
+                    <el-option key="1" label="有效" value="1">
+                    </el-option>
+                    <el-option key="0" label="无效" value="0">
+                    </el-option>
+                </el-select>
+            </el-col>
+        </el-row>
+        <div class="table-btn">
+            <el-button type="primary" icon="search" @@click="getpage(currentPage)">搜索</el-button>
+        </div>
+    </div>
 </div>
 
 @section script{
-    <script>
-        var vm = new Vue({
-            el: '#app',
-            data: {
-                where: {
-                    OrderId: '12312312'
-                }
-            }
-        })
-    </script>
+    <script src="../../Scripts/app/csOrder.js"></script>
 }
 

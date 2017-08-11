@@ -10,6 +10,8 @@ namespace Web.Controllers
             var res = new JsonResult();
             return res;
         }
+
+        protected const int PageSize = 15;
     }
 
     public class ResModel

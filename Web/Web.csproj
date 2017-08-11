@@ -81,6 +81,9 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SqlHelper">
+      <HintPath>..\Common\Reference\SqlHelper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -242,7 +245,20 @@
     <Content Include="fonts\element-icons.woff" />
     <None Include="Project_Readme.html" />
     <Content Include="Views\CsOrder\Index.cshtml" />
-    <Content Include="Views\Shared\_Scripts.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BLL\BLL.csproj">
+      <Project>{32e1f4b0-7ff8-4609-adeb-67d6cb3e0694}</Project>
+      <Name>BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{7aec3a19-b69f-438a-addc-574815f33f22}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{7f8b9dc0-919d-4dcf-a829-f712a6f2e88e}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

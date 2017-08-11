@@ -7,8 +7,8 @@ namespace Model.DBModel
     /// </summary>
     public class CsRebate : BaseModel
     {
-        public static string PrimaryKey = "RebateId";
-        public static string IdentityKey = "RebateId";
+        public static string PrimaryKey { get; set; } = "RebateId";
+        public static string IdentityKey { get; set; } = "RebateId";
 
         /// <summary>
         /// 返利编号 主键 自动增长

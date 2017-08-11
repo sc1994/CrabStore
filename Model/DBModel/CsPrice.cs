@@ -3,12 +3,12 @@ using System;
 namespace Model.DBModel
 {
     /// <summary>
-    /// 商品价格(螃蟹价格)表
+    /// 商品价格[螃蟹价格]
     /// </summary>
     public class CsPrice : BaseModel
     {
-        public static string PrimaryKey = "PriceId";
-        public static string IdentityKey = "PriceId";
+        public static string PrimaryKey { get; set; } = "PriceId";
+        public static string IdentityKey { get; set; } = "PriceId";
 
         /// <summary>
         /// 商品价格编号

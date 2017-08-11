@@ -7,8 +7,8 @@ namespace Model.DBModel
     /// </summary>
     public class CsUsers : BaseModel
     {
-        public static string PrimaryKey = "UserId";
-        public static string IdentityKey = "UserId";
+        public static string PrimaryKey { get; set; } = "UserId";
+        public static string IdentityKey { get; set; } = "UserId";
 
         /// <summary>
         /// 用户编号 主键 自动增长

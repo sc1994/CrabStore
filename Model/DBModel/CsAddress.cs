@@ -7,8 +7,8 @@ namespace Model.DBModel
     /// </summary>
     public class CsAddress : BaseModel
     {
-        public static string PrimaryKey = "AddressId";
-        public static string IdentityKey = "AddressId";
+        public static string PrimaryKey { get; set; } = "AddressId";
+        public static string IdentityKey { get; set; } = "AddressId";
 
         /// <summary>
         /// 收货地址编号 主键 自动增长

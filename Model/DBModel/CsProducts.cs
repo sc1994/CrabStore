@@ -3,12 +3,12 @@ using System;
 namespace Model.DBModel
 {
     /// <summary>
-    /// 商品表(螃蟹种类)
+    /// 商品表[螃蟹种类]
     /// </summary>
     public class CsProducts : BaseModel
     {
-        public static string PrimaryKey = "ProductId";
-        public static string IdentityKey = "ProductId";
+        public static string PrimaryKey { get; set; } = "ProductId";
+        public static string IdentityKey { get; set; } = "ProductId";
 
         /// <summary>
         /// 螃蟹商品编号
@@ -24,6 +24,11 @@ namespace Model.DBModel
         /// 商品名称
         /// </summary>
         public string ProductName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 产品图片
+        /// </summary>
+        public string ProductImage { get; set; } = string.Empty;
 
         /// <summary>
         /// 商品重量
@@ -52,6 +57,10 @@ namespace Model.DBModel
         /// 商品名称
         /// </summary>
         ProductName,
+        /// <summary>
+        /// 产品图片
+        /// </summary>
+        ProductImage,
         /// <summary>
         /// 商品重量
         /// </summary>

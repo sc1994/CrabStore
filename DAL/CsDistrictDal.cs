@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsDistrict] (");
-            strSql.Append("name,parent_id,code,sort");
+            strSql.Append("Name,ParentId,Code,Sort");
             strSql.Append(") VALUES (");
-            strSql.Append("@name,@parent_id,@code,@sort);");
+            strSql.Append("@Name,@ParentId,@Code,@Sort);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,8 +37,8 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsDistrict] SET ");
-            strSql.Append("name = @name,parent_id = @parent_id,code = @code,sort = @sort");
-            strSql.Append(" WHERE id = @id");
+            strSql.Append("Name = @Name,ParentId = @ParentId,Code = @Code,Sort = @Sort");
+            strSql.Append(" WHERE Id = @Id");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }
 
@@ -59,7 +59,7 @@ namespace DAL
 
         public bool Delete(int primaryKey)
         {
-            var strSql = "DELETE FROM CrabShop.dbo.[CsDistrict] WHERE id = @primaryKey";
+            var strSql = "DELETE FROM CrabShop.dbo.[CsDistrict] WHERE Id = @primaryKey";
             return DbClient.Excute(strSql, new { primaryKey }) > 0;
         }
 
@@ -68,7 +68,7 @@ namespace DAL
 
         public CsDistrict GetModel(int primaryKey)
         {
-            var strSql = "SELECT * FROM CrabShop.dbo.[CsDistrict] WHERE id = @primaryKey";
+            var strSql = "SELECT * FROM CrabShop.dbo.[CsDistrict] WHERE Id = @primaryKey";
             return DbClient.Query<CsDistrict>(strSql, new { primaryKey }).FirstOrDefault();
         }
 

@@ -8,7 +8,7 @@ using System.Text;
 namespace DAL
 {
     /// <summary>
-    /// 商品表(螃蟹种类)  数据访问层
+    /// 商品表[螃蟹种类]  数据访问层
     /// </summary>
     public partial class CsProductsDal : ICsProductsDal
     {
@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsProducts] (");
-            strSql.Append("ProductType,ProductName,ProductWeight,ProductState");
+            strSql.Append("ProductType,ProductName,ProductImage,ProductWeight,ProductState");
             strSql.Append(") VALUES (");
-            strSql.Append("@ProductType,@ProductName,@ProductWeight,@ProductState);");
+            strSql.Append("@ProductType,@ProductName,@ProductImage,@ProductWeight,@ProductState);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsProducts] SET ");
-            strSql.Append("ProductType = @ProductType,ProductName = @ProductName,ProductWeight = @ProductWeight,ProductState = @ProductState");
+            strSql.Append("ProductType = @ProductType,ProductName = @ProductName,ProductImage = @ProductImage,ProductWeight = @ProductWeight,ProductState = @ProductState");
             strSql.Append(" WHERE ProductId = @ProductId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

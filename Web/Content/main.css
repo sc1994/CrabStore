@@ -40,3 +40,7 @@
     padding-bottom: 5px;
     text-align: right;
 }
+
+.el-row {
+    margin-bottom: 20px;
+}

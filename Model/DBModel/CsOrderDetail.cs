@@ -7,8 +7,8 @@ namespace Model.DBModel
     /// </summary>
     public class CsOrderDetail : BaseModel
     {
-        public static string PrimaryKey = "DetailId";
-        public static string IdentityKey = "DetailId";
+        public static string PrimaryKey { get; set; } = "DetailId";
+        public static string IdentityKey { get; set; } = "DetailId";
 
         /// <summary>
         /// 订单详细编号 主键 自动增长
