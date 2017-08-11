@@ -7,8 +7,8 @@ namespace Model.DBModel
     /// </summary>
     public class CsParts : BaseModel
     {
-        public static string PrimaryKey = "";
-        public static string IdentityKey = "PartId";
+        public static string PrimaryKey { get; set; } = "";
+        public static string IdentityKey { get; set; } = "PartId";
 
         /// <summary>
         /// 配件编号

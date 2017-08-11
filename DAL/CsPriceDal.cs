@@ -8,7 +8,7 @@ using System.Text;
 namespace DAL
 {
     /// <summary>
-    /// 商品价格(螃蟹价格)表  数据访问层
+    /// 商品价格[螃蟹价格]  数据访问层
     /// </summary>
     public partial class CsPriceDal : ICsPriceDal
     {

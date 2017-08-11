@@ -4,7 +4,7 @@ using Model.DBModel;
 namespace BLL
 {
     /// <summary>
-    /// 商品表(螃蟹种类)  逻辑层
+    /// 商品表[螃蟹种类]  逻辑层
     /// </summary>
     public class CsProductsBll : BaseBll<CsProducts, CsProductsEnum, int>
     {

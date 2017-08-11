@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsCart] (");
-            strSql.Append("UserId,ProductId,ProductNumber,ChoseType");
+            strSql.Append("OpenId,ProductId,ProductNumber,ChoseType");
             strSql.Append(") VALUES (");
-            strSql.Append("@UserId,@ProductId,@ProductNumber,@ChoseType);");
+            strSql.Append("@OpenId,@ProductId,@ProductNumber,@ChoseType);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsCart] SET ");
-            strSql.Append("UserId = @UserId,ProductId = @ProductId,ProductNumber = @ProductNumber,ChoseType = @ChoseType");
+            strSql.Append("OpenId = @OpenId,ProductId = @ProductId,ProductNumber = @ProductNumber,ChoseType = @ChoseType");
             strSql.Append(" WHERE CartId = @CartId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

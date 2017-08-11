@@ -7,8 +7,8 @@ namespace Model.DBModel
     /// </summary>
     public class CsMenus : BaseModel
     {
-        public static string PrimaryKey = "MenuId";
-        public static string IdentityKey = "MenuId";
+        public static string PrimaryKey { get; set; } = "MenuId";
+        public static string IdentityKey { get; set; } = "MenuId";
 
         /// <summary>
         /// 菜单编号 主键 自动增长
@@ -45,6 +45,11 @@ namespace Model.DBModel
         /// </summary>
         public string Remarks { get; set; } = string.Empty;
 
+        /// <summary>
+        /// 排序值 倒叙
+        /// </summary>
+        public int MenuOrder { get; set; }
+
     }
 
 
@@ -78,5 +83,9 @@ namespace Model.DBModel
         /// 备注
         /// </summary>
         Remarks,
+        /// <summary>
+        /// 排序值 倒叙
+        /// </summary>
+        MenuOrder,
     }
 }

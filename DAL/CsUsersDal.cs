@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsUsers] (");
-            strSql.Append("UserName,UserPhone,UserSex,UserState,OpenId,Remarks,UserBalance");
+            strSql.Append("UserName,UserPhone,UserSex,UserState,OpenId,Remarks,UserBalance,TotalWight");
             strSql.Append(") VALUES (");
-            strSql.Append("@UserName,@UserPhone,@UserSex,@UserState,@OpenId,@Remarks,@UserBalance);");
+            strSql.Append("@UserName,@UserPhone,@UserSex,@UserState,@OpenId,@Remarks,@UserBalance,@TotalWight);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsUsers] SET ");
-            strSql.Append("UserName = @UserName,UserPhone = @UserPhone,UserSex = @UserSex,UserState = @UserState,OpenId = @OpenId,Remarks = @Remarks,UserBalance = @UserBalance");
+            strSql.Append("UserName = @UserName,UserPhone = @UserPhone,UserSex = @UserSex,UserState = @UserState,OpenId = @OpenId,Remarks = @Remarks,UserBalance = @UserBalance,TotalWight = @TotalWight");
             strSql.Append(" WHERE UserId = @UserId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

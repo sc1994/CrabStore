@@ -12,7 +12,7 @@ namespace DAL
     /// </summary>
     public partial class CsOrderDal : ICsOrderDal
     {
-        public bool Exists(string primaryKey)
+        public bool Exists(int primaryKey)
         {
             var strSql = "SELECT COUNT(1) FROM CrabShop.dbo.[CsOrder] WHERE 1 = @primaryKey";
             var parameters = new { primaryKey };
@@ -22,22 +22,22 @@ namespace DAL
         public bool ExistsByWhere(string where)
             => DbClient.ExecuteScalar<int>($"SELECT COUNT(1) FROM CrabShop.dbo.[CsOrder] WHERE 1 = 1 {where};") > 0;
 
-        public string Add(CsOrder model)
+        public int Add(CsOrder model)
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsOrder] (");
-            strSql.Append("OrderId,UserId,TotalMoney,DiscountMoney,ActualMoney,OrderDate,OrderState");
+            strSql.Append("OrderNumber,UserId,TotallMoney,DiscountMoney,ActualMoney,OrderDate,OrderState,RowStatus,DeleteDate,DeleteDescribe");
             strSql.Append(") VALUES (");
-            strSql.Append("@OrderId,@UserId,@TotalMoney,@DiscountMoney,@ActualMoney,@OrderDate,@OrderState);");
+            strSql.Append("@OrderNumber,@UserId,@TotallMoney,@DiscountMoney,@ActualMoney,@OrderDate,@OrderState,@RowStatus,@DeleteDate,@DeleteDescribe);");
             strSql.Append("SELECT @@IDENTITY");
-            return DbClient.ExecuteScalar<string>(strSql.ToString(), model);
+            return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
 
         public bool Update(CsOrder model)
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsOrder] SET ");
-            strSql.Append("UserId = @UserId,TotalMoney = @TotalMoney,DiscountMoney = @DiscountMoney,ActualMoney = @ActualMoney,OrderDate = @OrderDate,OrderState = @OrderState");
+            strSql.Append("OrderNumber = @OrderNumber,UserId = @UserId,TotallMoney = @TotallMoney,DiscountMoney = @DiscountMoney,ActualMoney = @ActualMoney,OrderDate = @OrderDate,OrderState = @OrderState,RowStatus = @RowStatus,DeleteDate = @DeleteDate,DeleteDescribe = @DeleteDescribe");
             strSql.Append(" WHERE OrderId = @OrderId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }
@@ -57,7 +57,7 @@ namespace DAL
             return DbClient.Excute(strSql.ToString(), para) > 0;
         }
 
-        public bool Delete(string primaryKey)
+        public bool Delete(int primaryKey)
         {
             var strSql = "DELETE FROM CrabShop.dbo.[CsOrder] WHERE OrderId = @primaryKey";
             return DbClient.Excute(strSql, new { primaryKey }) > 0;
@@ -66,7 +66,7 @@ namespace DAL
         public int DeleteByWhere(string where)
             => DbClient.Excute($"DELETE FROM CrabShop.dbo.[CsOrder] WHERE 1 = 1 {where}");
 
-        public CsOrder GetModel(string primaryKey)
+        public CsOrder GetModel(int primaryKey)
         {
             var strSql = "SELECT * FROM CrabShop.dbo.[CsOrder] WHERE OrderId = @primaryKey";
             return DbClient.Query<CsOrder>(strSql, new { primaryKey }).FirstOrDefault();

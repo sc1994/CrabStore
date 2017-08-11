@@ -7,8 +7,8 @@ namespace Model.DBModel
     /// </summary>
     public class CsCart : BaseModel
     {
-        public static string PrimaryKey = "CartId";
-        public static string IdentityKey = "CartId";
+        public static string PrimaryKey { get; set; } = "CartId";
+        public static string IdentityKey { get; set; } = "CartId";
 
         /// <summary>
         /// 购物车编号 主键自动增长
@@ -16,9 +16,9 @@ namespace Model.DBModel
         public int CartId { get; set; }
 
         /// <summary>
-        /// 用户编号
+        /// 微信公开Id
         /// </summary>
-        public int UserId { get; set; }
+        public string OpenId { get; set; } = string.Empty;
 
         /// <summary>
         /// 商品编号
@@ -45,9 +45,9 @@ namespace Model.DBModel
         /// </summary>
         CartId,
         /// <summary>
-        /// 用户编号
+        /// 微信公开Id
         /// </summary>
-        UserId,
+        OpenId,
         /// <summary>
         /// 商品编号
         /// </summary>

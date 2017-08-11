@@ -7,33 +7,33 @@ namespace Model.DBModel
     /// </summary>
     public class CsDistrict : BaseModel
     {
-        public static string PrimaryKey = "id";
-        public static string IdentityKey = "id";
+        public static string PrimaryKey { get; set; } = "Id";
+        public static string IdentityKey { get; set; } = "Id";
 
         /// <summary>
         /// 编号 主键 自动增长
         /// </summary>
-        public int id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// 名称
         /// </summary>
-        public string name { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// 父级编号
         /// </summary>
-        public int parent_id { get; set; }
+        public int ParentId { get; set; }
 
         /// <summary>
         /// 区域编码
         /// </summary>
-        public string code { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
 
         /// <summary>
         /// 排序编号
         /// </summary>
-        public int sort { get; set; }
+        public int Sort { get; set; }
 
     }
 
@@ -43,22 +43,22 @@ namespace Model.DBModel
         /// <summary>
         /// 编号 主键 自动增长
         /// </summary>
-        id,
+        Id,
         /// <summary>
         /// 名称
         /// </summary>
-        name,
+        Name,
         /// <summary>
         /// 父级编号
         /// </summary>
-        parent_id,
+        ParentId,
         /// <summary>
         /// 区域编码
         /// </summary>
-        code,
+        Code,
         /// <summary>
         /// 排序编号
         /// </summary>
-        sort,
+        Sort,
     }
 }
