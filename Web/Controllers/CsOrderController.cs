@@ -11,8 +11,6 @@ namespace Web.Controllers
 {
     public class CsOrderController : BaseController
     {
-        private readonly CsUsersBll _csUsersBll = new CsUsersBll();
-
         // GET: CsOrder
         public ActionResult Index()
         {
@@ -21,7 +19,7 @@ namespace Web.Controllers
 
         public ActionResult GetCsOrderPage(CsOrderView.CsOrderWhere para)
         {
-            var sh = new SqlHelper<CsOrder>
+            var sh = new SqlHelper<CsOrderView.CsOrderPage>("CsOrder")
             {
                 PageConfig = new PageConfig
                 {
@@ -29,8 +27,26 @@ namespace Web.Controllers
                     PageSize = PageSize,
                     PageSortField = CsOrderEnum.OrderId.ToString(),
                     SortEnum = SortEnum.Desc
-                }
+                },
+                Alia = "co"
             };
+            sh.AddShow(CsOrderEnum.OrderId);
+            sh.AddShow(CsOrderEnum.OrderNumber);
+            sh.AddShow("co." + CsOrderEnum.UserId);
+            sh.AddShow(CsOrderEnum.TotalMoney);
+            sh.AddShow(CsOrderEnum.DiscountMoney);
+            sh.AddShow(CsOrderEnum.ActualMoney);
+            sh.AddShow(CsOrderEnum.OrderDate);
+            sh.AddShow(CsOrderEnum.OrderState);
+            sh.AddShow(CsOrderEnum.RowStatus);
+            sh.AddShow(CsOrderEnum.DeleteDate);
+            sh.AddShow(CsOrderEnum.DeleteDescribe);
+            sh.AddShow(CsUsersEnum.UserName);
+            sh.AddShow(CsUsersEnum.UserPhone);
+            sh.AddShow(CsUsersEnum.UserSex);
+
+            sh.AddJoin(JoinEnum.LeftJoin, "CsUsers", "cu", "UserId", "UserId");
+
             if (para.RowStatus > -1)
                 sh.AddWhere(CsOrderEnum.RowStatus, para.RowStatus);
             if (para.ActualStart > 0)
@@ -49,6 +65,10 @@ namespace Web.Controllers
                 sh.AddWhere(CsOrderEnum.OrderId, para.OrderId);
             if (para.Status > -1)
                 sh.AddWhere(CsOrderEnum.OrderState, para.Status);
+            if (!para.UserName.IsNullOrEmpty())
+                sh.AddWhere("cu." + CsUsersEnum.UserName, para.UserName, RelationEnum.Like);
+            if (!para.UserPhone.IsNullOrEmpty())
+                sh.AddWhere("cu." + CsUsersEnum.UserPhone, para.UserPhone, RelationEnum.Like);
             if (para.Time != null)
             {
                 var timeArr = para.Time.Split(new[] { "," }, StringSplitOptions.None);
@@ -61,19 +81,29 @@ namespace Web.Controllers
                     sh.AddWhere(CsOrderEnum.OrderDate, timeArr[1], RelationEnum.LessEqual);
                 }
             }
-            if (!para.UserName.IsNullOrEmpty())
+
+            var list = sh.Select().Select(x => new
             {
-                var userList = _csUsersBll.GetModelList($" AND UserName LIKE '%{para.UserName}%'");
-                if (userList.Any())
-                {
-                    sh.AddWhere(CsOrderEnum.UserId, string.Join(",", userList.Select(x => x.UserId)), RelationEnum.In);
-                }
-            }
+                x.OrderId,
+                x.OrderNumber,
+                x.UserId,
+                TotalMoney = x.TotalMoney.ToString("C2"),
+                DiscountMoney = x.DiscountMoney.ToString("C2"),
+                ActualMoney = x.ActualMoney.ToString("C2"),
+                OrderDate = x.OrderDate.ToString("yyyy-M-d hh:mm:ss"),
+                OrderState = ((OrderState)x.OrderState).ToString(),
+                RowStatus = ((RowStatus)x.RowStatus).ToString(),
+                DeleteDate = x.DeleteDate.ToString("yyyy-M-d hh:mm:ss"),
+                x.DeleteDescribe,
+                UserName = x.UserName + $"({x.UserSex})",
+                x.UserPhone,
+            });
 
             return Json(new
             {
-                data = sh.Select(),
-                sql = sh.SqlString.ToString()
+                data = list,
+                sql = sh.SqlString.ToString(),
+                total = sh.Total
             });
         }
     }

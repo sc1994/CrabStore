@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsOrder] (");
-            strSql.Append("OrderNumber,UserId,TotallMoney,DiscountMoney,ActualMoney,OrderDate,OrderState,RowStatus,DeleteDate,DeleteDescribe");
+            strSql.Append("OrderNumber,UserId,TotalMoney,DiscountMoney,ActualMoney,OrderDate,OrderState,RowStatus,DeleteDate,DeleteDescribe");
             strSql.Append(") VALUES (");
-            strSql.Append("@OrderNumber,@UserId,@TotallMoney,@DiscountMoney,@ActualMoney,@OrderDate,@OrderState,@RowStatus,@DeleteDate,@DeleteDescribe);");
+            strSql.Append("@OrderNumber,@UserId,@TotalMoney,@DiscountMoney,@ActualMoney,@OrderDate,@OrderState,@RowStatus,@DeleteDate,@DeleteDescribe);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsOrder] SET ");
-            strSql.Append("OrderNumber = @OrderNumber,UserId = @UserId,TotallMoney = @TotallMoney,DiscountMoney = @DiscountMoney,ActualMoney = @ActualMoney,OrderDate = @OrderDate,OrderState = @OrderState,RowStatus = @RowStatus,DeleteDate = @DeleteDate,DeleteDescribe = @DeleteDescribe");
+            strSql.Append("OrderNumber = @OrderNumber,UserId = @UserId,TotalMoney = @TotalMoney,DiscountMoney = @DiscountMoney,ActualMoney = @ActualMoney,OrderDate = @OrderDate,OrderState = @OrderState,RowStatus = @RowStatus,DeleteDate = @DeleteDate,DeleteDescribe = @DeleteDescribe");
             strSql.Append(" WHERE OrderId = @OrderId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

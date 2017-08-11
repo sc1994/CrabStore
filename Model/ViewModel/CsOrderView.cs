@@ -1,4 +1,6 @@
 ﻿
+using Model.DBModel;
+
 namespace Model.ViewModel
 {
     public class CsOrderView
@@ -16,7 +18,17 @@ namespace Model.ViewModel
             public decimal ActualEnd { get; set; } = 0;
             public int Status { get; set; } = -1;
             public string UserName { get; set; } = string.Empty;
+            public string UserPhone { get; set; } = string.Empty;
             public int OrderId { get; set; } = 0;
+        }
+
+        public class CsOrderPage : CsOrder
+        {
+            public string UserName { get; set; } = string.Empty;
+
+            public string UserPhone { get; set; } = string.Empty;
+
+            public string UserSex { get; set; } = string.Empty;
         }
     }
 }

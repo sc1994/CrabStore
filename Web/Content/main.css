@@ -44,3 +44,8 @@
 .el-row {
     margin-bottom: 20px;
 }
+
+.table-expand {
+    width: 80%;
+    margin-left: 10%;
+}

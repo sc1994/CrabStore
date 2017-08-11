@@ -28,7 +28,7 @@ namespace Model.DBModel
         /// <summary>
         /// 总金额
         /// </summary>
-        public decimal TotallMoney { get; set; }
+        public decimal TotalMoney { get; set; }
 
         /// <summary>
         /// 优惠金额
@@ -85,7 +85,7 @@ namespace Model.DBModel
         /// <summary>
         /// 总金额
         /// </summary>
-        TotallMoney,
+        TotalMoney,
         /// <summary>
         /// 优惠金额
         /// </summary>

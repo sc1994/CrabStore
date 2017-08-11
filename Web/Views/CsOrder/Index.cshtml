@@ -19,21 +19,10 @@
                 <el-input v-model="where.UserName" placeholder="请输入下单用户"></el-input>
             </el-col>
             <el-col :span="2" class="layout-right">
-                订单状态：
+                用户电话：
             </el-col>
             <el-col :span="6">
-                <el-select v-model="where.Status" placeholder="请选择订单状态" :clearable='true'>
-                    <el-option key="0" label="取消订单" value="0">
-                    </el-option>
-                    <el-option key="1" label="已下单未至支付" value="1">
-                    </el-option>
-                    <el-option key="2" label="支付成功" value="2">
-                    </el-option>
-                    <el-option key="3" label="配货中" value="3">
-                    </el-option>
-                    <el-option key="4" label="已发货" value="4">
-                    </el-option>
-                </el-select>
+                <el-input v-model="where.UserPhone" placeholder="请输入用户电话"></el-input>
             </el-col>
         </el-row> 
         <el-row :gutter="20">
@@ -75,6 +64,23 @@
                 </el-date-picker>
             </el-col>
             <el-col :span="2" class="layout-right">
+                订单状态：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="where.Status" placeholder="请选择订单状态" :clearable='true'>
+                    <el-option key="0" label="取消订单" value="0">
+                    </el-option>
+                    <el-option key="1" label="已下单未至支付" value="1">
+                    </el-option>
+                    <el-option key="2" label="支付成功" value="2">
+                    </el-option>
+                    <el-option key="3" label="配货中" value="3">
+                    </el-option>
+                    <el-option key="4" label="已发货" value="4">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col :span="2" class="layout-right">
                 数据状态：
             </el-col>
             <el-col :span="6">
@@ -88,6 +94,61 @@
         </el-row>
         <div class="table-btn">
             <el-button type="primary" icon="search" @@click="getpage(currentPage)">搜索</el-button>
+        </div>
+    </div>
+    <div class="table-content">
+        <el-table  v-loading.body="loading"
+            :data="list"
+            @@expand="expandRow"
+            style="width: 100%">
+            <el-table-column type="expand">
+            <template scope="props">
+                <el-form label-position="left" inline class="table-expand">
+                    <!-- <table>
+                        <tr>
+                            <td>{{ props.row.TotalMoney }}</td>
+                            <td>{{ props.row.DiscountMoney }}</td>
+                            <td>{{ props.row.ActualMoney }}</td>
+                        </tr>
+                    </table> -->
+
+                </el-form>
+            </template>
+            </el-table-column>
+            <el-table-column
+                label="订单编号"
+                prop="OrderNumber">
+            </el-table-column>
+            <el-table-column
+                label="订购用户"
+                prop="UserName">
+            </el-table-column>
+            <el-table-column
+                label="联系电话"
+                prop="UserPhone">
+            </el-table-column>
+            <el-table-column
+                label="订购时间"
+                prop="OrderDate">
+            </el-table-column>
+            <el-table-column
+                label="订单状态"
+                prop="OrderState">
+            </el-table-column>
+            <el-table-column
+                label="总金额"
+                prop="ActualMoney">
+            </el-table-column>
+        </el-table>
+        <div class="table-page">
+            <el-pagination
+                :current-page="currentPage"
+                :page-size="15"
+                layout="total, prev, pager, next, jumper"
+                @@size-change="getpage"
+                @@current-change="getpage"
+                :total="total">
+            </el-pagination>
         </div>
     </div>
 </div>
