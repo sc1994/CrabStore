@@ -55,6 +55,7 @@
     <Compile Include="DBModel\CsMenus.cs" />
     <Compile Include="DBModel\CsDistrict.cs" />
     <Compile Include="ViewModel\CsOrderView.cs" />
+    <Compile Include="DBModel\CsSystemUsers.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

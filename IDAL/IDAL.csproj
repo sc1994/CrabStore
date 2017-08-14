@@ -54,6 +54,7 @@
     <Compile Include="ICsCsDistrictDal.cs" />
     <Compile Include="ICsMenusDal.cs" />
     <Compile Include="ICsDistrictDal.cs" />
+    <Compile Include="ICsSystemUsersDal.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Model\Model.csproj">

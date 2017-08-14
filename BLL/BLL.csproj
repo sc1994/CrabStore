@@ -54,6 +54,7 @@
     <Compile Include="CsCsDistrictBll.cs" />
     <Compile Include="CsMenusBll.cs" />
     <Compile Include="CsDistrictBll.cs" />
+    <Compile Include="CsSystemUsersBll.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">
