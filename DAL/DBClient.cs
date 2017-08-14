@@ -7,8 +7,19 @@ using System.Data;
 
 namespace DAL
 {
+    #region 数据库操作类
+    /// <summary>
+    /// 数据库操作类
+    /// </summary>
     public class DbClient
     {
+        /// <summary>
+        /// 执行带参查询
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public static IEnumerable<T> Query<T>(string sql, object param = null)
         {
             if (string.IsNullOrEmpty(sql))
@@ -17,12 +28,26 @@ namespace DAL
             }
             using (var con = DataSource.GetConnection())
             {
-                var tList = con.Query<T>(sql, param);
-                con.Close();
-                return tList;
+                try
+                {
+                    var tList = con.Query<T>(sql, param);
+                    con.Close();
+                    return tList;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message + "------------ SQL:" + sql);
+                }
             }
         }
 
+        /// <summary>
+        /// 执行受影响行数 的 sql
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
         public static int Excute(string sql, object param = null, IDbTransaction transaction = null)
         {
             if (string.IsNullOrEmpty(sql))
@@ -31,10 +56,26 @@ namespace DAL
             }
             using (var con = DataSource.GetConnection())
             {
-                return con.Execute(sql, param, transaction);
+                int line;
+                try
+                {
+                    line = con.Execute(sql, param, transaction);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message + "-------------- SQL:" + sql);
+                }
+                return line;
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public static T ExecuteScalar<T>(string sql, object param = null)
         {
             if (string.IsNullOrEmpty(sql))
@@ -47,6 +88,13 @@ namespace DAL
             }
         }
 
+        /// <summary>
+        /// 执行带参数的存储过程
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="strProcName"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public static T ExecuteScalarProc<T>(string strProcName, object param = null)
         {
             using (var con = DataSource.GetConnection())
@@ -55,6 +103,12 @@ namespace DAL
             }
         }
 
+        /// <summary>
+        /// 执行带参数的存储过程(查询)
+        /// </summary>
+        /// <param name="strProcName"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public static IEnumerable<T> ExecuteQueryProc<T>(string strProcName, object param = null)
         {
             using (var con = DataSource.GetConnection())
@@ -65,6 +119,12 @@ namespace DAL
             }
         }
 
+        /// <summary>
+        /// 执行带参数的存储过程
+        /// </summary>
+        /// <param name="strProcName"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
         public static int ExecuteProc(string strProcName, object param = null)
         {
             try
@@ -74,17 +134,23 @@ namespace DAL
                     return con.Execute(strProcName, param, commandType: CommandType.StoredProcedure);
                 }
             }
-            catch (Exception)
+            catch
             {
                 return 0;
             }
         }
     }
 
-
+    /// <summary>
+    /// 数据源
+    /// </summary>
     public class DataSource
     {
-        public static string ConnString = ConfigurationManager.ConnectionStrings["CrabStore"].ConnectionString;
+        private static readonly string ConnString = ConfigurationManager.ConnectionStrings["DBString"].ConnectionString;
+        /// <summary>
+        /// 连接池
+        /// </summary>
+        /// <returns></returns>
         public static IDbConnection GetConnection()
         {
             if (string.IsNullOrEmpty(ConnString))
@@ -92,4 +158,5 @@ namespace DAL
             return new SqlConnection(ConnString);
         }
     }
+    #endregion
 }

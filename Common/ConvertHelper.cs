@@ -103,5 +103,29 @@ namespace Common
             }
             return s;
         }
+
+        public static TToObject Map<TToObject, TFromObject>(this TFromObject from)
+        {
+            var fs = typeof(TFromObject).GetProperties();
+            var ts = typeof(TToObject).GetProperties();
+            var to = Activator.CreateInstance<TToObject>();
+            foreach (var f in fs)
+            {
+                foreach (var t in ts)
+                {
+                    if (f.Name == t.Name)
+                    {
+                        var propertyInfo = to.GetType().GetProperty(t.Name);
+                        if (propertyInfo != null)
+                        {
+                            propertyInfo.SetValue(to, f.GetValue(from, null), null);
+                            break;
+                        }
+                    }
+                }
+            }
+            return to;
+        }
+
     }
 }
