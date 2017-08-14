@@ -61,6 +61,7 @@ var vm = new Vue({
         },
         updateInfo: function (id) {
             var that = this
+            that.dialogLoading = true
             ajax('CsOrder/UpdateCsOrder', {
                 id: id,
                 rowStatus: that.newInfo.RowStatus,
@@ -91,6 +92,7 @@ var vm = new Vue({
                 that.newInfo = {}
                 that.getpage(that.currentPage)
                 that.dialogVisible = false
+                that.dialogLoading = false
             })
         }
     },

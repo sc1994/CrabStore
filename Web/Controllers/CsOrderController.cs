@@ -213,6 +213,11 @@ namespace Web.Controllers
                 model.DeleteDate = deleteDate;
                 model.DeleteDescribe = deleteDescribe;
             }
+            else
+            {
+                model.DeleteDate = "1900-1-1".ToDate();
+                model.DeleteDescribe = "";
+            }
             model.OrderState = orderState;
             var line = _csOrderBll.Update(model);
 

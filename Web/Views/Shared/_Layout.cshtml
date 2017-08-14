@@ -9,8 +9,6 @@
     @Styles.Render("~/Content/main.css")
 </head>
 <body>
-    @Scripts.Render("~/Scripts/vue/vue.js")
-    @Scripts.Render("~/Scripts/element/index.js")
     <div class="index-head"></div>
     <div class="el-row" style="margin-left: -10px; margin-right: -10px;">
         <div class="el-col-4" style="padding-left: 10px; padding-right: 10px;" id="menuApp">
@@ -35,6 +33,8 @@
             @RenderBody()
         </div>
     </div>
+    @Scripts.Render("~/Scripts/vue/vue.js")
+    @Scripts.Render("~/Scripts/element/index.js")
     @Scripts.Render("~/Scripts/main.js")
     @Scripts.Render("~/Scripts/app/menu.js")
     @RenderSection("script", false)
