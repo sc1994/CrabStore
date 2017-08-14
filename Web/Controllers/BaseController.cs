@@ -1,5 +1,6 @@
 ﻿
 using System.Web.Mvc;
+using Common;
 
 namespace Web.Controllers
 {
@@ -7,7 +8,14 @@ namespace Web.Controllers
     {
         protected internal JsonResult Json(ResModel data)
         {
-            var res = new JsonResult();
+            var res = new JsonResult
+            {
+                Data = new
+                {
+                    code = data.ResStatus.GetHashCode(),
+                    data = data.Data
+                }
+            };
             return res;
         }
 
@@ -16,6 +24,7 @@ namespace Web.Controllers
 
     public class ResModel
     {
-
+        public ResStatue ResStatus { get; set; } = ResStatue.Yes;
+        public object Data { get; set; }
     }
 }

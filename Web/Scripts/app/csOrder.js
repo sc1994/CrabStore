@@ -9,7 +9,19 @@ var vm = new Vue({
         currentPage: 1,
         list: [],
         total: 0,
-        loading: false
+        loading: false,
+        dialogVisible: false,
+        dialogLoading: false,
+        oldInfo: {
+            OrderState: '',
+            RowStatus: '',
+            DeleteDescribe: ''
+        },
+        newInfo: {
+            OrderState: '',
+            RowStatus: '',
+            DeleteDescribe: ''
+        }
     },
     methods: {
         getpage: function (currentPage) {
@@ -26,11 +38,81 @@ var vm = new Vue({
                 that.loading = false
             })
         },
-        expandRow: function (row) {
-            console.log(row)
+        detailRow: function (id) {
+            var that = this;
+            if (!that.dialogVisible) {
+                that.dialogVisible = true
+            }
+            if (id === that.oldInfo.OrderId) {
+                return
+            }
+            that.dialogLoading = true
+            ajax('CsOrder/GetCsOrderInfo', {
+                id
+            }, function (data) {
+                that.oldInfo = clone(data)
+                that.newInfo = clone(data)
+                that.dialogLoading = false
+            })
+        },
+        closeInfo: function () {
+            this.newInfo = clone(this.oldInfo)
+            this.dialogVisible = false
+        },
+        updateInfo: function (id) {
+            var that = this
+            ajax('CsOrder/UpdateCsOrder', {
+                id: id,
+                rowStatus: that.newInfo.RowStatus,
+                deleteDate: that.newInfo.DeleteDate,
+                deleteDescribe: that.newInfo.DeleteDescribe,
+                orderState: that.newInfo.OrderState,
+            }, function (data) {
+                var type, title
+                if (data.code === 1) {
+                    type = 'success'
+                    title = '更新成功'
+                } else if (data.code === 2) {
+                    type = 'warning'
+                    title = '更新无结果'
+                } else {
+                    that.$notify.error({
+                        title: '错误',
+                        message: data.data
+                    })
+                    return
+                }
+                that.$notify({
+                    title: title,
+                    message: data.data,
+                    type: type
+                });
+                that.oldInfo = {}
+                that.newInfo = {}
+                that.getpage(that.currentPage)
+                that.dialogVisible = false
+            })
         }
     },
     mounted: function () {
         this.getpage(1)
+    },
+    computed: {
+        infoIsChange: function () {
+            var b
+            b = this.oldInfo.OrderState != this.newInfo.OrderState ||
+                this.oldInfo.RowStatus != this.newInfo.RowStatus ||
+                this.oldInfo.DeleteDescribe != this.newInfo.DeleteDescribe
+            return b
+        }
+    },
+    watch: {
+        'newInfo.RowStatus': function (newValue) {
+            if (this.oldInfo.RowStatus == 1) {
+                this.newInfo.DeleteDate = new Date().Format("yyyy-MM-dd hh:mm:ss")
+            } else {
+                this.newInfo.DeleteDate = new Date(this.oldInfo.DeleteDate).Format("yyyy-MM-dd hh:mm:ss")
+            }
+        }
     }
 })

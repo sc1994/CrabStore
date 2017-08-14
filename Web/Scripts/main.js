@@ -92,3 +92,42 @@ Date.prototype.Format = function (fmt) { //author: meizz
     if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
+
+function clone(obj)
+{
+	var o,i,j,k;
+	if(typeof(obj)!="object" || obj===null)return obj;
+	if(obj instanceof(Array))
+	{
+		o=[];
+		i=0;j=obj.length;
+		for(;i<j;i++)
+		{
+			if(typeof(obj[i])=="object" && obj[i]!=null)
+			{
+				o[i]=arguments.callee(obj[i]);
+			}
+			else
+			{
+				o[i]=obj[i];
+			}
+		}
+	}
+	else
+	{
+		o={};
+		for(i in obj)
+		{
+			if(typeof(obj[i])=="object" && obj[i]!=null)
+			{
+				o[i]=arguments.callee(obj[i]);
+			}
+			else
+			{
+				o[i]=obj[i];
+			}
+		}
+	}
+ 
+	return o;
+}

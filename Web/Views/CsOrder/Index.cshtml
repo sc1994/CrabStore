@@ -6,19 +6,19 @@
 <div id="app">
     <div class="table-where">
         <el-row :gutter="20">
-            <el-col :span="2" class="layout-right">
+            <el-col :span="2" class="layout-right layout-where">
                 订单编号：
             </el-col>
             <el-col :span="6">
                 <el-input v-model="where.OrderId" placeholder="请输入订单编号"></el-input>
             </el-col>
-            <el-col :span="2" class="layout-right">
+            <el-col :span="2" class="layout-right layout-where">
                 下单用户：
             </el-col>
             <el-col :span="6">
                 <el-input v-model="where.UserName" placeholder="请输入下单用户"></el-input>
             </el-col>
-            <el-col :span="2" class="layout-right">
+            <el-col :span="2" class="layout-right layout-where">
                 用户电话：
             </el-col>
             <el-col :span="6">
@@ -26,7 +26,7 @@
             </el-col>
         </el-row> 
         <el-row :gutter="20">
-            <el-col :span="2" class="layout-right">
+            <el-col :span="2" class="layout-right layout-where">
                 总金额：
             </el-col>
             <el-col :span="2">
@@ -35,7 +35,7 @@
             <el-col :span="4">
                  <el-input v-model="where.TotalEnd" placeholder="最大金额" style="width:50%"></el-input> 
             </el-col>
-            <el-col :span="2" class="layout-right">
+            <el-col :span="2" class="layout-right layout-where">
                 优惠金额：
             </el-col>
             <el-col :span="2" class="number">
@@ -45,7 +45,7 @@
                  <el-input v-model="where.DiscountEnd" placeholder="最大金额" style="width:50%"></el-input> 
             </el-col>
 
-            <el-col :span="2" class="layout-right">
+            <el-col :span="2" class="layout-right layout-where">
                 实际金额：
             </el-col>
             <el-col :span="2">
@@ -56,18 +56,18 @@
             </el-col>
         </el-row> 
         <el-row :gutter="20">
-            <el-col :span="2" class="layout-right">
+            <el-col :span="2" class="layout-right layout-where">
                 下单时间：
             </el-col>
             <el-col :span="6">
-                <el-date-picker v-model="where.Time" type="datetimerange" placeholder="选择时间范围">
+                <el-date-picker v-model="where.Time" type="datetimerange" placeholder="选择时间范围" @@change="getpage(1)">
                 </el-date-picker>
             </el-col>
-            <el-col :span="2" class="layout-right">
+            <el-col :span="2" class="layout-right layout-where">
                 订单状态：
             </el-col>
             <el-col :span="6">
-                <el-select v-model="where.Status" placeholder="请选择订单状态" :clearable='true'>
+                <el-select v-model="where.Status" placeholder="请选择订单状态" :clearable='true' @@change="getpage(1)">
                     <el-option key="0" label="取消订单" value="0">
                     </el-option>
                     <el-option key="1" label="已下单未至支付" value="1">
@@ -84,7 +84,7 @@
                 数据状态：
             </el-col>
             <el-col :span="6">
-                <el-select v-model="where.RowStatus" placeholder="请选择有效性" :clearable='true'>
+                <el-select v-model="where.RowStatus" placeholder="请选择有效性" :clearable='true' @@change="getpage(1)">
                     <el-option key="1" label="有效" value="1">
                     </el-option>
                     <el-option key="0" label="无效" value="0">
@@ -97,47 +97,28 @@
         </div>
     </div>
     <div class="table-content">
-        <el-table  v-loading.body="loading"
+        <el-table v-loading.body="loading"
             :data="list"
-            @@expand="expandRow"
             style="width: 100%">
-            <el-table-column type="expand">
-            <template scope="props">
-                <el-form label-position="left" inline class="table-expand">
-                    <!-- <table>
-                        <tr>
-                            <td>{{ props.row.TotalMoney }}</td>
-                            <td>{{ props.row.DiscountMoney }}</td>
-                            <td>{{ props.row.ActualMoney }}</td>
-                        </tr>
-                    </table> -->
-
-                </el-form>
-            </template>
+            <el-table-column label="订单编号" prop="OrderNumber">
             </el-table-column>
-            <el-table-column
-                label="订单编号"
-                prop="OrderNumber">
+            <el-table-column label="订购用户" prop="UserName">
             </el-table-column>
-            <el-table-column
-                label="订购用户"
-                prop="UserName">
+            <el-table-column label="联系电话" prop="UserPhone">
             </el-table-column>
-            <el-table-column
-                label="联系电话"
-                prop="UserPhone">
+            <el-table-column label="订购时间" prop="OrderDate">
             </el-table-column>
-            <el-table-column
-                label="订购时间"
-                prop="OrderDate">
+            <el-table-column label="订单状态" prop="OrderState">
             </el-table-column>
-            <el-table-column
-                label="订单状态"
-                prop="OrderState">
+            <el-table-column label="有效性" prop="RowStatus">
             </el-table-column>
-            <el-table-column
-                label="总金额"
-                prop="ActualMoney">
+            <el-table-column label="总金额" prop="TotalMoney">
+            </el-table-column>
+            <el-table-column label="操作" width="80px">
+                <template scope="scope">
+                    <el-button size="small" class="table-detail-btn"
+                        @@click="detailRow(scope.row.OrderId)">详细</el-button>
+                </template>
             </el-table-column>
         </el-table>
         <div class="table-page">
@@ -150,6 +131,88 @@
                 :total="total">
             </el-pagination>
         </div>
+    </div>
+    <div data-msg="详细页面的弹窗">
+        <el-dialog :visible.sync="dialogVisible" size="small"
+            title="订单详细" >
+            <div data-msg="弹窗内容" v-loading.body="dialogLoading">
+                <el-row>
+                    <el-col :span="4" class="layout-right">总金额：</el-col>
+                    <el-col :span="3">{{oldInfo.TotalMoney}}</el-col>
+                    <el-col :span="3" class="layout-right">优惠金额：</el-col>
+                    <el-col :span="3">{{oldInfo.DiscountMoney}}</el-col>
+                    <el-col :span="3" class="layout-right">实际金额：</el-col>
+                    <el-col :span="3">{{oldInfo.ActualMoney}}</el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="4" class="layout-right">下单用户：</el-col>
+                    <el-col :span="8">{{oldInfo.UserName}}</el-col>
+                    <el-col :span="4" class="layout-right">联系方式：</el-col>
+                    <el-col :span="8">{{oldInfo.UserPhone}}</el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="4" class="layout-right">下单时间：</el-col>
+                    <el-col :span="8">{{oldInfo.OrderDate}}</el-col>
+                    <el-col :span="4" class="layout-right">订单状态：</el-col>
+                    <el-col :span="8">
+                        <el-select v-model="newInfo.OrderState" size="mini">
+                            <el-option key="0" label="取消订单" value="0">
+                            </el-option>
+                            <el-option key="1" label="已下单未至支付" value="1">
+                            </el-option>
+                            <el-option key="2" label="支付成功" value="2">
+                            </el-option>
+                            <el-option key="3" label="配货中" value="3">
+                            </el-option>
+                            <el-option key="4" label="已发货" value="4">
+                            </el-option>
+                        </el-select>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="4" class="layout-right">数据状态：</el-col>
+                    <el-col :span="8">
+                        <el-select v-model="newInfo.RowStatus" size="mini">
+                            <el-option key="1" label="有效" value="1">
+                            </el-option>
+                            <el-option key="0" label="无效" value="0">
+                            </el-option>
+                        </el-select>
+                    </el-col>
+                    <el-col :span="4" class="layout-right" v-show="newInfo.RowStatus == 0">无效时间：</el-col>
+                    <el-col :span="8" v-show="newInfo.RowStatus == 0">
+                        {{newInfo.DeleteDate}}
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="4" class="layout-right layout-where"  v-show="newInfo.RowStatus == 0">无效描述：</el-col>
+                    <el-col :span="18" v-show="newInfo.RowStatus == 0">
+                        <el-input type="textarea" autosize
+                            placeholder="可能的话,请输入无效数据的原因"
+                            v-model="newInfo.DeleteDescribe">
+                        </el-input>
+                    </el-col>
+                </el-row>
+                <div class="table-content">
+                    <el-table :data="oldInfo.CsOrderDetails" style="width: 100%">
+                        <el-table-column label="商品名称(编号)" prop="ProductName">
+                        </el-table-column>
+                        <el-table-column label="商品类型" prop="ChoseType">
+                        </el-table-column>
+                        <el-table-column label="购买数量" prop="ProductNumber">
+                        </el-table-column>
+                        <el-table-column label="商品商品总价类型" prop="TotalPrice">
+                        </el-table-column>
+                        <el-table-column label="销售单价" prop="UnitPrice">
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @@click="closeInfo">{{infoIsChange ? '取 消' : '关 闭'}}</el-button>
+                <el-button @@click="updateInfo(oldInfo.OrderId)" type="warning" v-if="infoIsChange">更 新</el-button>
+            </span>
+        </el-dialog>
     </div>
 </div>
 

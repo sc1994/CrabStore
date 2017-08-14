@@ -5,6 +5,9 @@
 
 .layout-right {
     text-align: right;
+}
+
+.layout-where {
     padding-top: 6px;
 }
 
@@ -48,4 +51,12 @@
 .table-expand {
     width: 80%;
     margin-left: 10%;
+}
+
+.table-detail-btn {
+    margin-left: -9px;
+}
+
+.el-input--mini {
+    width: 130px
 }
