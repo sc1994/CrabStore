@@ -3,7 +3,7 @@ using System;
 namespace Model.DBModel
 {
     /// <summary>
-    /// 
+    /// 系统用户表
     /// </summary>
     public class CsSystemUsers : BaseModel
     {

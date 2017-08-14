@@ -4,7 +4,7 @@ using Model.DBModel;
 namespace BLL
 {
     /// <summary>
-    ///   逻辑层
+    /// 系统用户表  逻辑层
     /// </summary>
     public class CsSystemUsersBll : BaseBll<CsSystemUsers, CsSystemUsersEnum, int>
     {

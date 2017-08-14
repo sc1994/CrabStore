@@ -8,7 +8,7 @@ using System.Text;
 namespace DAL
 {
     /// <summary>
-    ///   数据访问层
+    /// 系统用户表  数据访问层
     /// </summary>
     public partial class CsSystemUsersDal : ICsSystemUsersDal
     {
