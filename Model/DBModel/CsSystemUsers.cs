@@ -38,7 +38,7 @@ namespace Model.DBModel
         /// <summary>
         /// 操作时间
         /// </summary>
-        public DateTime SysUserDate { get; set; } = ToDateTime("");
+        public DateTime SysUserDate { get; set; } = ToDateTime("getdate");
 
     }
 
