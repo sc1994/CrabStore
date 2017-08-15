@@ -98,6 +98,14 @@ var vm = new Vue({
                         message: ' ',
                         type: 'success'
                     });
+                    that.dialogVisible = false
+                    that.getpage(that.currentPage)
+                } else if (data.code === 2) {
+                    that.$notify({
+                        title: '请注意',
+                        message: data.data,
+                        type: 'warning'
+                    })
                 } else {
                     that.$notify.error({
                         title: '错误',
@@ -105,8 +113,6 @@ var vm = new Vue({
                     })
                 }
                 that.dialogLoading = false
-                that.dialogVisible = false
-                that.getpage(that.currentPage)
             })
         }
     },

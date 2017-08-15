@@ -62,7 +62,19 @@ namespace Web.Controllers
 
         public ActionResult SubmitCsSystemUsers(CsSystemUsers model)
         {
+            if (model.SysUserType == SysUserType.管理员.GetHashCode())
+            {
+                if (_csSystemUsersBll.GetModelList(" AND SysUserType = 1 AND SysUserState = 1").Any())
+                {
+                    return Json(new ResModel
+                    {
+                        ResStatus = ResStatue.Warn,
+                        Data = "最多只能存在一个管理员, 请勿重复设置管理员"
+                    });
+                }
+            }
             ResStatue code;
+            string msg = string.Empty;
             if (model.SysUserId > 0)
             {
                 code = _csSystemUsersBll.Update(model) ? ResStatue.Yes : ResStatue.No;
@@ -74,7 +86,8 @@ namespace Web.Controllers
             }
             return Json(new ResModel
             {
-                ResStatus = code
+                ResStatus = code,
+                Data = msg
             });
         }
 

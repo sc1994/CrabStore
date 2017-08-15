@@ -36,7 +36,7 @@ namespace Model.DBModel
         public int MenuParId { get; set; }
 
         /// <summary>
-        /// 状态 1表示可用 2表示不可用
+        /// 状态 1表示可用 0表示不可用
         /// </summary>
         public int MenuState { get; set; }
 
@@ -76,7 +76,7 @@ namespace Model.DBModel
         /// </summary>
         MenuParId,
         /// <summary>
-        /// 状态 1表示可用 2表示不可用
+        /// 状态 1表示可用 0表示不可用
         /// </summary>
         MenuState,
         /// <summary>

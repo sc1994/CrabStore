@@ -31,7 +31,7 @@ namespace Model.DBModel
         public int SysUserType { get; set; }
 
         /// <summary>
-        /// 1正常 2已删除
+        /// 1正常 0已删除
         /// </summary>
         public int SysUserState { get; set; }
 
@@ -72,7 +72,7 @@ namespace Model.DBModel
         /// </summary>
         SysUserType,
         /// <summary>
-        /// 1正常 2已删除
+        /// 1正常 0已删除
         /// </summary>
         SysUserState,
         /// <summary>

@@ -41,7 +41,7 @@ namespace Model.DBModel
         public decimal ProductPrice { get; set; }
 
         /// <summary>
-        /// 商品状态 1表示正常 2表示下架
+        /// 商品状态 1表示正常 0表示下架
         /// </summary>
         public int ProductState { get; set; }
 
@@ -80,7 +80,7 @@ namespace Model.DBModel
         /// </summary>
         ProductPrice,
         /// <summary>
-        /// 商品状态 1表示正常 2表示下架
+        /// 商品状态 1表示正常 0表示下架
         /// </summary>
         ProductState,
         /// <summary>

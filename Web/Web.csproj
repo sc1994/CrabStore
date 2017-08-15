@@ -201,6 +201,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CsOrderController.cs" />
+    <Compile Include="Controllers\CsPartsController.cs" />
     <Compile Include="Controllers\CsSystemUsersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -222,6 +223,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Scripts\app\csOrder.js" />
+    <Content Include="Scripts\app\csParts.js" />
     <Content Include="Scripts\app\menu.js" />
     <Content Include="Scripts\element\index.js" />
     <Content Include="Scripts\main.js" />
@@ -250,6 +252,7 @@
     <Content Include="Views\CsOrder\Index.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\CsSystemUsers\Index.cshtml" />
+    <Content Include="Views\CsParts\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

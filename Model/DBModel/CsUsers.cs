@@ -31,7 +31,7 @@ namespace Model.DBModel
         public string UserSex { get; set; } = string.Empty;
 
         /// <summary>
-        /// 用户状态 1表示可用 2表示不可用
+        /// 用户状态 1表示正常 0表示删除
         /// </summary>
         public int UserState { get; set; }
 
@@ -77,7 +77,7 @@ namespace Model.DBModel
         /// </summary>
         UserSex,
         /// <summary>
-        /// 用户状态 1表示可用 2表示不可用
+        /// 用户状态 1表示正常 0表示删除
         /// </summary>
         UserState,
         /// <summary>
