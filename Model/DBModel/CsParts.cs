@@ -7,7 +7,7 @@ namespace Model.DBModel
     /// </summary>
     public class CsParts : BaseModel
     {
-        public static string PrimaryKey { get; set; } = "";
+        public static string PrimaryKey { get; set; } = "PartId";
         public static string IdentityKey { get; set; } = "PartId";
 
         /// <summary>

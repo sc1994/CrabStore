@@ -40,6 +40,16 @@ namespace Model.DBModel
         /// </summary>
         public DateTime SysUserDate { get; set; } = ToDateTime("getdate");
 
+        /// <summary>
+        /// 无效时间
+        /// </summary>
+        public DateTime DeleteDate { get; set; } = ToDateTime("1900-1-1");
+
+        /// <summary>
+        /// 无效描述
+        /// </summary>
+        public string DeleteDescribe { get; set; } = string.Empty;
+
     }
 
 
@@ -69,5 +79,13 @@ namespace Model.DBModel
         /// 操作时间
         /// </summary>
         SysUserDate,
+        /// <summary>
+        /// 无效时间
+        /// </summary>
+        DeleteDate,
+        /// <summary>
+        /// 无效描述
+        /// </summary>
+        DeleteDescribe,
     }
 }

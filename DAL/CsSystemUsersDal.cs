@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsSystemUsers] (");
-            strSql.Append("SysUserName,SysUserPassword,SysUserType,SysUserState,SysUserDate");
+            strSql.Append("SysUserName,SysUserPassword,SysUserType,SysUserState,SysUserDate,DeleteDate,DeleteDescribe");
             strSql.Append(") VALUES (");
-            strSql.Append("@SysUserName,@SysUserPassword,@SysUserType,@SysUserState,@SysUserDate);");
+            strSql.Append("@SysUserName,@SysUserPassword,@SysUserType,@SysUserState,@SysUserDate,@DeleteDate,@DeleteDescribe);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsSystemUsers] SET ");
-            strSql.Append("SysUserName = @SysUserName,SysUserPassword = @SysUserPassword,SysUserType = @SysUserType,SysUserState = @SysUserState,SysUserDate = @SysUserDate");
+            strSql.Append("SysUserName = @SysUserName,SysUserPassword = @SysUserPassword,SysUserType = @SysUserType,SysUserState = @SysUserState,SysUserDate = @SysUserDate,DeleteDate = @DeleteDate,DeleteDescribe = @DeleteDescribe");
             strSql.Append(" WHERE SysUserId = @SysUserId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

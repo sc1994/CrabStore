@@ -18,7 +18,7 @@ namespace Model.DBModel
         /// <summary>
         /// 订单编号
         /// </summary>
-        public string OrderId { get; set; } = string.Empty;
+        public int OrderId { get; set; }
 
         /// <summary>
         /// 产品编号

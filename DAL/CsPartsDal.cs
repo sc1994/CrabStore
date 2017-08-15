@@ -12,22 +12,25 @@ namespace DAL
     /// </summary>
     public partial class CsPartsDal : ICsPartsDal
     {
-        public bool Exists(object primaryKey)
+        public bool Exists(int primaryKey)
         {
-            return false;
+            var strSql = "SELECT COUNT(1) FROM CrabShop.dbo.[CsParts] WHERE 1 = @primaryKey";
+            var parameters = new { primaryKey };
+            return DbClient.Excute(strSql, parameters) > 0;
         }
 
         public bool ExistsByWhere(string where)
             => DbClient.ExecuteScalar<int>($"SELECT COUNT(1) FROM CrabShop.dbo.[CsParts] WHERE 1 = 1 {where};") > 0;
 
-        public object Add(CsParts model)
+        public int Add(CsParts model)
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsParts] (");
             strSql.Append("PartType,PartName,PartWeight,PartPrice,OperationDate,PartState");
             strSql.Append(") VALUES (");
             strSql.Append("@PartType,@PartName,@PartWeight,@PartPrice,@OperationDate,@PartState);");
-            return DbClient.Excute(strSql.ToString(), model);
+            strSql.Append("SELECT @@IDENTITY");
+            return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
 
         public bool Update(CsParts model)
@@ -54,17 +57,19 @@ namespace DAL
             return DbClient.Excute(strSql.ToString(), para) > 0;
         }
 
-        public bool Delete(object primaryKey)
+        public bool Delete(int primaryKey)
         {
-            return false;
+            var strSql = "DELETE FROM CrabShop.dbo.[CsParts] WHERE PartId = @primaryKey";
+            return DbClient.Excute(strSql, new { primaryKey }) > 0;
         }
 
         public int DeleteByWhere(string where)
             => DbClient.Excute($"DELETE FROM CrabShop.dbo.[CsParts] WHERE 1 = 1 {where}");
 
-        public CsParts GetModel(object primaryKey)
+        public CsParts GetModel(int primaryKey)
         {
-            return null;
+            var strSql = "SELECT * FROM CrabShop.dbo.[CsParts] WHERE PartId = @primaryKey";
+            return DbClient.Query<CsParts>(strSql, new { primaryKey }).FirstOrDefault();
         }
 
         public List<CsParts> GetModelList(string where)

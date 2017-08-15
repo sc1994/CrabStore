@@ -20,7 +20,7 @@ namespace Model.ViewModel
             public int Status { get; set; } = -1;
             public string UserName { get; set; } = string.Empty;
             public string UserPhone { get; set; } = string.Empty;
-            public int OrderId { get; set; } = 0;
+            public string OrderId { get; set; } = string.Empty;
         }
 
         public class CsOrderPage : CsOrder

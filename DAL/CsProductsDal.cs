@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsProducts] (");
-            strSql.Append("ProductType,ProductName,ProductImage,ProductWeight,ProductState");
+            strSql.Append("ProductType,ProductName,ProductImage,ProductWeight,ProductPrice,ProductState,OperationDate");
             strSql.Append(") VALUES (");
-            strSql.Append("@ProductType,@ProductName,@ProductImage,@ProductWeight,@ProductState);");
+            strSql.Append("@ProductType,@ProductName,@ProductImage,@ProductWeight,@ProductPrice,@ProductState,@OperationDate);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsProducts] SET ");
-            strSql.Append("ProductType = @ProductType,ProductName = @ProductName,ProductImage = @ProductImage,ProductWeight = @ProductWeight,ProductState = @ProductState");
+            strSql.Append("ProductType = @ProductType,ProductName = @ProductName,ProductImage = @ProductImage,ProductWeight = @ProductWeight,ProductPrice = @ProductPrice,ProductState = @ProductState,OperationDate = @OperationDate");
             strSql.Append(" WHERE ProductId = @ProductId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

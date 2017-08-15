@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
 using BLL;
+using Common;
 
 namespace Web.Controllers
 {
@@ -15,14 +16,23 @@ namespace Web.Controllers
 
         public ActionResult Menu()
         {
-            var list = _csMenusBll.GetModelList("AND 1=1");
+            string where;
+            if (CurrentUser.SysUserType == SysUserType.普通用户.GetHashCode())
+            {
+                where = "AND MenuName <> '用户管理'";
+            }
+            else
+            {
+                where = " AND 1=1";
+            }
+            var list = _csMenusBll.GetModelList(where);
 
             var res = list
                 .Where(x => x.MenuParId == 0)
                 .OrderByDescending(x => x.MenuOrder)
                 .Select(p => new
                 {
-                    id = p.MenuId.ToString(),
+                    id = "0-" + p.MenuId.ToString(),
                     title = p.MenuName,
                     icon = p.MenuIcon,
                     url = p.MenuUrl,
@@ -31,7 +41,7 @@ namespace Web.Controllers
                             .OrderByDescending(x => x.MenuOrder)
                             .Select(x => new
                             {
-                                id = p.MenuId.ToString(),
+                                id = x.MenuParId + "-" + p.MenuId.ToString(),
                                 title = x.MenuName,
                                 url = x.MenuUrl
                             })
