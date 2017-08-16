@@ -36,9 +36,19 @@ namespace Model.DBModel
         public decimal ProductWeight { get; set; }
 
         /// <summary>
+        /// 商品价格
+        /// </summary>
+        public decimal ProductPrice { get; set; }
+
+        /// <summary>
         /// 商品状态 1表示正常 2表示下架
         /// </summary>
         public int ProductState { get; set; }
+
+        /// <summary>
+        /// 操作时间
+        /// </summary>
+        public DateTime OperationDate { get; set; } = ToDateTime("getdate");
 
     }
 
@@ -66,8 +76,16 @@ namespace Model.DBModel
         /// </summary>
         ProductWeight,
         /// <summary>
+        /// 商品价格
+        /// </summary>
+        ProductPrice,
+        /// <summary>
         /// 商品状态 1表示正常 2表示下架
         /// </summary>
         ProductState,
+        /// <summary>
+        /// 操作时间
+        /// </summary>
+        OperationDate,
     }
 }

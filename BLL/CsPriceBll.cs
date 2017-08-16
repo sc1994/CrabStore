@@ -1,6 +1,8 @@
 using DAL;
 using IDAL;
 using Model.DBModel;
+using System;
+
 namespace BLL
 {
     /// <summary>
@@ -11,5 +13,7 @@ namespace BLL
         public CsPriceBll() : base(new CsPriceDal()) { }
 
         public CsPriceBll(IBaseDal<CsPrice, CsPriceEnum, int> dal) : base(dal) { }
+
+        
     }
 }

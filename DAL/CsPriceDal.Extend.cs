@@ -1,3 +1,5 @@
+using System;
+
 namespace DAL
 {
     /// <summary>
@@ -5,6 +7,6 @@ namespace DAL
     /// </summary>
     public partial class CsPriceDal
     {
-
+       
     }
 }
