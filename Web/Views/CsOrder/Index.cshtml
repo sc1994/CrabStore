@@ -134,7 +134,7 @@
     </div>
     <div data-msg="详细页面的弹窗">
         <el-dialog :visible.sync="dialogVisible" size="small"
-            title="订单详细" >
+            :title="'订单( '+ oldInfo.OrderNumber +' )详细'" >
             <div data-msg="弹窗内容" v-loading.body="dialogLoading">
                 <el-row>
                     <el-col :span="4" class="layout-right">总金额：</el-col>
@@ -151,16 +151,20 @@
                     <el-col :span="8">{{oldInfo.UserPhone}}</el-col>
                 </el-row>
                 <el-row>
+                    <el-col :span="4" class="layout-right">地址信息：</el-col>
+                    <el-col :span="20">{{oldInfo.OrderAddress}}</el-col>
+                </el-row>
+                <el-row>
                     <el-col :span="4" class="layout-right">下单时间：</el-col>
-                    <el-col :span="8">{{oldInfo.OrderDate}}</el-col>
-                    <el-col :span="4" class="layout-right">订单状态：</el-col>
-                    <el-col :span="8">
+                    <el-col :span="4">{{oldInfo.OrderDate}}</el-col>
+                    <el-col :span="2" class="layout-right">订单状态：</el-col>
+                    <el-col :span="3">
                         <el-select v-model="newInfo.OrderState" size="mini">
-                            <el-option key="0" label="取消订单" value="0">
+                            <el-option key="0" label="取消订单" value="0" :disabled="true">
                             </el-option>
-                            <el-option key="1" label="已下单未至支付" value="1">
+                            <el-option key="1" label="已下单未至支付" value="1" :disabled="true">
                             </el-option>
-                            <el-option key="2" label="支付成功" value="2">
+                            <el-option key="2" label="支付成功" value="2" :disabled="true">
                             </el-option>
                             <el-option key="3" label="配货中" value="3">
                             </el-option>
@@ -168,11 +172,20 @@
                             </el-option>
                         </el-select>
                     </el-col>
+                    <el-col :span="3" class="layout-right">货运单号：</el-col>
+                    <el-col :span="6">
+                        <el-input v-model="newInfo.OrderDelivery" 
+                            placeholder="输入货运单号" size="mini" v-if="newInfo.OrderState == 4">
+                        </el-input>
+                        <span v-else>
+                            还未发货
+                        </span>
+                    </el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">数据状态：</el-col>
                     <el-col :span="8">
-                        <el-select v-model="newInfo.RowStatus" size="mini">
+                        <el-select v-model="newInfo.RowStatus" size="mini" class="mini-width">
                             <el-option key="1" label="有效" value="1">
                             </el-option>
                             <el-option key="0" label="无效" value="0">
@@ -187,7 +200,7 @@
                 <el-row>
                     <el-col :span="4" class="layout-right layout-where"  v-show="newInfo.RowStatus == 0">无效描述：</el-col>
                     <el-col :span="18" v-show="newInfo.RowStatus == 0">
-                        <el-input type="textarea" autosize
+                        <el-input type="textarea" autosize 
                             placeholder="可能的话,请输入无效数据的原因"
                             v-model="newInfo.DeleteDescribe">
                         </el-input>

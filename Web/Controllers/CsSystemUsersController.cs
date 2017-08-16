@@ -74,7 +74,7 @@ namespace Web.Controllers
                 }
             }
             ResStatue code;
-            string msg = string.Empty;
+            var msg = string.Empty;
             if (model.SysUserId > 0)
             {
                 code = _csSystemUsersBll.Update(model) ? ResStatue.Yes : ResStatue.No;

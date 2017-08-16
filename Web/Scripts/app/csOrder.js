@@ -68,6 +68,7 @@ var vm = new Vue({
                 deleteDate: that.newInfo.DeleteDate,
                 deleteDescribe: that.newInfo.DeleteDescribe,
                 orderState: that.newInfo.OrderState,
+                delivery: that.newInfo.OrderDelivery
             }, function (data) {
                 var type, title
                 if (data.code === 1) {
@@ -104,7 +105,8 @@ var vm = new Vue({
             var b
             b = this.oldInfo.OrderState != this.newInfo.OrderState ||
                 this.oldInfo.RowStatus != this.newInfo.RowStatus ||
-                this.oldInfo.DeleteDescribe != this.newInfo.DeleteDescribe
+                this.oldInfo.DeleteDescribe != this.newInfo.DeleteDescribe ||
+                this.oldInfo.OrderDelivery != this.newInfo.OrderDelivery
             return b
         }
     },

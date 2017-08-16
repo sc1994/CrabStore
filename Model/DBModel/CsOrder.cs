@@ -51,6 +51,16 @@ namespace Model.DBModel
         public int OrderState { get; set; }
 
         /// <summary>
+        /// 订单地址信息
+        /// </summary>
+        public string OrderAddress { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 快递单号
+        /// </summary>
+        public string OrderDelivery { get; set; } = string.Empty;
+
+        /// <summary>
         /// 数据状态 0 删除 1 有效
         /// </summary>
         public int RowStatus { get; set; }
@@ -102,6 +112,14 @@ namespace Model.DBModel
         /// 订单状态 0 取消订单 1已下单未至支付 2支付成功 3 配货中 4 已发货
         /// </summary>
         OrderState,
+        /// <summary>
+        /// 订单地址信息
+        /// </summary>
+        OrderAddress,
+        /// <summary>
+        /// 快递单号
+        /// </summary>
+        OrderDelivery,
         /// <summary>
         /// 数据状态 0 删除 1 有效
         /// </summary>

@@ -34,7 +34,7 @@ namespace Model.ViewModel
 
         public class CsOrderInfo
         {
-            public  string TotalMoney { get; set; } = string.Empty;
+            public string TotalMoney { get; set; } = string.Empty;
             public string ActualMoney { get; set; } = string.Empty;
             public string DeleteDate { get; set; } = string.Empty;
             public string DeleteDescribe { get; set; } = string.Empty;
@@ -48,6 +48,8 @@ namespace Model.ViewModel
             public string RowStatusDescribe { get; set; } = string.Empty;
             public string UserName { get; set; } = string.Empty;
             public string UserPhone { get; set; } = string.Empty;
+            public string OrderAddress { get; set; } = string.Empty;
+            public string OrderDelivery { get; set; } = string.Empty;
             public List<CsOrderDetailExtend> CsOrderDetails { get; set; } = new List<CsOrderDetailExtend>();
         }
 
