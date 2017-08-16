@@ -101,7 +101,7 @@ namespace Web.Controllers
                 x.DeleteDescribe,
                 UserName = x.UserName + $"({x.UserSex})",
                 x.UserPhone,
-                TotalMoney = x.TotalMoney.ToString("C2")
+                TotalMoney = "￥" + x.TotalMoney.ToString("N2")
             });
 
             return Json(new
@@ -140,8 +140,8 @@ namespace Web.Controllers
                     DetailId = csOrderDetail.DetailId,
                     ProductId = csOrderDetail.ProductId,
                     ProductNumber = csOrderDetail.ProductNumber,
-                    TotalPrice = csOrderDetail.TotalPrice.ToString("C2"),
-                    UnitPrice = csOrderDetail.UnitPrice.ToString("C2")
+                    TotalPrice = "￥" + csOrderDetail.TotalPrice.ToString("N2"),
+                    UnitPrice = "￥" + csOrderDetail.UnitPrice.ToString("N2")
                 };
                 // 计算商品名称
                 if (csOrderDetailExtend.ChoseType == ChoseType.配件.ToString())
@@ -174,12 +174,14 @@ namespace Web.Controllers
                 OrderDate = csOrder.OrderDate.ToString("yyyy-M-d hh:mm:ss"),
                 DeleteDate = csOrder.DeleteDate.ToString("yyyy-M-d hh:mm:ss"),
                 DeleteDescribe = csOrder.DeleteDescribe,
-                TotalMoney = csOrder.TotalMoney.ToString("C2"),
-                ActualMoney = csOrder.ActualMoney.ToString("C2"),
-                DiscountMoney = csOrder.DiscountMoney.ToString("C2"),
+                TotalMoney = "￥" + csOrder.TotalMoney.ToString("N2"),
+                ActualMoney = "￥" + csOrder.ActualMoney.ToString("N2"),
+                DiscountMoney = "￥" + csOrder.DiscountMoney.ToString("N2"),
                 UserName = $"{user.UserName}({user.UserSex})",
                 UserPhone = user.UserPhone,
-                CsOrderDetails = csOrderDetailExtends
+                CsOrderDetails = csOrderDetailExtends,
+                OrderDelivery = csOrder.OrderDelivery,
+                OrderAddress = csOrder.OrderAddress
             });
         }
 
@@ -187,7 +189,8 @@ namespace Web.Controllers
                                           int rowStatus,
                                           DateTime deleteDate,
                                           string deleteDescribe,
-                                          int orderState)
+                                          int orderState,
+                                          string delivery)
         {
             if (id < 1)
             {
@@ -204,7 +207,7 @@ namespace Web.Controllers
                 return Json(new ResModel
                 {
                     ResStatus = ResStatue.No,
-                    Data = "Id 未能查询到响应订单, 请刷新页面再试"
+                    Data = "Id 未能查询到对应订单, 请刷新页面再试"
                 });
             }
             model.RowStatus = rowStatus;
@@ -219,6 +222,14 @@ namespace Web.Controllers
                 model.DeleteDescribe = "";
             }
             model.OrderState = orderState;
+            if (orderState == OrderState.已发货.GetHashCode())
+            {
+                model.OrderDelivery = delivery;
+            }
+            else
+            {
+                model.OrderDelivery = "";
+            }
             var line = _csOrderBll.Update(model);
 
             if (line)

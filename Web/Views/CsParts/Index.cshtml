@@ -4,7 +4,99 @@
 }
 
 <div id="app">
-    
+    <div class="table-where">
+        <el-row :gutter="20">
+            <el-col :span="2" class="layout-right layout-where">
+                配件名称：
+            </el-col>
+            <el-col :span="6">
+                <el-input v-model="where.PartName" placeholder="请输入配件名称"></el-input>
+            </el-col>
+            <el-col :span="2" class="layout-right layout-where">
+                配件类型：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="where.PartType" placeholder="请选择配件类型" :clearable='true' @@change="getList()">
+                    <el-option key="1" label="必选配件" value="1">
+                    </el-option>
+                    <el-option key="2" label="可选配件" value="2">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col :span="2" class="layout-right layout-where">
+                数据状态：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="where.PartState" placeholder="请选择数据状态" :clearable='true' @@change="getList()">
+                    <el-option key="1" label="有效" value="1">
+                    </el-option>
+                    <el-option key="0" label="无效" value="0">
+                    </el-option>
+                </el-select>
+            </el-col>
+        </el-row> 
+        <div class="table-btn">
+            <el-button type="primary" icon="search" @@click="getList()">搜索</el-button>
+        </div>
+    </div>
+    <div class="table-content">
+        <el-table v-loading.body="loading"
+            :data="list"
+            style="width: 100%">
+            <el-table-column label="Id" prop="PartId" width="120">
+            </el-table-column>
+            <el-table-column label="配件名称" prop="PartName">
+            </el-table-column>
+            <el-table-column label="配件类型" prop="PartType">
+            </el-table-column>
+            <el-table-column label="配件重量" prop="PartWeight">
+            </el-table-column>
+            <el-table-column label="配件价格" prop="PartPrice">
+            </el-table-column>
+            <el-table-column label="数据状态" prop="PartState">
+            </el-table-column>
+            <el-table-column label="操作" width="80px">
+                <template scope="scope">
+                    <el-button size="small" class="table-detail-btn"
+                        @@click="getInfo(scope.row.PartId)">详细</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+    <el-dialog :title="'配件( '+info.PartId+' )详细'" :visible.sync="dialogVisible"
+        size="tiny">
+        <el-form ref="info" :model="info" label-width="160px" style="width:80%">
+            <el-form-item label="配件名称：">
+                <span>{{info.PartName}}</span>
+            </el-form-item>
+            <el-form-item label="配件类型：">
+                <el-select v-model="info.PartType">
+                    <el-option key="1" label="必选配件" value="1">
+                    </el-option>
+                    <el-option key="2" label="可选配件" value="2">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="配件重量：">
+                <el-input type="number" v-model="info.PartWeight"></el-input>
+            </el-form-item>
+            <el-form-item label="配件价格：" >
+                <el-input type="number" v-model="info.PartPrice"></el-input>
+            </el-form-item>
+            <el-form-item label="数据状态：">
+                <el-select v-model="info.PartState">
+                    <el-option key="1" label="有效" value="1">
+                    </el-option>
+                    <el-option key="0" label="无效" value="0">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @@click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @@click="submitInfo()">确 定</el-button>
+        </span>
+    </el-dialog>
 </div>
 
 @section script{
