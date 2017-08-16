@@ -13,6 +13,7 @@ namespace Web.Controllers
         private readonly CsPartsBll _csPartsBll = new CsPartsBll();
         private readonly CsProductsBll _csProductsBll = new CsProductsBll();
         private readonly CsPriceBll _csPriceBll = new CsPriceBll();
+        private readonly CsOrderBll _csOrderBll = new CsOrderBll();
 
         [HttpGet]
         public IHttpActionResult GetIndex()
@@ -95,6 +96,84 @@ namespace Web.Controllers
             strJson.Append("]");
             strJson.Append("}");
             return Json(strJson.ToString());
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetProductList()
+        {
+            //获取产品列表
+            List<CsProducts> productList = _csProductsBll.GetModelList("");
+            //大宗采购公蟹列表
+            List<CsProducts> proList1 = (from product1 in productList
+                                         where product1.ProductType == 1&& product1.ProductName.StartsWith("公")
+                                         select product1).ToList();
+            var proList11 =proList1.Select(x=>new {
+                x.ProductId,
+                x.ProductImage,
+                x.ProductPrice,
+                x.ProductWeight,
+                x.ProductName,
+                x.OperationDate,
+                TotalNumber =_csOrderBll.TotalNumber(x.ProductId,DateTime.Now)
+            });
+            //大宗采购母蟹列表
+            List<CsProducts> proList2 = (from product2 in productList
+                                         where product2.ProductType == 1 && product2.ProductName.StartsWith("母")
+                                        select product2).ToList();
+            var proList21 = proList2.Select(x=>new {
+                x.ProductId,
+                x.ProductImage,
+                x.ProductPrice,
+                x.ProductWeight,
+                x.ProductName,
+                x.OperationDate,
+                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now)
+            });
+            //蟹唐直采公蟹列表
+            List<CsProducts> proList3 = (from product3 in productList
+                                         where product3.ProductType == 2 &&product3.ProductName.StartsWith("公")
+                                         select product3).ToList();
+            var proList31 = proList3.Select(x => new
+            {
+                x.ProductId,
+                x.ProductImage,
+                x.ProductPrice,
+                x.ProductWeight,
+                x.ProductName,
+                x.OperationDate,
+                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now)
+            });
+
+            //蟹塘直采母蟹列表
+            List<CsProducts> proList4 = (from product4 in productList
+                                         where product4.ProductType == 2 && product4.ProductName.StartsWith("母")
+                                         select product4).ToList();
+            var proList41 = proList4.Select(x=>new {
+                x.ProductId,
+                x.ProductImage,
+                x.ProductPrice,
+                x.ProductWeight,
+                x.ProductName,
+                x.OperationDate,
+                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now)
+            });
+            //可选配件列表
+            var partList = _csPartsBll.GetModelList(" and PartType=2").Select(x=>new {
+                x.PartId,
+                x.PartName,
+                x.PartPrice,
+                x.PartWeight,
+               x.OperationDate
+            }).ToList();
+
+            return Json(new {
+                proList1=proList11,
+                proList2 = proList21,
+                proList3 = proList31,
+                proList4 =proList41,
+                partList = partList
+
+            });
         }
     }
 }

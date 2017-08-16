@@ -1,5 +1,6 @@
 using DAL;
 using IDAL;
+using System;
 using Model.DBModel;
 namespace BLL
 {
@@ -11,5 +12,7 @@ namespace BLL
         public CsOrderDetailBll() : base(new CsOrderDetailDal()) { }
 
         public CsOrderDetailBll(IBaseDal<CsOrderDetail, CsOrderDetailEnum, int> dal) : base(dal) { }
+
+        
     }
 }
