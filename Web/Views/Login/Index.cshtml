@@ -21,21 +21,25 @@
         border: 1px solid #eaeaea;
         box-shadow: 0 0 25px #cac6c6;
     }
+
+    .remember{
+        padding-bottom: 17px;
+    }
   </style>
 </head>
 <body>
   <div id="app">
-    <el-form :model="ruleForm2" ref="ruleForm2" label-position="left" label-width="0px" class="login-container">
+    <el-form :model="loginForm" :rules="rules" label-position="left" label-width="0px" class="login-container">
         <h3>管理员登录</h3>
         <el-form-item prop="account">
-        <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="账号"></el-input>
+        <el-input type="text" v-model="loginForm.account" auto-complete="off" placeholder="账号"></el-input>
         </el-form-item>
-        <el-form-item prop="checkPass">
-        <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="密码"></el-input>
+        <el-form-item prop="password">
+        <el-input type="password" v-model="loginForm.password" auto-complete="off" placeholder="密码"></el-input>
         </el-form-item>
-        <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
+        <el-checkbox v-model="loginForm.remember" checked class="remember">记住密码</el-checkbox>
         <el-form-item style="width:100%;">
-        <el-button type="primary" style="width:100%;" :loading="logining">登录</el-button>
+        <el-button type="primary" style="width:100%;" @@click="login">登录</el-button>
         </el-form-item>
     </el-form>
   </div>
@@ -43,4 +47,6 @@
     @Scripts.Render("~/Scripts/vue/vue.js")
     @Scripts.Render("~/Scripts/element/index.js")
     @Scripts.Render("~/Scripts/app/login.js")
+    @Scripts.Render("~/Scripts/md5.min.js")
+    @Scripts.Render("~/Scripts/main.js")
 </html>

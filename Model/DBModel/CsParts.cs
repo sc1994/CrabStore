@@ -7,7 +7,7 @@ namespace Model.DBModel
     /// </summary>
     public class CsParts : BaseModel
     {
-        public static string PrimaryKey { get; set; } = "";
+        public static string PrimaryKey { get; set; } = "PartId";
         public static string IdentityKey { get; set; } = "PartId";
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Model.DBModel
         public DateTime OperationDate { get; set; } = ToDateTime("");
 
         /// <summary>
-        /// 配件状态 1可用 2 不可用
+        /// 配件状态 1可用  0 删除
         /// </summary>
         public int PartState { get; set; }
 
@@ -75,7 +75,7 @@ namespace Model.DBModel
         /// </summary>
         OperationDate,
         /// <summary>
-        /// 配件状态 1可用 2 不可用
+        /// 配件状态 1可用  0 删除
         /// </summary>
         PartState,
     }

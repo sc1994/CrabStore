@@ -68,8 +68,8 @@ namespace Web.Controllers
                 sh.AddWhere(CsOrderEnum.TotalMoney, para.TotalStart, RelationEnum.GreaterEqual);
             if (para.TotalEnd > 0)
                 sh.AddWhere(CsOrderEnum.TotalMoney, para.TotalEnd, RelationEnum.LessEqual);
-            if (para.OrderId > 0)
-                sh.AddWhere(CsOrderEnum.OrderId, para.OrderId);
+            if (!para.OrderId.IsNullOrEmpty())
+                sh.AddWhere(CsOrderEnum.OrderNumber, para.OrderId, RelationEnum.Like);
             if (para.Status > -1)
                 sh.AddWhere(CsOrderEnum.OrderState, para.Status);
             if (!para.UserName.IsNullOrEmpty())

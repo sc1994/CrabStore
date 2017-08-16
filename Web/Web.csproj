@@ -214,6 +214,8 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CsOrderController.cs" />
+    <Compile Include="Controllers\CsPartsController.cs" />
+    <Compile Include="Controllers\CsSystemUsersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\WebApiController.cs" />
@@ -235,9 +237,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Scripts\app\csOrder.js" />
+    <Content Include="Scripts\app\csParts.js" />
     <Content Include="Scripts\app\menu.js" />
     <Content Include="Scripts\element\index.js" />
     <Content Include="Scripts\main.js" />
+    <Content Include="Scripts\md5.min.js" />
     <Content Include="Scripts\vue\vue-router.js" />
     <Content Include="Scripts\vue\vue.js" />
     <Content Include="Web.config" />
@@ -261,6 +265,8 @@
     <None Include="Project_Readme.html" />
     <Content Include="Views\CsOrder\Index.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
+    <Content Include="Views\CsSystemUsers\Index.cshtml" />
+    <Content Include="Views\CsParts\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

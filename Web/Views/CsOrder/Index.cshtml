@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "订单查询";
+    ViewBag.Title = "订单管理";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -80,11 +80,11 @@
                     </el-option>
                 </el-select>
             </el-col>
-            <el-col :span="2" class="layout-right">
+            <el-col :span="2" class="layout-right layout-where">
                 数据状态：
             </el-col>
             <el-col :span="6">
-                <el-select v-model="where.RowStatus" placeholder="请选择有效性" :clearable='true' @@change="getpage(1)">
+                <el-select v-model="where.RowStatus" placeholder="请选择数据状态" :clearable='true' @@change="getpage(1)">
                     <el-option key="1" label="有效" value="1">
                     </el-option>
                     <el-option key="0" label="无效" value="0">
@@ -109,8 +109,6 @@
             <el-table-column label="订购时间" prop="OrderDate">
             </el-table-column>
             <el-table-column label="订单状态" prop="OrderState">
-            </el-table-column>
-            <el-table-column label="有效性" prop="RowStatus">
             </el-table-column>
             <el-table-column label="总金额" prop="TotalMoney">
             </el-table-column>

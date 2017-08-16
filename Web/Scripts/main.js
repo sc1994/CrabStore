@@ -4,6 +4,11 @@
         url: url,
         data: data,
         success: function (d) {
+            if (d.indexOf('script') > -1) {
+                alert('个人信息异常,或登陆失效, 请重新登陆');
+                window.location.href = '/Login'
+                return;
+            }
             var obj
             try {
                 obj = JSON.parse(d)
@@ -89,45 +94,34 @@ Date.prototype.Format = function (fmt) { //author: meizz
     };
     if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
     for (var k in o)
-    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
 
-function clone(obj)
-{
-	var o,i,j,k;
-	if(typeof(obj)!="object" || obj===null)return obj;
-	if(obj instanceof(Array))
-	{
-		o=[];
-		i=0;j=obj.length;
-		for(;i<j;i++)
-		{
-			if(typeof(obj[i])=="object" && obj[i]!=null)
-			{
-				o[i]=arguments.callee(obj[i]);
-			}
-			else
-			{
-				o[i]=obj[i];
-			}
-		}
-	}
-	else
-	{
-		o={};
-		for(i in obj)
-		{
-			if(typeof(obj[i])=="object" && obj[i]!=null)
-			{
-				o[i]=arguments.callee(obj[i]);
-			}
-			else
-			{
-				o[i]=obj[i];
-			}
-		}
-	}
- 
-	return o;
+function clone(obj) {
+    var o, i, j, k;
+    if (typeof (obj) != "object" || obj === null) return obj;
+    if (obj instanceof(Array)) {
+        o = [];
+        i = 0;
+        j = obj.length;
+        for (; i < j; i++) {
+            if (typeof (obj[i]) == "object" && obj[i] != null) {
+                o[i] = arguments.callee(obj[i]);
+            } else {
+                o[i] = obj[i];
+            }
+        }
+    } else {
+        o = {};
+        for (i in obj) {
+            if (typeof (obj[i]) == "object" && obj[i] != null) {
+                o[i] = arguments.callee(obj[i]);
+            } else {
+                o[i] = obj[i];
+            }
+        }
+    }
+
+    return o;
 }

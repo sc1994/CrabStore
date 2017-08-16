@@ -9,22 +9,27 @@
     @Styles.Render("~/Content/main.css")
 </head>
 <body>
-    <div class="index-head"></div>
+    <div class="index-head">
+        <div class="el-row" style="margin-left: -10px; margin-right: -10px;">
+            <div class="el-col-20" style="padding-left: 10px; padding-right: 10px;">
+                哈哈哈
+            </div>
+            <div class="el-col-3" style="padding-left: 10px; padding-right: 10px;padding-top: 20px">
+                <span style="color:#bfcbd9">欢迎：</span>
+                <span style="color:#20a0ff;">@ViewBag.UserName</span>  
+                <span style="color:#bfcbd9;margin-left: 16px;cursor:pointer"
+                    onclick="signout('@ViewBag.UserName')">退出登陆</span>
+            </div>
+        </div>
+    </div>
     <div class="el-row" style="margin-left: -10px; margin-right: -10px;">
         <div class="el-col-4" style="padding-left: 10px; padding-right: 10px;" id="menuApp">
-            <el-menu default-active="1" class="el-menu-vertical" theme="dark">
+            <el-menu :default-active="defaultActive" class="el-menu-vertical" theme="dark">
                 <template v-for="(menu, menuIndex) in menuList">
-                    <el-submenu v-if="menu.child.length > 0">
-                        <template slot="title">
-                            <i :class="menu.icon"></i>
-                            {{menu.title}}
-                        </template>
-                        <el-menu-item v-for="(c, cIndex) in menu.child" :key="c.id">{{c.title}}</el-menu-item>
-                    </el-submenu>
-                    <el-menu-item v-else :index="menu.id" >
+                    <el-menu-item :index="menu.id" :key="menuIndex" 
+                        @@click='routeTo(menu)'>
                         <i :class="menu.icon"></i>
                         {{menu.title}}
-                    </el-menu-item>
                     </el-menu-item>
                 </template>
             </el-menu>
@@ -35,6 +40,7 @@
     </div>
     @Scripts.Render("~/Scripts/vue/vue.js")
     @Scripts.Render("~/Scripts/element/index.js")
+    @Scripts.Render("~/Scripts/md5.min.js")
     @Scripts.Render("~/Scripts/main.js")
     @Scripts.Render("~/Scripts/app/menu.js")
     @RenderSection("script", false)

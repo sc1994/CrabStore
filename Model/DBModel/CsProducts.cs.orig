@@ -41,7 +41,11 @@ namespace Model.DBModel
         public decimal ProductPrice { get; set; }
 
         /// <summary>
-        /// 商品状�1表示正常 0表示下架
+<<<<<<< HEAD
+        /// 商品状态 1表示正常 2表示下架
+=======
+        /// 商品状态 1表示正常 0表示下架
+>>>>>>> ea20a1f75b378cab46a5c0c47364841a9c467553
         /// </summary>
         public int ProductState { get; set; }
 
@@ -80,7 +84,11 @@ namespace Model.DBModel
         /// </summary>
         ProductPrice,
         /// <summary>
-        /// 商品状�1表示正常 0表示下架
+<<<<<<< HEAD
+        /// 商品状态 1表示正常 2表示下架
+=======
+        /// 商品状态 1表示正常 0表示下架
+>>>>>>> ea20a1f75b378cab46a5c0c47364841a9c467553
         /// </summary>
         ProductState,
         /// <summary>

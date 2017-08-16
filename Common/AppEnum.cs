@@ -33,4 +33,10 @@
         No = 0,
         Warn = 2
     }
+
+    public enum SysUserType
+    {
+        管理员 = 1,
+        普通用户 = 2
+    }
 }

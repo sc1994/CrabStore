@@ -1,10 +1,13 @@
 ﻿var mentApp = new Vue({
     el: '#menuApp',
     data: {
-        menuList: []
+        menuList: [],
+        defaultActive: "0-1"
     },
     methods: {
-
+        routeTo: function (item) {
+            window.location.href = item.url
+        }
     },
     mounted: function () {
         var that = this;
@@ -30,3 +33,13 @@
         var thatUrl = document.URL;
     }
 })
+
+function signout(userName) {
+    ajax('/Login/LogionOut', {
+        userName: userName
+    }, function (data) {
+        if (data.code === 1) {
+            window.location.href = '/Login'
+        }
+    })
+}

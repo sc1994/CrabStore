@@ -31,7 +31,7 @@ namespace Model.DBModel
         public int SysUserType { get; set; }
 
         /// <summary>
-        /// 1正常 2已删除
+        /// 1正常 0已删除
         /// </summary>
         public int SysUserState { get; set; }
 
@@ -39,6 +39,16 @@ namespace Model.DBModel
         /// 操作时间
         /// </summary>
         public DateTime SysUserDate { get; set; } = ToDateTime("getdate");
+
+        /// <summary>
+        /// 无效时间
+        /// </summary>
+        public DateTime DeleteDate { get; set; } = ToDateTime("1900-1-1");
+
+        /// <summary>
+        /// 无效描述
+        /// </summary>
+        public string DeleteDescribe { get; set; } = string.Empty;
 
     }
 
@@ -62,12 +72,20 @@ namespace Model.DBModel
         /// </summary>
         SysUserType,
         /// <summary>
-        /// 1正常 2已删除
+        /// 1正常 0已删除
         /// </summary>
         SysUserState,
         /// <summary>
         /// 操作时间
         /// </summary>
         SysUserDate,
+        /// <summary>
+        /// 无效时间
+        /// </summary>
+        DeleteDate,
+        /// <summary>
+        /// 无效描述
+        /// </summary>
+        DeleteDescribe,
     }
 }
