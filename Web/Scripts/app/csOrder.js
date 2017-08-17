@@ -4,7 +4,8 @@ var vm = new Vue({
         where: {
             RowStatus: '1',
             Time: [],
-            Status: ''
+            Status: '',
+            UserName: ''
         },
         currentPage: 1,
         list: [],
@@ -98,6 +99,9 @@ var vm = new Vue({
         }
     },
     mounted: function () {
+        if (req['userId'] > 0) {
+            this.where.UserName = req['userId']
+        }
         this.getpage(1)
     },
     computed: {

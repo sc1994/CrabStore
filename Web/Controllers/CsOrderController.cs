@@ -74,7 +74,16 @@ namespace Web.Controllers
             if (para.Status > -1)
                 sh.AddWhere(CsOrderEnum.OrderState, para.Status);
             if (!para.UserName.IsNullOrEmpty())
-                sh.AddWhere("cu." + CsUsersEnum.UserName, para.UserName, RelationEnum.Like);
+            {
+                if (para.UserName.ToInt() > 0)
+                {
+                    sh.AddWhere("cu." + CsUsersEnum.UserId, para.UserName.ToInt());
+                }
+                else
+                {
+                    sh.AddWhere("cu." + CsUsersEnum.UserName, para.UserName, RelationEnum.Like);
+                }
+            }
             if (!para.UserPhone.IsNullOrEmpty())
                 sh.AddWhere("cu." + CsUsersEnum.UserPhone, para.UserPhone, RelationEnum.Like);
             if (para.Time.Count > 0)
@@ -93,13 +102,12 @@ namespace Web.Controllers
             {
                 x.OrderId,
                 x.OrderNumber,
-                x.UserId,
                 OrderDate = x.OrderDate.ToString("yyyy-M-d HH:mm:ss"),
                 OrderState = ((OrderState)x.OrderState).ToString(),
                 RowStatus = ((RowStatus)x.RowStatus).ToString(),
                 DeleteDate = x.DeleteDate.ToString("yyyy-M-d HH:mm:ss"),
                 x.DeleteDescribe,
-                UserName = x.UserName + $"({x.UserSex})",
+                UserName = x.UserName + $"({x.UserSex}) / " + x.UserId,
                 x.UserPhone,
                 TotalMoney = "￥" + x.TotalMoney.ToString("N2")
             });

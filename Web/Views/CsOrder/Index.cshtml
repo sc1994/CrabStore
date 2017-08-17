@@ -16,7 +16,7 @@
                 下单用户：
             </el-col>
             <el-col :span="6">
-                <el-input v-model="where.UserName" placeholder="请输入下单用户"></el-input>
+                <el-input v-model="where.UserName" placeholder="请输入下单用户姓名或Id"></el-input>
             </el-col>
             <el-col :span="2" class="layout-right layout-where">
                 用户电话：
@@ -70,7 +70,7 @@
                 <el-select v-model="where.Status" placeholder="请选择订单状态" :clearable='true' @@change="getpage(1)">
                     <el-option key="0" label="取消订单" value="0">
                     </el-option>
-                    <el-option key="1" label="已下单未至支付" value="1">
+                    <el-option key="1" label="已下单未支付" value="1">
                     </el-option>
                     <el-option key="2" label="支付成功" value="2">
                     </el-option>
@@ -102,7 +102,7 @@
             style="width: 100%">
             <el-table-column label="订单编号" prop="OrderNumber">
             </el-table-column>
-            <el-table-column label="订购用户" prop="UserName">
+            <el-table-column label="订购用户/Id" prop="UserName">
             </el-table-column>
             <el-table-column label="联系电话" prop="UserPhone">
             </el-table-column>
@@ -162,7 +162,7 @@
                         <el-select v-model="newInfo.OrderState" size="mini">
                             <el-option key="0" label="取消订单" value="0" :disabled="true">
                             </el-option>
-                            <el-option key="1" label="已下单未至支付" value="1" :disabled="true">
+                            <el-option key="1" label="已下单未支付" value="1" :disabled="true">
                             </el-option>
                             <el-option key="2" label="支付成功" value="2" :disabled="true">
                             </el-option>

@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewBag.Title = "客户统计";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="app">
+    <div class="table-where">
+        <el-row>
+            <el-col :span="2" class="layout-right layout-where">
+                客户Id：
+            </el-col>
+            <el-col :span="6">
+                <el-input v-model="where.UserId" placeholder="请输入客户Id"></el-input>
+            </el-col>
+            <el-col :span="2" class="layout-right layout-where">
+                客户姓名：
+            </el-col>
+            <el-col :span="6">
+                <el-input v-model="where.UserName" placeholder="请输入客户姓名"></el-input>
+            </el-col>
+            <el-col :span="2" class="layout-right layout-where">
+                联系号码：
+            </el-col>
+            <el-col :span="6">
+                <el-input v-model="where.UserPhone" placeholder="请输入客户联系号码"></el-input>
+            </el-col>
+        </el-row> 
+        <el-row>
+            <el-col :span="2" class="layout-right layout-where">
+                余额排序：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="order.Balance" placeholder="请选择余额排序" :clearable='true' @@change="getpage(1)">
+                    <el-option key="1" label="升序" value="1">
+                    </el-option>
+                    <el-option key="0" label="降序" value="0">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col :span="2" class="layout-right layout-where">
+                返利排序：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="order.Rebate" placeholder="请选择返利排序" :clearable='true' @@change="getpage(1)">
+                    <el-option key="1" label="升序" value="1">
+                    </el-option>
+                    <el-option key="0" label="降序" value="0">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col :span="2" class="layout-right layout-where">
+                消费排序：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="order.TotalPrice" placeholder="请选择消费排序" :clearable='true' @@change="getpage(1)">
+                    <el-option key="1" label="升序" value="1">
+                    </el-option>
+                    <el-option key="0" label="降序" value="0">
+                    </el-option>
+                </el-select>
+            </el-col>
+        </el-row>    
+        <div class="table-btn">
+            <el-button type="primary" icon="search" @@click="getpage(currentPage)">搜索</el-button>
+        </div>   
+    </div>
+    <div class="table-content">
+        <el-table v-loading.body="loading"
+            :data="list"
+            style="width: 100%">
+            <el-table-column label="Id" prop="UserId" width="80">
+            </el-table-column>
+            <el-table-column label="客户姓名" prop="UserName">
+            </el-table-column>
+            <el-table-column label="联系方式" prop="UserPhone">
+            </el-table-column>
+            <el-table-column label="累计返利金额" prop="Rebate">
+            </el-table-column>
+            <el-table-column label="累计消费金额" prop="TotalPrice">
+            </el-table-column>
+            <el-table-column label="累计消费重量" prop="TotalWeight">
+            </el-table-column>
+            <el-table-column label="当前余额" prop="UserBalance">
+            </el-table-column>
+            <el-table-column label="操作">
+                <template scope="scope">
+                    <el-button size="small" class="table-detail-btn"
+                        @@click="selectDetail(scope.row.UserId)">消费明细</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div class="table-page">
+            <el-pagination
+                :current-page="currentPage"
+                :page-size="15"
+                layout="total, prev, pager, next, jumper"
+                @@size-change="getpage"
+                @@current-change="getpage"
+                :total="total">
+            </el-pagination>
+        </div>
+    </div>
+</div>
+
+@section script{
+    <script src="../../Scripts/app/csUsers.js"></script>
+}

@@ -52,4 +52,12 @@
         在售 = 1,
         已下架 = 0
     }
+
+    public enum OrderEnum
+    {
+        // ReSharper disable once InconsistentNaming
+        ASC = 1,
+        // ReSharper disable once InconsistentNaming
+        DESC = 0
+    }
 }
