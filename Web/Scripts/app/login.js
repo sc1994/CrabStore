@@ -6,6 +6,7 @@ var vm = new Vue({
             password: '',
             remember: true
         },
+        loading: false,
         rules: {
             account: [{
                     required: true,
@@ -36,6 +37,7 @@ var vm = new Vue({
     methods: {
         login: function () {
             var that = this
+            that.loading = true
             that.loginForm.password = md5(that.loginForm.password)
             ajax('/Login/Login', that.loginForm, function (data) {
                 if (data.code === 1) {
@@ -53,6 +55,7 @@ var vm = new Vue({
                         message: data.data
                     })
                     that.loginForm.password = ''
+                    that.loading = false
                 }
             });
         }

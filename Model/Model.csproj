@@ -57,6 +57,8 @@
     <Compile Include="ViewModel\CsOrderView.cs" />
     <Compile Include="DBModel\CsSystemUsers.cs" />
     <Compile Include="ViewModel\CsPartsView.cs" />
+    <Compile Include="ViewModel\CsPriceView.cs" />
+    <Compile Include="ViewModel\CsProductsView.cs" />
     <Compile Include="ViewModel\CsSystemUsersView.cs" />
   </ItemGroup>
   <ItemGroup />

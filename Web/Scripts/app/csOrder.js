@@ -28,7 +28,7 @@ var vm = new Vue({
             var that = this;
             that.where.CurrentPage = currentPage
             if (that.where.Time.length > 1 && that.where.Time[0] != null && that.where.Time[1] != null) {
-                that.where.Time = [new Date(that.where.Time[0]).Format('yyyy-MM-dd'), new Date(that.where.Time[1]).Format('yyyy-MM-dd')]
+                that.where.Time = [new Date(that.where.Time[0]).Format('yyyy-MM-dd hh:mm:ss'), new Date(that.where.Time[1]).Format('yyyy-MM-dd hh:mm:ss')]
             }
             that.loading = true
             ajax('/CsOrder/GetCsOrderPage', that.where, function (data) {

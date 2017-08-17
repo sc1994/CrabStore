@@ -127,5 +127,17 @@ namespace Common
             return to;
         }
 
+        public static decimal ToDecimal(this object o)
+        {
+            try
+            {
+                return Convert.ToDecimal(o);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
     }
 }

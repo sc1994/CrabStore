@@ -10,7 +10,8 @@
         }
     },
     mounted: function () {
-        var that = this;
+        var that = this
+        var thatUrl = document.URL
         ajax('/Home/Menu', {}, function (data) {
             data.forEach((m) => {
                 if (m.child.length > 0) {
@@ -29,8 +30,12 @@
             that.menuList = data
         })
         var menuElement = document.getElementsByClassName('el-menu-vertical')
-        menuElement[0].style.height = window.innerHeight - 100 + 'px'
-        var thatUrl = document.URL;
+        menuElement[0].style.height = document.body.scrollHeight - 90 + 'px'
+        setInterval(function () {
+            if (document.body.scrollHeight - 90 + "px" != menuElement[0].style.height)
+                menuElement[0].style.height = document.body.scrollHeight - 90 + 'px'
+        }, 300)
+
     }
 })
 

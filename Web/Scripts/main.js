@@ -1,87 +1,28 @@
 ﻿function ajax(url, data, backCall) {
-    ajaxsound({
-        type: "post",
-        url: url,
-        data: data,
-        success: function (d) {
-            if (d.indexOf('script') > -1) {
+    axios.post(url, data)
+        .then(function (d) {
+            if (d.data === "<script>window.location.href = '/Login'</script>") {
                 alert('个人信息异常,或登陆失效, 请重新登陆');
                 window.location.href = '/Login'
                 return;
             }
             var obj
             try {
-                obj = JSON.parse(d)
+                obj = JSON.parse(d.data)
             } catch (e) {
-                obj = d
+                obj = d.data
             }
             backCall(obj)
-        },
-        error: function () {
-            console.log("error")
-        }
-    });
-}
-
-function ajaxsound() {
-    var ajaxData = {
-        type: arguments[0].type || "GET",
-        url: arguments[0].url || "",
-        async: arguments[0].async || "true",
-        data: arguments[0].data || null,
-        dataType: arguments[0].dataType || "text",
-        contentType: arguments[0].contentType || "application/x-www-form-urlencoded",
-        beforeSend: arguments[0].beforeSend || function () {},
-        success: arguments[0].success || function () {},
-        error: arguments[0].error || function () {}
-    }
-    ajaxData.beforeSend()
-    var xhr = createxmlHttpRequest();
-    xhr.responseType = ajaxData.dataType;
-    xhr.open(ajaxData.type, ajaxData.url, ajaxData.async);
-    xhr.setRequestHeader("Content-Type", ajaxData.contentType);
-    xhr.send(convertData(ajaxData.data));
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                ajaxData.success(xhr.response)
-            } else {
-                ajaxData.error()
-            }
-        }
-    }
-
-    function createxmlHttpRequest() {
-        if (window.ActiveXObject) {
-            return new ActiveXObject("Microsoft.XMLHTTP");
-        } else if (window.XMLHttpRequest) {
-            return new XMLHttpRequest();
-        }
-    }
-
-    function convertData(data) {
-        if (typeof data === 'object') {
-            var convertResult = "";
-            for (var c in data) {
-                if (data.hasOwnProperty(c)) {
-                    convertResult += c + "=" + data[c] + "&";
-                }
-            }
-            convertResult = convertResult.substring(0, convertResult.length - 1)
-            return convertResult;
-        } else {
-            return data;
-        }
-    }
+        })
+        .catch(function (err) {
+            console.log(err)
+        })
 }
 
 
 // 对Date的扩展，将 Date 转化为指定格式的String
 // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
 // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字) 
-// 例子： 
-// (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423 
-// (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18 
 Date.prototype.Format = function (fmt) { //author: meizz 
     var o = {
         "M+": this.getMonth() + 1, //月份 

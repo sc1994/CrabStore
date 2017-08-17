@@ -9,7 +9,7 @@ namespace Model.ViewModel
         public class CsOrderWhere
         {
             public int RowStatus { get; set; } = -1;
-            public string Time { get; set; } = string.Empty;
+            public List<string> Time { get; set; } = new List<string>();
             public int CurrentPage { get; set; } = 1;
             public decimal TotalStart { get; set; } = 0;
             public decimal TotalEnd { get; set; } = 0;

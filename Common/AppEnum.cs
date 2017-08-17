@@ -31,7 +31,8 @@
     {
         Yes = 1,
         No = 0,
-        Warn = 2
+        Warn = 2,
+        LoginOut = 3
     }
 
     public enum SysUserType
@@ -44,5 +45,11 @@
     {
         必选配件 = 1,
         可选配件 = 2
+    }
+
+    public enum ProductState
+    {
+        在售 = 1,
+        已下架 = 0
     }
 }

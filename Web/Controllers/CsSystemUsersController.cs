@@ -121,7 +121,7 @@ namespace Web.Controllers
                     SysUserState = model.SysUserState.ToString(),
                     SysUserType = model.SysUserType.ToString(),
                     SysUserPassword = model.SysUserPassword,
-                    DeleteDate = model.DeleteDate.ToString("yyyy-M-d hh:mm:ss"),
+                    DeleteDate = model.DeleteDate.ToString("yyyy-M-d HH:mm:ss"),
                     DeleteDescribe = model.DeleteDescribe
                 }
             });

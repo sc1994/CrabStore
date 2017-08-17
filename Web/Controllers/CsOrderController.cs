@@ -76,16 +76,15 @@ namespace Web.Controllers
                 sh.AddWhere("cu." + CsUsersEnum.UserName, para.UserName, RelationEnum.Like);
             if (!para.UserPhone.IsNullOrEmpty())
                 sh.AddWhere("cu." + CsUsersEnum.UserPhone, para.UserPhone, RelationEnum.Like);
-            if (para.Time != null)
+            if (para.Time.Count > 0)
             {
-                var timeArr = para.Time.Split(new[] { "," }, StringSplitOptions.None);
-                if (!timeArr[0].IsNullOrEmpty())
+                if (!para.Time[0].IsNullOrEmpty())
                 {
-                    sh.AddWhere(CsOrderEnum.OrderDate, timeArr[0], RelationEnum.GreaterEqual);
+                    sh.AddWhere(CsOrderEnum.OrderDate, para.Time[0], RelationEnum.GreaterEqual);
                 }
-                if (!timeArr[1].IsNullOrEmpty())
+                if (!para.Time[1].IsNullOrEmpty())
                 {
-                    sh.AddWhere(CsOrderEnum.OrderDate, timeArr[1], RelationEnum.LessEqual);
+                    sh.AddWhere(CsOrderEnum.OrderDate, para.Time[1], RelationEnum.LessEqual);
                 }
             }
 
@@ -94,10 +93,10 @@ namespace Web.Controllers
                 x.OrderId,
                 x.OrderNumber,
                 x.UserId,
-                OrderDate = x.OrderDate.ToString("yyyy-M-d hh:mm:ss"),
+                OrderDate = x.OrderDate.ToString("yyyy-M-d HH:mm:ss"),
                 OrderState = ((OrderState)x.OrderState).ToString(),
                 RowStatus = ((RowStatus)x.RowStatus).ToString(),
-                DeleteDate = x.DeleteDate.ToString("yyyy-M-d hh:mm:ss"),
+                DeleteDate = x.DeleteDate.ToString("yyyy-M-d HH:mm:ss"),
                 x.DeleteDescribe,
                 UserName = x.UserName + $"({x.UserSex})",
                 x.UserPhone,
@@ -171,8 +170,8 @@ namespace Web.Controllers
                 OrderStateDescribe = ((OrderState)csOrder.OrderState).ToString(),
                 OrderId = csOrder.OrderId,
                 OrderNumber = csOrder.OrderNumber,
-                OrderDate = csOrder.OrderDate.ToString("yyyy-M-d hh:mm:ss"),
-                DeleteDate = csOrder.DeleteDate.ToString("yyyy-M-d hh:mm:ss"),
+                OrderDate = csOrder.OrderDate.ToString("yyyy-M-d HH:mm:ss"),
+                DeleteDate = csOrder.DeleteDate.ToString("yyyy-M-d HH:mm:ss"),
                 DeleteDescribe = csOrder.DeleteDescribe,
                 TotalMoney = "￥" + csOrder.TotalMoney.ToString("N2"),
                 ActualMoney = "￥" + csOrder.ActualMoney.ToString("N2"),
@@ -246,5 +245,15 @@ namespace Web.Controllers
                 Data = "更新成功,但是没有受影响行数"
             });
         }
+
+        /// <summary>
+        /// 统计
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Statistic()
+        {
+            return View();
+        }
+        
     }
 }
