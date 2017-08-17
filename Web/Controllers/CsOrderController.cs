@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -254,6 +255,67 @@ namespace Web.Controllers
         {
             return View();
         }
-        
+
+        public ActionResult GetStatisticList(StatisticView.StatisticWhere para)
+        {
+            #region 获取符合条件商品
+            var shProducts = new SqlHelper<CsProducts>();
+            if (!para.ProductName.IsNullOrEmpty())
+                shProducts.AddWhere(CsProductsEnum.ProductName, para.ProductName, RelationEnum.Like);
+            if (para.ProductType != 0)
+                shProducts.AddWhere(CsProductsEnum.ProductType, para.ProductType);
+            var products = shProducts.Select();
+            if (!products.Any())
+            {
+                return Json(new
+                {
+                    data = new ArrayList(),
+                    msg = "没有满足当前条件的商品"
+                });
+            }
+
+            #endregion
+
+            #region 获取未发货订单数量
+            var sh = new SqlHelper<StatisticView.StatisticList>("CsOrderDetail")
+            {
+                Alia = "cod"
+            };
+            sh.AddJoin(JoinEnum.LeftJoin, "CsOrder", "co", "OrderId", "OrderId", $" AND ProductId IN ({string.Join(",", products.Select(x => x.ProductId))})");
+            sh.AddShow("OrderState,ProductId,co.OrderId,OrderDate,ProductNumber,ChoseType");
+            sh.AddWhere($" AND OrderState IN ({OrderState.支付成功.GetHashCode()},{OrderState.配货中.GetHashCode()})");
+            var orders = sh.Select();
+            #endregion
+
+            #region 整合数据
+            var data = new List<StatisticView.StatisticList>();
+            foreach (var product in products)
+            {
+                var item = new StatisticView.StatisticList
+                {
+                    ProductId = product.ProductId,
+                    ProductName = product.ProductName,
+                    ProductType = ((ProductType)product.ProductType).ToString(),
+                };
+                var total = orders
+                    .Where(x => x.ProductId == product.ProductId)
+                    .Sum(x => x.ProductNumber);
+                item.Total = $"{total} 只 / 计 {total * product.ProductWeight} 斤";
+                var stock = orders
+                    .Where(x => x.ProductId == product.ProductId && x.OrderState == OrderState.配货中.GetHashCode())
+                    .Sum(x => x.ProductNumber);
+                item.Stock = $"{stock} 只 / 计 {stock * product.ProductWeight} 斤";
+                var unStork = orders
+                    .Where(x => x.ProductId == product.ProductId && x.OrderState == OrderState.支付成功.GetHashCode())
+                    .Sum(x => x.ProductNumber);
+                item.UnStork = $"{unStork} 只 / 计 {unStork * product.ProductWeight} 斤";
+                item.UnStorkInt = unStork;
+                data.Add(item);
+            }
+
+            #endregion
+
+            return Json(data.OrderByDescending(x => x.UnStorkInt));
+        }
     }
 }

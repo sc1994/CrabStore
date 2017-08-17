@@ -28,6 +28,7 @@ namespace Web.Controllers
             {
                 var sh = new SqlHelper<CsProducts>();
                 sh.AddUpdate(CsProductsEnum.ProductPrice.ToString(), product.ProductPrice);
+                sh.AddUpdate(CsProductsEnum.OperationDate.ToString(), DateTime.Now);
                 sh.AddWhere(CsProductsEnum.ProductId, product.ProductId);
                 if (sh.Update() > 0)
                 {
@@ -68,6 +69,7 @@ namespace Web.Controllers
             sh.AddShow(CsPriceEnum.PriceDate);
             sh.AddShow(CsPriceEnum.PriceId);
             sh.AddShow(CsProductsEnum.ProductName);
+            sh.AddShow(CsProductsEnum.ProductType);
             sh.AddShow(CsProductsEnum.ProductPrice + " AS CurrentPrice");
 
             sh.AddJoin(JoinEnum.LeftJoin, "CsProducts", "product", "ProductId", "ProductId");
@@ -78,6 +80,8 @@ namespace Web.Controllers
                 sh.AddWhere(CsPriceEnum.PriceNumber, para.PriceStart, RelationEnum.GreaterEqual);
             if (para.PriceEnd > 0)
                 sh.AddWhere(CsPriceEnum.PriceNumber, para.PriceEnd, RelationEnum.LessEqual);
+            if (para.ProductType != 0)
+                sh.AddWhere(CsProductsEnum.ProductType, para.ProductType);
             if (para.Time.Count > 0)
             {
                 if (!para.Time[0].IsNullOrEmpty())
@@ -96,12 +100,13 @@ namespace Web.Controllers
                     CurrentPrice = "￥ " + x.CurrentPrice.ToDecimal().ToString("N2"),
                     PriceNumber = "￥ " + x.PriceNumber.ToDecimal().ToString("N2"),
                     PriceDate = x.PriceDate.ToDate().ToString("yyyy-M-d HH:mm:ss"),
-                    PriceId = x.PriceId
+                    PriceId = x.PriceId,
+                    ProductType = ((ProductType)x.ProductType.ToInt()).ToString()
                 }),
                 total = sh.Total,
                 sql = sh.SqlString.ToString()
             });
         }
-        
+
     }
 }

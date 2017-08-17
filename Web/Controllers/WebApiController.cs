@@ -91,7 +91,6 @@ namespace Web.Controllers
                 {
                     strJson.Append(",");
                 }
-                
             }
             strJson.Append("]");
             strJson.Append("}");

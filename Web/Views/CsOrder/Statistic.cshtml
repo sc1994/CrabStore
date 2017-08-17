@@ -1,6 +1,52 @@
 ﻿@{
-    ViewBag.Title = "价格管理";
+    ViewBag.Title = "待发货统计";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div id="app">
+    <div class="table-where">
+        <el-row>
+        <el-col :span="2" class="layout-right layout-where">
+            商品名称：
+            </el-col>
+            <el-col :span="6">
+                <el-input v-model="where.ProductName" placeholder="请输入商品名称"></el-input>
+            </el-col>
+            <el-col :span="2" class="layout-right layout-where">
+                蟹类型：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="where.ProductType" placeholder="请选择蟹类型" :clearable='true' @@change="getList()">
+                    <el-option key="1" label="大宗采购" value="1">
+                    </el-option>
+                    <el-option key="2" label="包塘直补" value="2">
+                    </el-option>
+                </el-select>
+            </el-col>
+        </el-row>
+        <div class="table-btn">
+            <el-button type="primary" icon="search" @@click="getList()">搜索</el-button>
+        </div>
+    </div>
+    <h2>截止到 : {{time}} 代发货的统计数量如下</h2>
+    <div class="table-content">
+        <el-table v-loading.body="loading" :data="list">
+            <el-table-column label="Id" prop="ProductId" width="80">
+            </el-table-column>
+            <el-table-column label="商品名" prop="ProductName">
+            </el-table-column>
+            <el-table-column label="蟹类型" prop="ProductType">
+            </el-table-column>
+            <el-table-column label="总数" prop="Total">
+            </el-table-column>
+            <el-table-column label="已备货" prop="Stock">
+            </el-table-column>
+            <el-table-column label="还需备货" prop="UnStork">
+            </el-table-column>
+        </el-table>
+    </div>
+</div>
 
+@section script{
+    <script src="../../Scripts/app/statistic.js"></script>
+}
