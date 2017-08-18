@@ -13,6 +13,7 @@ var vm = new Vue({
         loading: false,
         dialogVisible: false,
         dialogLoading: false,
+        excelVisible: false,
         oldInfo: {
             OrderState: '',
             RowStatus: '',
@@ -22,7 +23,9 @@ var vm = new Vue({
             OrderState: '',
             RowStatus: '',
             DeleteDescribe: ''
-        }
+        },
+        fileList: [],
+        btnLoading: false
     },
     methods: {
         getpage: function (currentPage) {
@@ -96,6 +99,73 @@ var vm = new Vue({
                 that.dialogVisible = false
                 that.dialogLoading = false
             })
+        },
+        exportExcel: function () {
+            var that = this;
+            if (that.where.Time.length > 1 && that.where.Time[0] != null && that.where.Time[1] != null) {
+                that.where.Time = [new Date(that.where.Time[0]).Format('yyyy-MM-dd hh:mm:ss'), new Date(that.where.Time[1]).Format('yyyy-MM-dd hh:mm:ss')]
+            }
+            that.loading = true
+            ajax('/CsOrder/ExportCsOrder', that.where, function (data) {
+                if (data.code === 1) {
+                    window.open(data.data, '_blank')
+                } else {
+                    that.$notify.error({
+                        title: '错误',
+                        message: data.data
+                    })
+                }
+                that.loading = false
+            })
+        },
+        importExcel: function () {
+            var that = this
+            if (this.fileList.length <= 0) {
+                that.$notify.error({
+                    title: '错误',
+                    message: '请上传Excel文件'
+                })
+                return
+            }
+            that.btnLoading = true
+            ajax('/CsOrder/ImportCsOrder', {
+                path: that.fileList[0].path
+            }, function (data) {
+                if (data.code === 1) {
+                    that.$notify({
+                        title: '成功',
+                        message: data.data,
+                        type: 'success'
+                    });
+                    that.excelVisible = false
+                    that.getpage(that.currentPage)
+                } else {
+                    that.$notify.error({
+                        title: '错误',
+                        message: data.data
+                    })
+                }
+                that.btnLoading = false
+            })
+        },
+        uploadSuccess: function (file, obj) {
+            this.fileList = [{
+                name: obj.name,
+                url: '../excelicon.png',
+                path: file.Data
+            }]
+        },
+        uploadRemove: function (file, fileList) {
+            this.fileList = []
+        },
+        uploadBefore: function (file) {
+            if (file.name.indexOf('.xls') < 0) {
+                this.$notify.error({
+                    title: '错误',
+                    message: '请选择Excel文件后缀为: xls或xlsx'
+                })
+                return false
+            }
         }
     },
     mounted: function () {
@@ -120,6 +190,13 @@ var vm = new Vue({
                 this.newInfo.DeleteDate = new Date().Format("yyyy-MM-dd hh:mm:ss")
             } else {
                 this.newInfo.DeleteDate = new Date(this.oldInfo.DeleteDate).Format("yyyy-MM-dd hh:mm:ss")
+            }
+        },
+        excelVisible: function (newValue) {
+            if (newValue) {
+                setTimeout(function () {
+                    document.getElementsByName('file')[0].setAttribute('accept', "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                }, 500)
             }
         }
     }

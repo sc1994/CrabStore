@@ -53,6 +53,26 @@ namespace Model.ViewModel
             public List<CsOrderDetailExtend> CsOrderDetails { get; set; } = new List<CsOrderDetailExtend>();
         }
 
+        public class CsOrderExcel
+        {
+            public string 订单编号 { get; set; } = string.Empty;
+            public string 收货人 { get; set; } = string.Empty;
+            public string 联系电话 { get; set; } = string.Empty;
+            public string 收货地址 { get; set; } = string.Empty;
+            public string 商品名称 { get; set; } = string.Empty;
+            public string 种类 { get; set; } = string.Empty;
+            public string 数量 { get; set; } = string.Empty;
+            public string 类型 { get; set; } = string.Empty;
+        }
+
+        public class CsOrderImport : CsOrderExcel
+        {
+            public string 总金额 { get; set; } = string.Empty;
+            public string 实收金额 { get; set; } = string.Empty;
+            public string 货运单号 { get; set; } = string.Empty;
+            public string 单价 { get; set; } = string.Empty;
+        }
+
         public class CsOrderDetailExtend
         {
             /// <summary>
@@ -65,6 +85,15 @@ namespace Model.ViewModel
             public int ProductNumber { get; set; }
             public string TotalPrice { get; set; } = string.Empty;
             public string UnitPrice { get; set; } = string.Empty;
+        }
+
+        /// <summary>
+        /// 订单以及详细
+        /// </summary>
+        public class CsOrderAndDetail
+        {
+            public CsOrder CsOrder { get; set; } = new CsOrder();
+            public List<CsOrderDetail> CsOrderDetails { get; set; } = new List<CsOrderDetail>();
         }
     }
 }

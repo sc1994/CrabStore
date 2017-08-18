@@ -221,6 +221,7 @@
     <Compile Include="Controllers\CsUserController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\UploadFileController.cs" />
     <Compile Include="Controllers\WebApiController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -270,6 +271,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\UploadFile\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

@@ -60,4 +60,12 @@
         // ReSharper disable once InconsistentNaming
         DESC = 0
     }
+
+    public enum ExcelRow
+    {
+        Empty,
+        Order,
+        Detail,
+        Other
+    }
 }

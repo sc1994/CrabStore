@@ -11,7 +11,6 @@
     },
     methods: {
         getList: function (isUnLoad) {
-            debugger;
             var that = this
             if (!isUnLoad) {
                 that.loading = true

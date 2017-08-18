@@ -51,7 +51,7 @@ namespace Web.Controllers
                     UserId = x.UserId,
                     Rebate = "￥ " + x.Rebate.ToDecimal().ToString("N2"),
                     UserBalance = "￥ " + x.UserBalance.ToDecimal().ToString("N2"),
-                    TotalWeight = x.TotalWeight + " KG"
+                    TotalWeight = x.TotalWeight.ToDecimal().ToString("0.00") + " KG"
                 }),
                 sql = sh.SqlString.ToString(),
                 total = sh.Total

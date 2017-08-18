@@ -27,78 +27,9 @@ namespace Web.Controllers
 
         public ActionResult GetCsOrderPage(CsOrderView.CsOrderWhere para)
         {
-            var sh = new SqlHelper<CsOrderView.CsOrderPage>("CsOrder")
-            {
-                PageConfig = new PageConfig
-                {
-                    PageIndex = para.CurrentPage,
-                    PageSize = PageSize,
-                    PageSortField = CsOrderEnum.OrderId.ToString(),
-                    SortEnum = SortEnum.Desc
-                },
-                Alia = "co"
-            };
-            sh.AddShow(CsOrderEnum.OrderId);
-            sh.AddShow(CsOrderEnum.OrderNumber);
-            sh.AddShow("co." + CsOrderEnum.UserId);
-            sh.AddShow(CsOrderEnum.TotalMoney);
-            sh.AddShow(CsOrderEnum.DiscountMoney);
-            sh.AddShow(CsOrderEnum.ActualMoney);
-            sh.AddShow(CsOrderEnum.OrderDate);
-            sh.AddShow(CsOrderEnum.OrderState);
-            sh.AddShow(CsOrderEnum.RowStatus);
-            sh.AddShow(CsOrderEnum.DeleteDate);
-            sh.AddShow(CsOrderEnum.DeleteDescribe);
-            sh.AddShow(CsUsersEnum.UserName);
-            sh.AddShow(CsUsersEnum.UserPhone);
-            sh.AddShow(CsUsersEnum.UserSex);
+            var data = GetList(para);
 
-            sh.AddJoin(JoinEnum.LeftJoin, "CsUsers", "cu", "UserId", "UserId");
-
-            if (para.RowStatus > -1)
-                sh.AddWhere(CsOrderEnum.RowStatus, para.RowStatus);
-            if (para.ActualStart > 0)
-                sh.AddWhere(CsOrderEnum.ActualMoney, para.ActualStart, RelationEnum.GreaterEqual);
-            if (para.ActualEnd > 0)
-                sh.AddWhere(CsOrderEnum.ActualMoney, para.ActualEnd, RelationEnum.LessEqual);
-            if (para.DiscountStart > 0)
-                sh.AddWhere(CsOrderEnum.DiscountMoney, para.DiscountStart, RelationEnum.GreaterEqual);
-            if (para.DiscountEnd > 0)
-                sh.AddWhere(CsOrderEnum.DiscountMoney, para.DiscountEnd, RelationEnum.LessEqual);
-            if (para.TotalStart > 0)
-                sh.AddWhere(CsOrderEnum.TotalMoney, para.TotalStart, RelationEnum.GreaterEqual);
-            if (para.TotalEnd > 0)
-                sh.AddWhere(CsOrderEnum.TotalMoney, para.TotalEnd, RelationEnum.LessEqual);
-            if (!para.OrderId.IsNullOrEmpty())
-                sh.AddWhere(CsOrderEnum.OrderNumber, para.OrderId, RelationEnum.Like);
-            if (para.Status > -1)
-                sh.AddWhere(CsOrderEnum.OrderState, para.Status);
-            if (!para.UserName.IsNullOrEmpty())
-            {
-                if (para.UserName.ToInt() > 0)
-                {
-                    sh.AddWhere("cu." + CsUsersEnum.UserId, para.UserName.ToInt());
-                }
-                else
-                {
-                    sh.AddWhere("cu." + CsUsersEnum.UserName, para.UserName, RelationEnum.Like);
-                }
-            }
-            if (!para.UserPhone.IsNullOrEmpty())
-                sh.AddWhere("cu." + CsUsersEnum.UserPhone, para.UserPhone, RelationEnum.Like);
-            if (para.Time.Count > 0)
-            {
-                if (!para.Time[0].IsNullOrEmpty())
-                {
-                    sh.AddWhere(CsOrderEnum.OrderDate, para.Time[0], RelationEnum.GreaterEqual);
-                }
-                if (!para.Time[1].IsNullOrEmpty())
-                {
-                    sh.AddWhere(CsOrderEnum.OrderDate, para.Time[1], RelationEnum.LessEqual);
-                }
-            }
-
-            var list = sh.Select().Select(x => new
+            var list = data.Data.Select(x => new
             {
                 x.OrderId,
                 x.OrderNumber,
@@ -115,8 +46,8 @@ namespace Web.Controllers
             return Json(new
             {
                 data = list,
-                sql = sh.SqlString.ToString(),
-                total = sh.Total
+                sql = data.Sql,
+                total = data.Total
             });
         }
 
@@ -255,6 +186,219 @@ namespace Web.Controllers
             });
         }
 
+        public ActionResult ExportCsOrder(CsOrderView.CsOrderWhere para)
+        {
+            var data = GetList(para, false);
+            var details = _csOrderDetailBll.GetModelList($" AND OrderId IN ({string.Join(",", data.Data.Select(x => x.OrderId))})");
+            var products = _csProductsBll.GetModelList("");
+            var parts = _csPartsBll.GetModelList("");
+            var list = new List<CsOrderView.CsOrderExcel>();
+            foreach (var order in data.Data)
+            {
+                var item = new CsOrderView.CsOrderExcel
+                {
+                    收货人 = $"{order.UserName}({order.UserSex})",
+                    收货地址 = order.OrderAddress,
+                    联系电话 = order.UserPhone,
+                    订单编号 = order.OrderNumber
+                };
+
+                var detailWheres = details.Where(x => x.OrderId == order.OrderId);
+                foreach (var detail in detailWheres)
+                {
+                    var product = products.FirstOrDefault(x => x.ProductId == detail.ProductId);
+                    var part = parts.FirstOrDefault(x => x.PartId == detail.ProductId);
+                    if (product == null && detail.ChoseType == ChoseType.螃蟹.GetHashCode())
+                    {
+                        continue;
+                    }
+                    if (part == null && detail.ChoseType == ChoseType.配件.GetHashCode())
+                    {
+                        continue;
+                    }
+                    var isFirst = detailWheres.ToList().IndexOf(detail) == 0;
+                    if (!isFirst)
+                    {
+                        item = new CsOrderView.CsOrderExcel
+                        {
+                            商品名称 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? product?.ProductName : part?.PartName,
+                            数量 = detail.ProductNumber.ToString(),
+                            类型 = ((ChoseType)detail.ChoseType).ToString(),
+                            // ReSharper disable once PossibleNullReferenceException
+                            种类 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? ((ProductType)product.ProductType).ToString() : ((PartType)part.PartType).ToString(),
+                        };
+                        list.Add(item);
+                    }
+                    else
+                    {
+                        item.商品名称 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? product?.ProductName : part?.PartName;
+                        item.数量 = detail.ProductNumber.ToString();
+                        // ReSharper disable once PossibleNullReferenceException
+                        item.种类 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? ((ProductType)product.ProductType).ToString() : ((PartType)part.PartType).ToString();
+                        list.Add(item);
+                    }
+                }
+                // 空行 
+                list.Add(new CsOrderView.CsOrderExcel());
+            }
+            var path = $"/excel/{DateTime.Now:yyyyMMddHHmmssffff}.xls";
+            try
+            {
+                NpoiHelper.ExportToExcel(list.ToDataTable(), "D:" + path);
+            }
+            catch (Exception e)
+            {
+                return Json(new ResModel
+                {
+                    Data = e.Message,
+                    ResStatus = ResStatue.No
+                });
+            }
+            return Json(new ResModel
+            {
+                Data = ".." + path,
+                ResStatus = ResStatue.Yes
+            });
+        }
+
+        public ActionResult ImportCsOrder(string path)
+        {
+            path = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + path.Replace("..", "");
+            var fileArr = path.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+            var fileName = fileArr[fileArr.Length - 1];
+            var orders = NpoiHelper.ReadExcel(path.Replace("/" + fileName, ""), fileName).ToList<CsOrderView.CsOrderImport>();
+            if (!orders.Any())
+            {
+                return Json(new ResModel
+                {
+                    ResStatus = ResStatue.No,
+                    Data = "当前Excel中没有数据,请确认文件是否包含规定完整的数据"
+                });
+            }
+            var users = _csUsersBll.GetModelList($" AND (UserName IN ('{string.Join("','", orders.Select(x => x.收货人))}') OR UserPhone IN ('{string.Join("','", orders.Select(x => x.联系电话))}'))");
+            var products = _csProductsBll.GetModelList("");
+            var parts = _csPartsBll.GetModelList("");
+            var data = new List<CsOrderView.CsOrderAndDetail>();
+            var item = new CsOrderView.CsOrderAndDetail();
+            foreach (var order in orders)
+            {
+                var type = ExcelRowType(order);
+                if (type == ExcelRow.Other)
+                {
+                    return Json(new ResModel
+                    {
+                        ResStatus = ResStatue.No,
+                        Data = "当前Excel中不满足格式的单元格,请仔细确认数据, 数据一旦上传将无法撤回"
+                    });
+                }
+                if (type == ExcelRow.Empty)
+                {
+                    data.Add(item);
+                    item = new CsOrderView.CsOrderAndDetail();
+                    continue;
+                }
+                var product = products.FirstOrDefault(x => x.ProductName == order.商品名称 && ((ProductType)x.ProductType).ToString() == order.种类);
+                var part = parts.FirstOrDefault(x => x.PartName == order.商品名称 && ((PartType)x.PartType).ToString() == order.种类);
+                var pId = 0; // 商品Id
+                var cType = ChoseType.螃蟹; // 蟹或配件
+                if (product == null && part == null)
+                {
+                    return Json(new ResModel
+                    {
+                        ResStatus = ResStatue.No,
+                        Data = $"商品名称{order.商品名称}/种类{ order.种类},不存在与数据库中,请仔细确认数据"
+                    });
+                }
+                if (product != null)
+                {
+                    pId = product.ProductId;
+                    cType = ChoseType.螃蟹;
+                }
+                if (part != null)
+                {
+                    pId = part.PartId;
+                    cType = ChoseType.配件;
+                }
+                if (type == ExcelRow.Order)
+                {
+                    var user = users.FirstOrDefault(x => x.UserPhone == order.联系电话 && x.UserName == order.收货人);
+                    int userId;
+                    if (user == null)
+                    {
+                        userId = _csUsersBll.Add(new CsUsers
+                        {
+                            UserSex = "先生",
+                            UserName = order.收货人,
+                            UserPhone = order.联系电话,
+                            OpenId = "",
+                            Remarks = "",
+                            TotalWight = 0,
+                            UserBalance = 0,
+                            UserState = 1
+                        });
+                    }
+                    else
+                    {
+                        userId = user.UserId;
+                    }
+                    item.CsOrder = new CsOrder
+                    {
+                        RowStatus = RowStatus.有效.GetHashCode(),
+                        DeleteDescribe = "",
+                        OrderState = OrderState.已发货.GetHashCode(),
+                        UserId = userId,
+                        ActualMoney = order.实收金额.ToDecimal(),
+                        OrderDelivery = order.货运单号,
+                        OrderAddress = order.收货地址,
+                        DeleteDate = "1900-1-1".ToDate(),
+                        DiscountMoney = order.总金额.ToDecimal() - order.实收金额.ToDecimal(),
+                        OrderDate = DateTime.Now,
+                        OrderNumber = DateTime.Now.ToString(OrderNumberFormat),
+                        TotalMoney = order.总金额.ToDecimal()
+                    };
+                    item.CsOrderDetails.Add(new CsOrderDetail
+                    {
+                        ProductId = pId,
+                        ProductNumber = order.数量.ToInt(),
+                        ChoseType = cType.GetHashCode(),
+                        TotalPrice = order.单价.ToDecimal() * order.数量.ToInt(),
+                        UnitPrice = order.单价.ToDecimal()
+                    });
+                }
+                if (type == ExcelRow.Detail)
+                {
+                    item.CsOrderDetails.Add(new CsOrderDetail
+                    {
+                        ProductId = pId,
+                        ProductNumber = order.数量.ToInt(),
+                        ChoseType = cType.GetHashCode(),
+                        TotalPrice = order.单价.ToDecimal() * order.数量.ToInt(),
+                        UnitPrice = order.单价.ToDecimal()
+                    });
+                }
+            }
+
+            var count = 0;
+            var countDetail = 0;
+            foreach (var d in data)
+            {
+                var orderId = _csOrderBll.Add(d.CsOrder);
+                foreach (var detail in d.CsOrderDetails)
+                {
+                    detail.OrderId = orderId;
+                    _csOrderDetailBll.Add(detail);
+                    countDetail++;
+                }
+                count++;
+            }
+
+            return Json(new ResModel
+            {
+                ResStatus = ResStatue.Yes,
+                Data = $"导入{count}条订单记录,以及共计{countDetail}条商品记录"
+            });
+        }
+
         /// <summary>
         /// 统计
         /// </summary>
@@ -324,6 +468,133 @@ namespace Web.Controllers
             #endregion
 
             return Json(data.OrderByDescending(x => x.UnStorkInt));
+        }
+
+        /// <summary>
+        /// 获取当前条件的列表(用于分页查询和导出)
+        /// </summary>
+        /// <param name="para">条件参数</param>
+        /// <param name="isPage">是否分页</param>
+        /// <returns></returns>
+        private PageInfo<CsOrderView.CsOrderPage> GetList(CsOrderView.CsOrderWhere para, bool isPage = true)
+        {
+            var sh = new SqlHelper<CsOrderView.CsOrderPage>("CsOrder")
+            {
+                PageConfig = new PageConfig
+                {
+                    PageIndex = isPage ? para.CurrentPage : 0,
+                    PageSize = isPage ? PageSize : 0,
+                    PageSortField = CsOrderEnum.OrderId.ToString(),
+                    SortEnum = SortEnum.Desc
+                },
+                Alia = "co"
+            };
+            sh.AddShow(CsOrderEnum.OrderId);
+            sh.AddShow(CsOrderEnum.OrderAddress);
+            sh.AddShow(CsOrderEnum.OrderNumber);
+            sh.AddShow("co." + CsOrderEnum.UserId);
+            sh.AddShow(CsOrderEnum.TotalMoney);
+            sh.AddShow(CsOrderEnum.DiscountMoney);
+            sh.AddShow(CsOrderEnum.ActualMoney);
+            sh.AddShow(CsOrderEnum.OrderDate);
+            sh.AddShow(CsOrderEnum.OrderState);
+            sh.AddShow(CsOrderEnum.RowStatus);
+            sh.AddShow(CsOrderEnum.DeleteDate);
+            sh.AddShow(CsOrderEnum.DeleteDescribe);
+            sh.AddShow(CsUsersEnum.UserName);
+            sh.AddShow(CsUsersEnum.UserPhone);
+            sh.AddShow(CsUsersEnum.UserSex);
+
+            sh.AddJoin(JoinEnum.LeftJoin, "CsUsers", "cu", "UserId", "UserId");
+
+            if (para.RowStatus > -1)
+                sh.AddWhere(CsOrderEnum.RowStatus, para.RowStatus);
+            if (para.ActualStart > 0)
+                sh.AddWhere(CsOrderEnum.ActualMoney, para.ActualStart, RelationEnum.GreaterEqual);
+            if (para.ActualEnd > 0)
+                sh.AddWhere(CsOrderEnum.ActualMoney, para.ActualEnd, RelationEnum.LessEqual);
+            if (para.DiscountStart > 0)
+                sh.AddWhere(CsOrderEnum.DiscountMoney, para.DiscountStart, RelationEnum.GreaterEqual);
+            if (para.DiscountEnd > 0)
+                sh.AddWhere(CsOrderEnum.DiscountMoney, para.DiscountEnd, RelationEnum.LessEqual);
+            if (para.TotalStart > 0)
+                sh.AddWhere(CsOrderEnum.TotalMoney, para.TotalStart, RelationEnum.GreaterEqual);
+            if (para.TotalEnd > 0)
+                sh.AddWhere(CsOrderEnum.TotalMoney, para.TotalEnd, RelationEnum.LessEqual);
+            if (!para.OrderId.IsNullOrEmpty())
+                sh.AddWhere(CsOrderEnum.OrderNumber, para.OrderId, RelationEnum.Like);
+            if (para.Status > -1)
+                sh.AddWhere(CsOrderEnum.OrderState, para.Status);
+            if (!para.UserName.IsNullOrEmpty())
+            {
+                if (para.UserName.ToInt() > 0)
+                {
+                    sh.AddWhere("cu." + CsUsersEnum.UserId, para.UserName.ToInt());
+                }
+                else
+                {
+                    sh.AddWhere("cu." + CsUsersEnum.UserName, para.UserName, RelationEnum.Like);
+                }
+            }
+            if (!para.UserPhone.IsNullOrEmpty())
+                sh.AddWhere("cu." + CsUsersEnum.UserPhone, para.UserPhone, RelationEnum.Like);
+            if (para.Time.Count > 0)
+            {
+                if (!para.Time[0].IsNullOrEmpty())
+                {
+                    sh.AddWhere(CsOrderEnum.OrderDate, para.Time[0], RelationEnum.GreaterEqual);
+                }
+                if (!para.Time[1].IsNullOrEmpty())
+                {
+                    sh.AddWhere(CsOrderEnum.OrderDate, para.Time[1], RelationEnum.LessEqual);
+                }
+            }
+
+            return new PageInfo<CsOrderView.CsOrderPage>
+            {
+                Data = sh.Select().ToList(),
+                Total = sh.Total,
+                Sql = sh.SqlString.ToString()
+            };
+        }
+
+        private ExcelRow ExcelRowType(CsOrderView.CsOrderImport row)
+        {
+            if (row.实收金额.IsNullOrEmpty() &&
+                row.总金额.IsNullOrEmpty() &&
+                row.收货人.IsNullOrEmpty() &&
+                row.收货地址.IsNullOrEmpty() &&
+                row.联系电话.IsNullOrEmpty() &&
+                !row.商品名称.IsNullOrEmpty() &&
+                !row.种类.IsNullOrEmpty() &&
+                !row.单价.IsNullOrEmpty() &&
+                !row.数量.IsNullOrEmpty()
+            )
+            {
+                return ExcelRow.Detail;
+            }
+            if (row.实收金额.IsNullOrEmpty() &&
+                row.总金额.IsNullOrEmpty() &&
+                row.收货人.IsNullOrEmpty() &&
+                row.收货地址.IsNullOrEmpty() &&
+                row.联系电话.IsNullOrEmpty() &&
+                row.货运单号.IsNullOrEmpty() &&
+                row.商品名称.IsNullOrEmpty() &&
+                row.种类.IsNullOrEmpty() &&
+                row.单价.IsNullOrEmpty() &&
+                row.数量.IsNullOrEmpty())
+            {
+                return ExcelRow.Empty;
+            }
+            if (!row.实收金额.IsNullOrEmpty() &&
+                !row.总金额.IsNullOrEmpty() &&
+                !row.收货人.IsNullOrEmpty() &&
+                !row.收货地址.IsNullOrEmpty() &&
+                !row.联系电话.IsNullOrEmpty())
+            {
+                return ExcelRow.Order;
+            }
+            return ExcelRow.Other;
         }
     }
 }

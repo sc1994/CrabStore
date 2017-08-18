@@ -72,7 +72,7 @@
     <Compile Include="AppEnum.cs" />
     <Compile Include="HttpHelper.cs" />
     <Compile Include="LogHelper.cs" />
-    <Compile Include="NPOIHelper.cs" />
+    <Compile Include="NpoiHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
