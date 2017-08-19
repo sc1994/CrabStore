@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web.Mvc;
 using BLL;
 using Common;
@@ -223,7 +224,6 @@ namespace Web.Controllers
                         {
                             商品名称 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? product?.ProductName : part?.PartName,
                             数量 = detail.ProductNumber.ToString(),
-                            类型 = ((ChoseType)detail.ChoseType).ToString(),
                             // ReSharper disable once PossibleNullReferenceException
                             种类 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? ((ProductType)product.ProductType).ToString() : ((PartType)part.PartType).ToString(),
                         };
@@ -341,6 +341,7 @@ namespace Web.Controllers
                     {
                         userId = user.UserId;
                     }
+                    Thread.Sleep(5);
                     item.CsOrder = new CsOrder
                     {
                         RowStatus = RowStatus.有效.GetHashCode(),
