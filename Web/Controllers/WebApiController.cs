@@ -113,8 +113,9 @@ namespace Web.Controllers
                 x.ProductPrice,
                 x.ProductWeight,
                 x.ProductName,
-                x.OperationDate,
-                TotalNumber =_csOrderBll.TotalNumber(x.ProductId,DateTime.Now)
+                OperationDate =x.OperationDate.ToString("yyyy-MM-dd"),
+                TotalNumber =_csOrderBll.TotalNumber(x.ProductId,DateTime.Now),
+                number=0
             });
             //大宗采购母蟹列表
             List<CsProducts> proList2 = (from product2 in productList
@@ -126,8 +127,9 @@ namespace Web.Controllers
                 x.ProductPrice,
                 x.ProductWeight,
                 x.ProductName,
-                x.OperationDate,
-                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now)
+                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
+                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
+                number=0
             });
             //蟹唐直采公蟹列表
             List<CsProducts> proList3 = (from product3 in productList
@@ -140,8 +142,9 @@ namespace Web.Controllers
                 x.ProductPrice,
                 x.ProductWeight,
                 x.ProductName,
-                x.OperationDate,
-                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now)
+                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
+                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
+                number=0
             });
 
             //蟹塘直采母蟹列表
@@ -154,8 +157,9 @@ namespace Web.Controllers
                 x.ProductPrice,
                 x.ProductWeight,
                 x.ProductName,
-                x.OperationDate,
-                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now)
+                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
+                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
+                number=0
             });
             //可选配件列表
             var partList = _csPartsBll.GetModelList(" and PartType=2").Select(x=>new {
@@ -163,7 +167,7 @@ namespace Web.Controllers
                 x.PartName,
                 x.PartPrice,
                 x.PartWeight,
-               x.OperationDate
+                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
             }).ToList();
 
             return Json(new {

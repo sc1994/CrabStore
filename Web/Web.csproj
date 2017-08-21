@@ -239,6 +239,18 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\g2.5.gif" />
+    <Content Include="Images\g3.5.gif" />
+    <Content Include="Images\g3.gif" />
+    <Content Include="Images\g4.5.gif" />
+    <Content Include="Images\g4.gif" />
+    <Content Include="Images\g5.gif" />
+    <Content Include="Images\m1.5.gif" />
+    <Content Include="Images\m2.5.gif" />
+    <Content Include="Images\m2.gif" />
+    <Content Include="Images\m3.5.gif" />
+    <Content Include="Images\m3.gif" />
+    <Content Include="Images\m4.gif" />
     <Content Include="Scripts\app\csOrder.js" />
     <Content Include="Scripts\app\csParts.js" />
     <Content Include="Scripts\app\csPrice.js" />
