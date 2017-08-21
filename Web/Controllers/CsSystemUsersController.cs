@@ -62,16 +62,27 @@ namespace Web.Controllers
 
         public ActionResult SubmitCsSystemUsers(CsSystemUsers model)
         {
-            if (model.SysUserType == SysUserType.管理员.GetHashCode())
+            var admin = _csSystemUsersBll.GetModelList(" AND SysUserType = 1 AND SysUserState = 1");
+            if (model.SysUserType == SysUserType.管理员.GetHashCode()
+                && admin.Any()
+                && admin.FirstOrDefault()?.SysUserName != model.SysUserName)
             {
-                if (_csSystemUsersBll.GetModelList(" AND SysUserType = 1 AND SysUserState = 1").Any())
+
+                return Json(new ResModel
                 {
-                    return Json(new ResModel
-                    {
-                        ResStatus = ResStatue.Warn,
-                        Data = "最多只能存在一个管理员, 请勿重复设置管理员"
-                    });
-                }
+                    ResStatus = ResStatue.Warn,
+                    Data = "最多只能存在一个管理员, 请勿重复设置管理员"
+                });
+            }
+            if ((model.SysUserType != SysUserType.管理员.GetHashCode() &&
+                 admin.FirstOrDefault()?.SysUserName == model.SysUserName)
+                 || model.SysUserState == RowStatus.无效.GetHashCode())
+            {
+                return Json(new ResModel
+                {
+                    ResStatus = ResStatue.Warn,
+                    Data = "此用户是管理员不能设置为普通用户,以及不能无效管理员数据"
+                });
             }
             ResStatue code;
             var msg = string.Empty;

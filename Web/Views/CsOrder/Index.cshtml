@@ -16,7 +16,7 @@
                 下单用户：
             </el-col>
             <el-col :span="6">
-                <el-input v-model="where.UserName" placeholder="请输入下单用户"></el-input>
+                <el-input v-model="where.UserName" placeholder="请输入下单用户姓名或Id"></el-input>
             </el-col>
             <el-col :span="2" class="layout-right layout-where">
                 用户电话：
@@ -70,7 +70,7 @@
                 <el-select v-model="where.Status" placeholder="请选择订单状态" :clearable='true' @@change="getpage(1)">
                     <el-option key="0" label="取消订单" value="0">
                     </el-option>
-                    <el-option key="1" label="已下单未至支付" value="1">
+                    <el-option key="1" label="已下单未支付" value="1">
                     </el-option>
                     <el-option key="2" label="支付成功" value="2">
                     </el-option>
@@ -93,6 +93,8 @@
             </el-col>
         </el-row>
         <div class="table-btn">
+            <el-button type="primary" icon="upload" @@click="excelVisible=!excelVisible">导入</el-button>
+            <el-button type="primary" icon="upload2" @@click="exportExcel">导出</el-button>
             <el-button type="primary" icon="search" @@click="getpage(currentPage)">搜索</el-button>
         </div>
     </div>
@@ -102,7 +104,7 @@
             style="width: 100%">
             <el-table-column label="订单编号" prop="OrderNumber">
             </el-table-column>
-            <el-table-column label="订购用户" prop="UserName">
+            <el-table-column label="订购用户/Id" prop="UserName">
             </el-table-column>
             <el-table-column label="联系电话" prop="UserPhone">
             </el-table-column>
@@ -162,7 +164,7 @@
                         <el-select v-model="newInfo.OrderState" size="mini">
                             <el-option key="0" label="取消订单" value="0" :disabled="true">
                             </el-option>
-                            <el-option key="1" label="已下单未至支付" value="1" :disabled="true">
+                            <el-option key="1" label="已下单未支付" value="1" :disabled="true">
                             </el-option>
                             <el-option key="2" label="支付成功" value="2" :disabled="true">
                             </el-option>
@@ -208,7 +210,7 @@
                 </el-row>
                 <div class="table-content">
                     <el-table :data="oldInfo.CsOrderDetails" style="width: 100%">
-                        <el-table-column label="商品名称(编号)" prop="ProductName">
+                        <el-table-column label="商品名称(编号)" prop="ProductName" width="240">
                         </el-table-column>
                         <el-table-column label="商品类型" prop="ChoseType">
                         </el-table-column>
@@ -224,6 +226,21 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @@click="closeInfo">{{infoIsChange ? '取 消' : '关 闭'}}</el-button>
                 <el-button @@click="updateInfo(oldInfo.OrderId)" type="warning" v-if="infoIsChange">更 新</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog title="上传Excel文件"
+            :visible.sync="excelVisible" size="tiny" name="xls">
+            <el-upload action="../UploadFile/UploadFile"
+            :on-success="uploadSuccess"
+            :on-remove="uploadRemove"
+            :before-upload="uploadBefore"
+            :file-list="fileList" list-type="picture">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传xls/xlsx文件，且需要保证严格按照给出的模板填写表格，导入的数据不能撤回</div>
+            </el-upload>
+            <span slot="footer" class="dialog-footer">
+                <el-button @@click="excelVisible = false">取 消</el-button>
+                <el-button type="primary" @@click="importExcel" :loading="btnLoading">导 入</el-button>
             </span>
         </el-dialog>
     </div>

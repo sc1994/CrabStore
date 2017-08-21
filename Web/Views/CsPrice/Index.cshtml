@@ -55,8 +55,18 @@
                 <el-col :span="2" class="layout-right layout-where">
                     商品名称：
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="3">
                     <el-input v-model="where.ProductName" placeholder="请输入商品名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="layout-right layout-where">
+                    蟹类型：
+                </el-col>
+                <el-col :span="3">
+                    <el-select v-model="where.ProductType" placeholder="请选择蟹类型" :clearable='true' @@change="getpage(1)">
+                    <el-option key="1" label="大宗采购" value="1">
+                    </el-option>
+                    <el-option key="2" label="包塘直补" value="2">
+                </el-select>
                 </el-col>
                 <el-col :span="2" class="layout-right layout-where">
                     价格区间：
@@ -64,14 +74,14 @@
                 <el-col :span="2" class="number">
                     <el-input v-model="where.PriceStart" placeholder="最小金额"></el-input>
                 </el-col>
-                <el-col :span="4" class="number" style="text-align: left">
-                    <el-input v-model="where.PriceEnd" style="margin-left:20px;width:50%"
+                <el-col :span="2" class="number" style="text-align: left">
+                    <el-input v-model="where.PriceEnd" style="margin-left:10px"
                         placeholder="最大金额"></el-input> 
                 </el-col>
                 <el-col :span="2" class="layout-right layout-where">
                     日期：
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="6" style="text-align: left;">
                     <el-date-picker v-model="where.Time" type="datetimerange" placeholder="选择时间范围" @@change="getpage(1)">
                     </el-date-picker>
                 </el-col>
@@ -85,6 +95,8 @@
                 <el-table-column label="Id" prop="PriceId" width="80">
                 </el-table-column>
                 <el-table-column label="商品名称(编号)" prop="ProductName">
+                </el-table-column>
+                <el-table-column label="蟹类型" prop="ProductType">
                 </el-table-column>
                 <el-table-column label="历史价格" prop="PriceNumber">
                 </el-table-column>

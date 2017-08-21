@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Reflection;
 using Newtonsoft.Json;
 
 namespace Common
@@ -49,15 +53,14 @@ namespace Common
             }
         }
 
-        public static double ToDouble(this string str)
+        public static double ToDouble(this object o)
         {
             try
             {
-                return Convert.ToDouble(str);
+                return Convert.ToDouble(o);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                LogHelper.Log(" ToDouble Error " + e.Message);
                 return 0;
             }
         }
@@ -139,5 +142,55 @@ namespace Common
             }
         }
 
+        public static DataTable ToDataTable<T>(this List<T> entitys)
+        {
+            if (entitys == null || entitys.Count < 1)
+            {
+                return new DataTable();
+            }
+            var entityType = entitys[0].GetType();
+            var entityProperties = entityType.GetProperties();
+
+            var dt = new DataTable("dt");
+            foreach (var t in entityProperties)
+            {
+                dt.Columns.Add(t.Name);
+            }
+
+            foreach (object entity in entitys)
+            {
+                var entityValues = new object[entityProperties.Length];
+                for (var i = 0; i < entityProperties.Length; i++)
+                {
+                    entityValues[i] = entityProperties[i].GetValue(entity, null);
+                }
+                dt.Rows.Add(entityValues);
+            }
+            return dt;
+        }
+
+        public static IList<T> ToList<T>(this DataTable table) where T : new()
+        {
+            var properties = typeof(T).GetProperties().ToList();
+            return (from object row in table.Rows select CreateItemFromRow<T>((DataRow)row, properties)).ToList();
+        }
+
+        private static T CreateItemFromRow<T>(DataRow row, IEnumerable<PropertyInfo> properties) where T : new()
+        {
+            var item = new T();
+            foreach (var property in properties)
+            {
+                try
+                {
+                    property.SetValue(item, row[property.Name] ?? "", null);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            return item;
+        }
     }
+
 }

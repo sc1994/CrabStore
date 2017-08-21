@@ -10,6 +10,8 @@ namespace Web.Controllers
     {
         protected CsSystemUsers CurrentUser;
 
+        protected string OrderNumberFormat = "yyyyMMddHHmmssffff";
+
         protected internal JsonResult Json(ResModel data)
         {
             var res = new JsonResult
@@ -24,7 +26,6 @@ namespace Web.Controllers
         }
 
         protected const int PageSize = 15;
-
 
         protected override void OnAuthentication(AuthenticationContext filterContext)
         {

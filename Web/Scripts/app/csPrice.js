@@ -12,7 +12,8 @@ var vm = new Vue({
             Time: [],
             PriceStart: '',
             PriceEnd: '',
-            ProductName: ''
+            ProductName: '',
+            ProductType: ''
         }
     },
     methods: {

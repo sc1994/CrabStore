@@ -60,6 +60,9 @@
     <Compile Include="ViewModel\CsPriceView.cs" />
     <Compile Include="ViewModel\CsProductsView.cs" />
     <Compile Include="ViewModel\CsSystemUsersView.cs" />
+    <Compile Include="ViewModel\CsUsersView.cs" />
+    <Compile Include="ViewModel\PageInfo.cs" />
+    <Compile Include="ViewModel\StatisticView.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
