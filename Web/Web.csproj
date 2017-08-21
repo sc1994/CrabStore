@@ -223,6 +223,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\UploadFileController.cs" />
     <Compile Include="Controllers\WebApiController.cs" />
+    <Compile Include="Controllers\WeChatApiController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -284,6 +285,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\UploadFile\" />
+    <Folder Include="Views\WeChatApi\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

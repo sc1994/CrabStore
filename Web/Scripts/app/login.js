@@ -47,8 +47,8 @@ var vm = new Vue({
                         type: 'success'
                     });
                     setTimeout(function () {
-                        window.location.href = '/'
-                    }, 500)
+                        window.location.href = '/CsPrice'
+                    }, 300)
                 } else {
                     that.$notify.error({
                         title: '错误',
