@@ -17,7 +17,15 @@ namespace Web.Controllers
             var authCookie = HttpContext.Request.Cookies[FormsAuthentication.FormsCookieName];
             if (authCookie != null)
             {
-                var ticket = FormsAuthentication.Decrypt(authCookie.Value);
+                FormsAuthenticationTicket ticket = null;
+                try
+                {
+                    ticket = FormsAuthentication.Decrypt(authCookie.Value);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
                 if (ticket != null)
                 {
                     var user = ticket.UserData.JsonToObject<CsSystemUsers>();

@@ -299,6 +299,7 @@
     <Content Include="Views\CsProducts\Index.cshtml" />
     <Content Include="Views\CsOrder\Statistic.cshtml" />
     <Content Include="Views\CsUsers\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\1.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

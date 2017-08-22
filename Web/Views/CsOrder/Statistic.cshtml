@@ -28,7 +28,7 @@
             <el-button type="primary" icon="search" @@click="getList()">搜索</el-button>
         </div>
     </div>
-    <h2>截止到 : {{time}} 代发货的统计数量如下</h2>
+    <h2>截止到 : {{time}} 待发货的统计数量如下</h2>
     <div class="table-content">
         <el-table v-loading.body="loading" :data="list">
             <el-table-column label="Id" prop="ProductId" width="80">

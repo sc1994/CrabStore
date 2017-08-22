@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <setParameter name="IIS Web Application Name" value="Default Web Site/Web_deploy" />
+  <setParameter name="DefaultConnection-Web.config Connection String" value="Data Source=(LocalDb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\aspnet-Web-20170810093229.mdf;Initial Catalog=aspnet-Web-20170810093229;Integrated Security=True" />
+  <setParameter name="DATABASE-Web.config Connection String" value="CrabShop" />
+  <setParameter name="CrabShop-Web.config Connection String" value="server=192.168.0.126;uid=sa;pwd=sa;database=CrabShop;" />
+  <setParameter name="CrabStore-Web.config Connection String" value="server=192.168.0.126;uid=sa;pwd=sa;database=CrabShop;" />
+  <setParameter name="DBString-Web.config Connection String" value="server=192.168.0.126;uid=sa;pwd=sa;database=CrabShop;" />
+</parameters>

@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using System.Web.Mvc.Filters;
 using System.Web.Security;
 using Common;
@@ -32,7 +33,15 @@ namespace Web.Controllers
             var authCookie = HttpContext.Request.Cookies[FormsAuthentication.FormsCookieName];
             if (authCookie != null)
             {
-                var ticket = FormsAuthentication.Decrypt(authCookie.Value);
+                FormsAuthenticationTicket ticket = null;
+                try
+                {
+                    ticket = FormsAuthentication.Decrypt(authCookie.Value);
+                }
+                catch (Exception)
+                {
+                    LogOut(filterContext);
+                }
                 if (ticket != null)
                 {
                     CurrentUser = ticket.UserData.JsonToObject<CsSystemUsers>();

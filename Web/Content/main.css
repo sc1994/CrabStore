@@ -60,3 +60,11 @@
 .mini-width{
     width: 135px
 }
+
+.logo-text {
+    color: #f9fafc;
+    font-family: PingFang SC;
+    padding: 12px;
+    font-size: 25px;
+    padding-left: 21px;
+}
