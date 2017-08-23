@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsAddress] (");
-            strSql.Append("UserId,Province,City,District,Details,Consignee,ConSex,TelPhone,IsDefault");
+            strSql.Append("UserId,CompanyName,Consignee,Mobile,Details,TelPhone,ConSex,IsDefault");
             strSql.Append(") VALUES (");
-            strSql.Append("@UserId,@Province,@City,@District,@Details,@Consignee,@ConSex,@TelPhone,@IsDefault);");
+            strSql.Append("@UserId,@CompanyName,@Consignee,@Mobile,@Details,@TelPhone,@ConSex,@IsDefault);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsAddress] SET ");
-            strSql.Append("UserId = @UserId,Province = @Province,City = @City,District = @District,Details = @Details,Consignee = @Consignee,ConSex = @ConSex,TelPhone = @TelPhone,IsDefault = @IsDefault");
+            strSql.Append("UserId = @UserId,CompanyName = @CompanyName,Consignee = @Consignee,Mobile = @Mobile,Details = @Details,TelPhone = @TelPhone,ConSex = @ConSex,IsDefault = @IsDefault");
             strSql.Append(" WHERE AddressId = @AddressId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

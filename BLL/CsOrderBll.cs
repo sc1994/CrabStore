@@ -14,11 +14,10 @@ namespace BLL
 
         public CsOrderBll(IBaseDal<CsOrder, CsOrderEnum, int> dal) : base(dal) { }
 
+        private readonly CsOrderDal dal = new CsOrderDal();
         public int TotalNumber(int productId, DateTime nowTime)
         {
-            CsOrderDal order = new CsOrderDal();
-            int total = order.TotalNumber(productId, nowTime);
-            return total;
+            return dal.TotalNumber(productId, nowTime);
         }
     }
 }

@@ -106,21 +106,7 @@ namespace Web.Controllers
             List<CsProducts> proList1 = (from product1 in productList
                                          where product1.ProductType == 1&& product1.ProductName.StartsWith("公")
                                          select product1).ToList();
-            var proList11 =proList1.Select(x=>new {
-                x.ProductId,
-                x.ProductImage,
-                x.ProductPrice,
-                x.ProductWeight,
-                x.ProductName,
-                OperationDate =x.OperationDate.ToString("yyyy-MM-dd"),
-                TotalNumber =_csOrderBll.TotalNumber(x.ProductId,DateTime.Now),
-                number=0
-            });
-            //大宗采购母蟹列表
-            List<CsProducts> proList2 = (from product2 in productList
-                                         where product2.ProductType == 1 && product2.ProductName.StartsWith("母")
-                                        select product2).ToList();
-            var proList21 = proList2.Select(x=>new {
+            var proList11 = proList1.Select(x => new {
                 x.ProductId,
                 x.ProductImage,
                 x.ProductPrice,
@@ -128,7 +114,23 @@ namespace Web.Controllers
                 x.ProductName,
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
-                number=0
+                number = 0,
+                TypeName = "大宗采购"
+            });
+            //大宗采购母蟹列表
+            List<CsProducts> proList2 = (from product2 in productList
+                                         where product2.ProductType == 1 && product2.ProductName.StartsWith("母")
+                                        select product2).ToList();
+            var proList21 = proList2.Select(x => new {
+                x.ProductId,
+                x.ProductImage,
+                x.ProductPrice,
+                x.ProductWeight,
+                x.ProductName,
+                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
+                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
+                number = 0,
+                TypeName = "大宗采购"
             });
             //蟹唐直采公蟹列表
             List<CsProducts> proList3 = (from product3 in productList
@@ -143,7 +145,8 @@ namespace Web.Controllers
                 x.ProductName,
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
-                number=0
+                number=0,
+                TypeName = "蟹塘直采"
             });
 
             //蟹塘直采母蟹列表
@@ -158,8 +161,10 @@ namespace Web.Controllers
                 x.ProductName,
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
-                number=0
+                number=0,
+                TypeName = "蟹塘直采"
             });
+
             //可选配件列表
             var partList = _csPartsBll.GetModelList(" and PartType=2").Select(x=>new {
                 x.PartId,
@@ -167,6 +172,19 @@ namespace Web.Controllers
                 x.PartPrice,
                 x.PartWeight,
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
+                number=0,
+                TypeName = "可选配件"
+            }).ToList();
+
+            //必须选配件列表
+            var partList1 = _csPartsBll.GetModelList(" and PartType=1").Select(x => new {
+                x.PartId,
+                x.PartName,
+                x.PartPrice,
+                x.PartWeight,
+                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
+                number = 0,
+                TypeName = "必选配件"
             }).ToList();
 
             return Json(new {
@@ -174,9 +192,25 @@ namespace Web.Controllers
                 proList2 = proList21,
                 proList3 = proList31,
                 proList4 =proList41,
-                partList = partList
-
+                partList = partList,
+                partList1 = partList1
             });
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetPartList(int id)
+        {
+            //可选配件列表
+            var partList = _csPartsBll.GetModelList(" and PartType="+id).Select(x => new {
+                x.PartId,
+                x.PartName,
+                x.PartPrice,
+                x.PartWeight,
+                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
+                number = 0,
+                TypeName = id==1?"必须配件":"可选配件"
+            }).ToList();
+            return Json(partList);
         }
     }
 }
