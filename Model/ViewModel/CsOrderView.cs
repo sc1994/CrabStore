@@ -62,11 +62,11 @@ namespace Model.ViewModel
             public string 商品名称 { get; set; } = string.Empty;
             public string 种类 { get; set; } = string.Empty;
             public string 数量 { get; set; } = string.Empty;
-            public string 类型 { get; set; } = string.Empty;
         }
 
         public class CsOrderImport : CsOrderExcel
         {
+            public string 类型 { get; set; } = string.Empty;
             public string 总金额 { get; set; } = string.Empty;
             public string 实收金额 { get; set; } = string.Empty;
             public string 货运单号 { get; set; } = string.Empty;
