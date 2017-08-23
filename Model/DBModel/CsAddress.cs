@@ -21,24 +21,9 @@ namespace Model.DBModel
         public int UserId { get; set; }
 
         /// <summary>
-        /// 省名称
+        /// 收件公司名称
         /// </summary>
-        public string Province { get; set; } = string.Empty;
-
-        /// <summary>
-        /// 城市名称
-        /// </summary>
-        public string City { get; set; } = string.Empty;
-
-        /// <summary>
-        /// 县区
-        /// </summary>
-        public string District { get; set; } = string.Empty;
-
-        /// <summary>
-        /// 详细地址
-        /// </summary>
-        public string Details { get; set; } = string.Empty;
+        public string CompanyName { get; set; } = string.Empty;
 
         /// <summary>
         /// 收货人
@@ -46,14 +31,24 @@ namespace Model.DBModel
         public string Consignee { get; set; } = string.Empty;
 
         /// <summary>
+        /// 联系电话
+        /// </summary>
+        public string Mobile { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 详细地址
+        /// </summary>
+        public string Details { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 手机号码
+        /// </summary>
+        public string TelPhone { get; set; } = string.Empty;
+
+        /// <summary>
         /// 性别 先生/女士
         /// </summary>
         public string ConSex { get; set; } = string.Empty;
-
-        /// <summary>
-        /// 联系方式
-        /// </summary>
-        public string TelPhone { get; set; } = string.Empty;
 
         /// <summary>
         /// 是否默认地址 1默认 2不默认
@@ -74,33 +69,29 @@ namespace Model.DBModel
         /// </summary>
         UserId,
         /// <summary>
-        /// 省名称
+        /// 收件公司名称
         /// </summary>
-        Province,
-        /// <summary>
-        /// 城市名称
-        /// </summary>
-        City,
-        /// <summary>
-        /// 县区
-        /// </summary>
-        District,
-        /// <summary>
-        /// 详细地址
-        /// </summary>
-        Details,
+        CompanyName,
         /// <summary>
         /// 收货人
         /// </summary>
         Consignee,
         /// <summary>
+        /// 联系电话
+        /// </summary>
+        Mobile,
+        /// <summary>
+        /// 详细地址
+        /// </summary>
+        Details,
+        /// <summary>
+        /// 手机号码
+        /// </summary>
+        TelPhone,
+        /// <summary>
         /// 性别 先生/女士
         /// </summary>
         ConSex,
-        /// <summary>
-        /// 联系方式
-        /// </summary>
-        TelPhone,
         /// <summary>
         /// 是否默认地址 1默认 2不默认
         /// </summary>

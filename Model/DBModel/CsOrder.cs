@@ -75,6 +75,21 @@ namespace Model.DBModel
         /// </summary>
         public string DeleteDescribe { get; set; } = string.Empty;
 
+        /// <summary>
+        /// 份数 默认值1
+        /// </summary>
+        public int OrderCopies { get; set; }
+
+        /// <summary>
+        /// 寄托物数量
+        /// </summary>
+        public int CargoNumber { get; set; }
+
+        /// <summary>
+        /// 寄件信息
+        /// </summary>
+        public string SendAddress { get; set; } = string.Empty;
+
     }
 
 
@@ -132,5 +147,17 @@ namespace Model.DBModel
         /// 删除描述
         /// </summary>
         DeleteDescribe,
+        /// <summary>
+        /// 份数 默认值1
+        /// </summary>
+        OrderCopies,
+        /// <summary>
+        /// 寄托物数量
+        /// </summary>
+        CargoNumber,
+        /// <summary>
+        /// 寄件信息
+        /// </summary>
+        SendAddress,
     }
 }

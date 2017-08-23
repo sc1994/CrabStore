@@ -2,7 +2,6 @@ using DAL;
 using IDAL;
 using Model.DBModel;
 using System;
-
 namespace BLL
 {
     /// <summary>
@@ -13,12 +12,10 @@ namespace BLL
         public CsOrderBll() : base(new CsOrderDal()) { }
 
         public CsOrderBll(IBaseDal<CsOrder, CsOrderEnum, int> dal) : base(dal) { }
-
-        public int TotalNumber(int productId, DateTime nowTime)
+        private readonly CsOrderDal dal = new CsOrderDal();
+        public int TotalNumber(int productId,DateTime nowTime)
         {
-            CsOrderDal order = new CsOrderDal();
-            int total = order.TotalNumber(productId, nowTime);
-            return total;
+            return dal.TotalNumber(productId, nowTime);
         }
     }
 }

@@ -73,6 +73,8 @@
     <Compile Include="CsDistrictDal.Extend.cs" />
     <Compile Include="CsSystemUsersDal.cs" />
     <Compile Include="CsSystemUsersDal.Extend.cs" />
+    <Compile Include="CsSendDal.cs" />
+    <Compile Include="CsSendDal.Extend.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
