@@ -295,6 +295,8 @@
     <Content Include="Views\CsUsers\Index.cshtml" />
     <None Include="Properties\PublishProfiles\1.pubxml" />
     <Content Include="Views\WeChatApi\GetOpenId.cshtml" />
+    <Content Include="Views\WeChatApi\RedirectUrL.cshtml" />
+    <Content Include="Views\WeChatApi\PayTest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">
