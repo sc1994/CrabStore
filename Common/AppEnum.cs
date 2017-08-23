@@ -68,4 +68,13 @@
         Detail,
         Other
     }
+
+    /// <summary>
+    /// execl 中的 bool 值类型
+    /// </summary>
+    public enum ExcelBool
+    {
+        Y,
+        N
+    }
 }
