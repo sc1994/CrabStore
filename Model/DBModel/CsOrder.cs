@@ -85,6 +85,11 @@ namespace Model.DBModel
         /// </summary>
         public int CargoNumber { get; set; }
 
+        /// <summary>
+        /// 寄件信息
+        /// </summary>
+        public string SendAddress { get; set; } = string.Empty;
+
     }
 
 
@@ -150,5 +155,9 @@ namespace Model.DBModel
         /// 寄托物数量
         /// </summary>
         CargoNumber,
+        /// <summary>
+        /// 寄件信息
+        /// </summary>
+        SendAddress,
     }
 }
