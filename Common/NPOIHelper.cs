@@ -1,10 +1,11 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
+using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 
 namespace Common
@@ -45,18 +46,47 @@ namespace Common
                 IWorkbook workbook = new HSSFWorkbook();
                 var sheet = workbook.CreateSheet();
                 {
+                    // 表格头
                     var headerRow = sheet.CreateRow(0);
-                    foreach (DataColumn column in table.Columns)
-                        headerRow.CreateCell(column.Ordinal).SetCellValue(column.Caption);
+                    headerRow.CreateCell(0).SetCellValue("用户订单号");
+                    headerRow.CreateCell(1).SetCellValue("寄件方信息");
+                    headerRow.CreateCell(2).SetCellValue("收件方信息");
+                    headerRow.CreateCell(3).SetCellValue("运单其它信息");
 
-                    var rowIndex = 1;
+                    // 定义每列名称
+                    var nameRow = sheet.CreateRow(1);
+                    foreach (DataColumn column in table.Columns)
+                    {
+                        if (column.Caption == "寄联系人")
+                        {
+                            nameRow.CreateCell(column.Ordinal).SetCellValue("联系人");
+                        }
+                        else if (column.Caption == "寄联系电话")
+                        {
+                            nameRow.CreateCell(column.Ordinal).SetCellValue("联系电话");
+                        }
+                        else
+                        {
+                            nameRow.CreateCell(column.Ordinal).SetCellValue(column.Caption);
+                        }
+                    }
+
+                    #region 设置样式
+                    SetCellRangeAddress(sheet, 0, 0, 0, 1); // 用户订单 列 合并
+                    SetCellRangeAddress(sheet, 1, 4, 0, 0); // 寄件方信息 行 合并
+                    SetCellRangeAddress(sheet, 5, 9, 0, 0); // 收件方信息 行合并
+                    SetCellRangeAddress(sheet, 10, nameRow.Count(), 0, 0); // 收件方信息 行合并
+                    #endregion
+
+                    var rowIndex = 2;
 
                     foreach (DataRow row in table.Rows)
                     {
                         var dataRow = sheet.CreateRow(rowIndex);
                         foreach (DataColumn column in table.Columns)
                         {
-                            dataRow.CreateCell(column.Ordinal).SetCellValue(row[column].ToString());
+                            var col = dataRow.CreateCell(column.Ordinal);
+                            col.SetCellValue(row[column].ToString());
                         }
                         rowIndex++;
                     }
@@ -137,6 +167,20 @@ namespace Common
                 Thread.CurrentThread.CurrentCulture = prevCulture;
             }
 
+        }
+
+        /// <summary>
+        /// 合并单元格
+        /// </summary>
+        /// <param name="sheet">要合并单元格所在的sheet</param>
+        /// <param name="rowstart">开始行的索引</param>
+        /// <param name="rowend">结束行的索引</param>
+        /// <param name="colstart">开始列的索引</param>
+        /// <param name="colend">结束列的索引</param>
+        public static void SetCellRangeAddress(ISheet sheet, int rowstart, int rowend, int colstart, int colend)
+        {
+            var cellRangeAddress = new CellRangeAddress(rowstart, rowend, colstart, colend);
+            sheet.AddMergedRegion(cellRangeAddress);
         }
     }
 }

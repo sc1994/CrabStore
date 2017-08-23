@@ -67,7 +67,7 @@ namespace Common
                 var response = (HttpWebResponse)request.GetResponse();
                 var stream = response.GetResponseStream();
                 // ReSharper disable once AssignNullToNotNullAttribute
-                var streamReader = new StreamReader(stream, Encoding.GetEncoding("utf-8"));
+                var streamReader = new StreamReader(stream, Encoding.GetEncoding("UTF-8"));
                 var retString = streamReader.ReadToEnd();
 
                 streamReader.Close();

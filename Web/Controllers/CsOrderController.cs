@@ -198,53 +198,50 @@ namespace Web.Controllers
             {
                 var item = new CsOrderView.CsOrderExcel
                 {
-                    收货人 = $"{order.UserName}({order.UserSex})",
-                    收货地址 = order.OrderAddress,
-                    联系电话 = order.UserPhone,
-                    订单编号 = order.OrderNumber
+                    用户订单号 = order.OrderNumber,
                 };
 
-                var detailWheres = details.Where(x => x.OrderId == order.OrderId);
-                foreach (var detail in detailWheres)
-                {
-                    var product = products.FirstOrDefault(x => x.ProductId == detail.ProductId);
-                    var part = parts.FirstOrDefault(x => x.PartId == detail.ProductId);
-                    if (product == null && detail.ChoseType == ChoseType.螃蟹.GetHashCode())
-                    {
-                        continue;
-                    }
-                    if (part == null && detail.ChoseType == ChoseType.配件.GetHashCode())
-                    {
-                        continue;
-                    }
-                    var isFirst = detailWheres.ToList().IndexOf(detail) == 0;
-                    if (!isFirst)
-                    {
-                        item = new CsOrderView.CsOrderExcel
-                        {
-                            商品名称 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? product?.ProductName : part?.PartName,
-                            数量 = detail.ProductNumber.ToString(),
-                            // ReSharper disable once PossibleNullReferenceException
-                            种类 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? ((ProductType)product.ProductType).ToString() : ((PartType)part.PartType).ToString(),
-                        };
-                        list.Add(item);
-                    }
-                    else
-                    {
-                        item.商品名称 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? product?.ProductName : part?.PartName;
-                        item.数量 = detail.ProductNumber.ToString();
-                        // ReSharper disable once PossibleNullReferenceException
-                        item.种类 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? ((ProductType)product.ProductType).ToString() : ((PartType)part.PartType).ToString();
-                        list.Add(item);
-                    }
-                }
+                //var detailWheres = details.Where(x => x.OrderId == order.OrderId);
+                //foreach (var detail in detailWheres)
+                //{
+                //    var product = products.FirstOrDefault(x => x.ProductId == detail.ProductId);
+                //    var part = parts.FirstOrDefault(x => x.PartId == detail.ProductId);
+                //    if (product == null && detail.ChoseType == ChoseType.螃蟹.GetHashCode())
+                //    {
+                //        continue;
+                //    }
+                //    if (part == null && detail.ChoseType == ChoseType.配件.GetHashCode())
+                //    {
+                //        continue;
+                //    }
+                //    var isFirst = detailWheres.ToList().IndexOf(detail) == 0;
+                //    if (!isFirst)
+                //    {
+                //        item = new CsOrderView.CsOrderExcel
+                //        {
+                //            商品名称 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? product?.ProductName : part?.PartName,
+                //            数量 = detail.ProductNumber.ToString(),
+                //            // ReSharper disable once PossibleNullReferenceException
+                //            种类 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? ((ProductType)product.ProductType).ToString() : ((PartType)part.PartType).ToString(),
+                //        };
+                //        list.Add(item);
+                //    }
+                //    else
+                //    {
+                //        item.商品名称 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? product?.ProductName : part?.PartName;
+                //        item.数量 = detail.ProductNumber.ToString();
+                //        // ReSharper disable once PossibleNullReferenceException
+                //        item.种类 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? ((ProductType)product.ProductType).ToString() : ((PartType)part.PartType).ToString();
+                //        list.Add(item);
+                //    }
+                //}
                 // 空行 
-                list.Add(new CsOrderView.CsOrderExcel());
+                //list.Add(new CsOrderView.CsOrderExcel());
             }
-            var path = $"/excel/{DateTime.Now:yyyyMMddHHmmssffff}.xls";
+            var path = $"excel/{DateTime.Now:yyyyMMddHHmmssffff}.xls";
             try
             {
-                NpoiHelper.ExportToExcel(list.ToDataTable(), "D:" + path);
+                NpoiHelper.ExportToExcel(list.ToDataTable(), AppDomain.CurrentDomain.SetupInformation.ApplicationBase + path);
             }
             catch (Exception e)
             {
@@ -256,7 +253,7 @@ namespace Web.Controllers
             }
             return Json(new ResModel
             {
-                Data = ".." + path,
+                Data = "../" + path,
                 ResStatus = ResStatue.Yes
             });
         }

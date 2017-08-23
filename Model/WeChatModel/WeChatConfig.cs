@@ -15,17 +15,7 @@ namespace Model.WeChatModel
         /// <summary>
         /// 开发者密钥
         /// </summary>
-        public const string AppSecret = "";
-
-        /// <summary>
-        /// 代理的本地地址
-        /// </summary>
-        public const string ProxyLocalUrl = "http://192.168.0.107:7003";
-
-        /// <summary>
-        /// 代理的线上地址
-        /// </summary>
-        public const string ProxyOnLineUrl = "";
+        public const string AppSecret = "52f27e040b80b82eb677f30e66555a05";
 
         /// <summary>
         /// 获取 AccessToken  api 地址
@@ -39,7 +29,7 @@ namespace Model.WeChatModel
         /// @param appid
         /// @param redirect_uri 回掉地址
         /// </summary>
-        public const string WeChatCodeUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+        public const string WeChatCodeUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
 
         /// <summary>
         /// 获取OpenId api 地址 
