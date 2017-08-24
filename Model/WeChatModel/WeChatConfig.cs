@@ -23,7 +23,7 @@ namespace Model.WeChatModel
         /// 商户号
         /// </summary>
         public const string MchId = "1487318862";
-        
+
         /// <summary>
         /// 支付密钥
         /// </summary>
@@ -113,4 +113,34 @@ namespace Model.WeChatModel
         // ReSharper disable once InconsistentNaming
         public string expires_in { get; set; } = string.Empty;
     }
+
+    /// <summary>
+    /// 预支付信息
+    /// </summary>
+    [Serializable]
+    [System.ComponentModel.DesignerCategory("code")]
+    [System.Xml.Serialization.XmlType(AnonymousType = true)]
+    [System.Xml.Serialization.XmlRoot(Namespace = "", IsNullable = false)]
+    public class PrepayInfo
+    {
+        // ReSharper disable once InconsistentNaming
+        public string return_code { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public string return_msg { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public string appid { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public string mch_id { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public string nonce_str { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public string sign { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public string result_code { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public string prepay_id { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public string trade_type { get; set; } = string.Empty;
+    }
+
 }

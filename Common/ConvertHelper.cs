@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml.Serialization;
 using Newtonsoft.Json;
 
 namespace Common
@@ -16,7 +18,6 @@ namespace Common
             if (s == null) return true;
             if (s.Trim() == string.Empty) return true;
             return false;
-
         }
 
         public static string ToJson(this object obj)
@@ -27,6 +28,15 @@ namespace Common
         public static T JsonToObject<T>(this string json)
         {
             return JsonConvert.DeserializeObject<T>(json);
+        }
+
+        public static T XmlToObject<T>(this string xml)
+        {
+            var serializer = new XmlSerializer(typeof(T));
+            using (TextReader reader = new StringReader(xml))
+            {
+                return (T)serializer.Deserialize(reader);
+            }
         }
 
         public static int ToInt(this object o)
@@ -126,8 +136,6 @@ namespace Common
             return sb.ToString();
         }
 
-
-
         /// <summary>  
         /// MD5 加密字符串  
         /// </summary>  
@@ -140,7 +148,7 @@ namespace Common
             var bs = Encoding.UTF8.GetBytes(str);
             var hs = md5.ComputeHash(bs);
             var sb = new StringBuilder();
-            foreach (byte b in hs)
+            foreach (var b in hs)
             {
                 sb.Append(b.ToString("x2"));
             }
@@ -231,7 +239,6 @@ namespace Common
             }
             return item;
         }
-
     }
 
 }
