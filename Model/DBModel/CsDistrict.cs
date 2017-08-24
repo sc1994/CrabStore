@@ -35,6 +35,16 @@ namespace Model.DBModel
         /// </summary>
         public int Sort { get; set; }
 
+        /// <summary>
+        /// 首重价格
+        /// </summary>
+        public int FirstPrice { get; set; }
+
+        /// <summary>
+        /// 后续价格
+        /// </summary>
+        public int FllowPrice { get; set; }
+
     }
 
 
@@ -60,5 +70,13 @@ namespace Model.DBModel
         /// 排序编号
         /// </summary>
         Sort,
+        /// <summary>
+        /// 首重价格
+        /// </summary>
+        FirstPrice,
+        /// <summary>
+        /// 后续价格
+        /// </summary>
+        FllowPrice,
     }
 }

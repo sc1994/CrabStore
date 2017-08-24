@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsDistrict] (");
-            strSql.Append("Name,ParentId,Code,Sort");
+            strSql.Append("Name,ParentId,Code,Sort,FirstPrice,FllowPrice");
             strSql.Append(") VALUES (");
-            strSql.Append("@Name,@ParentId,@Code,@Sort);");
+            strSql.Append("@Name,@ParentId,@Code,@Sort,@FirstPrice,@FllowPrice);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsDistrict] SET ");
-            strSql.Append("Name = @Name,ParentId = @ParentId,Code = @Code,Sort = @Sort");
+            strSql.Append("Name = @Name,ParentId = @ParentId,Code = @Code,Sort = @Sort,FirstPrice = @FirstPrice,FllowPrice = @FllowPrice");
             strSql.Append(" WHERE Id = @Id");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }
