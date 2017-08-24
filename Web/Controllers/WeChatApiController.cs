@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
+using System.Xml.Serialization;
 using BLL;
 using Common;
 using Model.WeChatModel;
@@ -129,7 +130,7 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// 发起支付需要的信息
+        /// 获取发起支付配置
         /// </summary>
         /// <param name="prepayId"></param>
         /// <returns></returns>
@@ -137,7 +138,7 @@ namespace Web.Controllers
         {
             var timeStamp = ConvertHelper.GetTimeStamp();
             var nonceStr = ConvertHelper.GetNonce(32);
-            var str = $"appId={WeChatConfig.AppId}&nonceStr={nonceStr}&package=prepay_id={prepayId}&signType=MD5&timeStamp={timeStamp}";
+            var str = $"appId={WeChatConfig.AppId}&nonceStr={nonceStr}&package=prepay_id={prepayId}&signType=MD5&timeStamp={timeStamp}&key={WeChatConfig.PayKey}";
             return Json(new
             {
                 appId = WeChatConfig.AppId,
@@ -172,14 +173,14 @@ namespace Web.Controllers
                 "spbill_create_ip=" + HttpContext.Request.UserHostAddress,
                 "notify_url=" + notify,
                 "trade_type=JSAPI",
-                "attach=1233333333",
+                "attach=attach", // 用户数据 将会原样返回给回掉页面, 暂时不需要
                 "openid=" + openId,
             };
             var sign = (string.Join("&", getPr.OrderBy(x => x)) + "&key=" + WeChatConfig.PayKey).ToMd5().ToUpper();
             var xml = $@"
                         <xml>
                             <appid>{WeChatConfig.AppId}</appid>
-                            <attach>1233333333</attach>
+                            <attach>attach</attach>
                             <body>{body}</body>
                             <mch_id>{WeChatConfig.MchId}</mch_id> 
                             <nonce_str>{nonce}</nonce_str> 
@@ -191,8 +192,45 @@ namespace Web.Controllers
                             <trade_type>JSAPI</trade_type> 
                             <sign>{sign}</sign> 
                         </xml>";
+            LogHelper.Log(xml, "预支付请求参数");
             var data = HttpHelper.HttpPost("https://api.mch.weixin.qq.com/pay/unifiedorder", xml);
-            return Content(data);
+            LogHelper.Log(data, "预支付响应参数");
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(data);
+            var rootNode = xmlDoc.SelectSingleNode("xml");
+            if (rootNode == null) // 可能发生请求不通的错误
+            {
+                return Json(new
+                {
+                    code = 0,
+                    data,
+                    msg = "微信API响应的数据可能不是XML格式"
+                });
+            }
+            var childs = rootNode.ChildNodes;
+            var prepayId = string.Empty;
+            for (var i = 0; i < childs.Count; i++)
+            {
+                if (childs[i].Name == "prepay_id")
+                {
+                    prepayId = childs[i].InnerText;
+                    break;
+                }
+            }
+            if (prepayId.IsNullOrEmpty())
+            {
+                return Json(new
+                {
+                    code = 1,
+                    data,
+                    msg = "请求成功但是返回并非预期值,请检查日志(预支付请求参数/预支付响应参数)"
+                });
+            }
+            return Json(new
+            {
+                code = 1,
+                data = prepayId
+            });
         }
 
         public ActionResult SendTemplateMsg()
