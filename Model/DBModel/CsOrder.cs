@@ -56,9 +56,34 @@ namespace Model.DBModel
         public string OrderAddress { get; set; } = string.Empty;
 
         /// <summary>
+        /// 寄件信息
+        /// </summary>
+        public string SendAddress { get; set; } = string.Empty;
+
+        /// <summary>
         /// 快递单号
         /// </summary>
         public string OrderDelivery { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 寄托物数量
+        /// </summary>
+        public int CargoNumber { get; set; }
+
+        /// <summary>
+        /// 份数 默认值1
+        /// </summary>
+        public int OrderCopies { get; set; }
+
+        /// <summary>
+        /// 总重量
+        /// </summary>
+        public decimal TotalWeight { get; set; }
+
+        /// <summary>
+        /// 计费重量
+        /// </summary>
+        public decimal BillWeight { get; set; }
 
         /// <summary>
         /// 数据状态 0 删除 1 有效
@@ -74,21 +99,6 @@ namespace Model.DBModel
         /// 删除描述
         /// </summary>
         public string DeleteDescribe { get; set; } = string.Empty;
-
-        /// <summary>
-        /// 份数 默认值1
-        /// </summary>
-        public int OrderCopies { get; set; }
-
-        /// <summary>
-        /// 寄托物数量
-        /// </summary>
-        public int CargoNumber { get; set; }
-
-        /// <summary>
-        /// 寄件信息
-        /// </summary>
-        public string SendAddress { get; set; } = string.Empty;
 
     }
 
@@ -132,9 +142,29 @@ namespace Model.DBModel
         /// </summary>
         OrderAddress,
         /// <summary>
+        /// 寄件信息
+        /// </summary>
+        SendAddress,
+        /// <summary>
         /// 快递单号
         /// </summary>
         OrderDelivery,
+        /// <summary>
+        /// 寄托物数量
+        /// </summary>
+        CargoNumber,
+        /// <summary>
+        /// 份数 默认值1
+        /// </summary>
+        OrderCopies,
+        /// <summary>
+        /// 总重量
+        /// </summary>
+        TotalWeight,
+        /// <summary>
+        /// 计费重量
+        /// </summary>
+        BillWeight,
         /// <summary>
         /// 数据状态 0 删除 1 有效
         /// </summary>
@@ -147,17 +177,5 @@ namespace Model.DBModel
         /// 删除描述
         /// </summary>
         DeleteDescribe,
-        /// <summary>
-        /// 份数 默认值1
-        /// </summary>
-        OrderCopies,
-        /// <summary>
-        /// 寄托物数量
-        /// </summary>
-        CargoNumber,
-        /// <summary>
-        /// 寄件信息
-        /// </summary>
-        SendAddress,
     }
 }

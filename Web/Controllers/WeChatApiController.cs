@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using BLL;
 using Common;
 using Model.WeChatModel;
 
@@ -10,24 +15,221 @@ namespace Web.Controllers
     {
         public ActionResult GetOpenId(string currentPage)
         {
-            var url = string.Format(WeChatConfig.WeChatCodeUrl, WeChatConfig.AppId, HttpUtility.UrlEncode($"http://{Request.Url?.Authority}/WeChatApi/RedirectUri?currentPage={currentPage}"));
+            var url = string.Format(WeChatConfig.WeChatCodeUrl, WeChatConfig.AppId, HttpUtility.UrlEncode($"http://{Request.Url?.Authority}/WeChatApi/RedirectUrL?currentPage={currentPage}"));
             ViewBag.CodeUrl = url;
             LogHelper.Log(ViewBag.CodeUrl, "url");
             return View();
         }
 
-        public ActionResult RedirectUri(string code, string currentPage)
+        public ActionResult RedirectUrL(string code, string currentPage)
         {
-            LogHelper.Log(code + "/" + currentPage, "code/currentPage");
-            var opneId = HttpHelper.HttpGet(string.Format(WeChatConfig.OpenIdUrl, WeChatConfig.AppId, WeChatConfig.AppSecret, code));
-            LogHelper.Log(opneId, "opneId");
-            return Redirect($"{currentPage}{(currentPage.IndexOf("?", StringComparison.Ordinal) > -1 ? "&" : "?")}openId=");
+            var data = HttpHelper.HttpGet(string.Format(WeChatConfig.OpenIdUrl, WeChatConfig.AppId, WeChatConfig.AppSecret, code));
+            var openId = data.JsonToObject<OpenIdModel>().openid;
+            currentPage = HttpUtility.UrlDecode(currentPage);
+            ViewBag.RedirectUrL = $"{currentPage}{(currentPage?.IndexOf("?", StringComparison.Ordinal) > -1 ? "&" : "?")}openId={openId}";
+            return View();
         }
 
-        public ActionResult GetAccessToken()
+        public string GetAccessToken()
         {
-            var data = HttpHelper.HttpGet(string.Format(WeChatConfig.AccessTokenUrl, WeChatConfig.AppId, WeChatConfig.AppSecret));
+            if (WeChatConfig.AccessToken == null ||
+                DateTime.Now.AddHours(-2) > WeChatConfig.AccessToken.Time)
+            {
+                var data = HttpHelper.HttpGet(string.Format(WeChatConfig.AccessTokenUrl, WeChatConfig.AppId, WeChatConfig.AppSecret));
+                var access = data.JsonToObject<AccessTokenModel>();
+                LogHelper.Log("AccessTokenModel:" + access.ToJson(), "记录获取AccessToken");
+                WeChatConfig.AccessToken = new TokenModel
+                {
+                    Value = access.access_token,
+                    Time = DateTime.Now
+                };
+                return access.access_token;
+            }
+            return WeChatConfig.AccessToken.Value;
+        }
+
+        public string GetJsApiTicket()
+        {
+            if (WeChatConfig.JsApiTicket == null ||
+                DateTime.Now.AddHours(-2) > WeChatConfig.JsApiTicket.Time)
+            {
+                var url = string.Format(WeChatConfig.JsApiTicketUrl, GetAccessToken());
+                var data = HttpHelper.HttpGet(url);
+                var access = data.JsonToObject<JsApiTicketModel>();
+                LogHelper.Log("JsApiTicket:" + access.ToJson(), "记录获取JsApiTicket");
+                WeChatConfig.JsApiTicket = new TokenModel
+                {
+                    Value = access.ticket,
+                    Time = DateTime.Now
+                };
+                return access.ticket;
+            }
+            return WeChatConfig.JsApiTicket.Value;
+        }
+
+        /// <summary>
+        /// 获取JsApi配置信息
+        /// </summary>
+        /// <param name="currentPage"></param>
+        /// <returns></returns>
+        public ActionResult GetJsApiConfig(string currentPage)
+        {
+            var nonceStr = ConvertHelper.GetNonce(16);
+            var timestamp = ConvertHelper.GetTimeStamp();
+            var str = "jsapi_ticket=" + GetJsApiTicket()
+                      + "&noncestr=" + nonceStr
+                      + "&timestamp=" + timestamp
+                      + "&url=" + currentPage;
+            return Json(new
+            {
+                appId = WeChatConfig.AppId,
+                timestamp,
+                nonceStr,
+                signature = str.ToSha1(),
+                jsApiList = new ArrayList
+                {
+                    "onMenuShareTimeline",
+                    "onMenuShareAppMessage",
+                    "onMenuShareQQ",
+                    "onMenuShareWeibo",
+                    "onMenuShareQZone",
+                    "startRecord",
+                    "stopRecord",
+                    "onVoiceRecordEnd",
+                    "playVoice",
+                    "pauseVoice",
+                    "stopVoice",
+                    "onVoicePlayEnd",
+                    "uploadVoice",
+                    "downloadVoice",
+                    "chooseImage",
+                    "previewImage",
+                    "uploadImage",
+                    "downloadImage",
+                    "translateVoice",
+                    "getNetworkType",
+                    "openLocation",
+                    "getLocation",
+                    "hideOptionMenu",
+                    "showOptionMenu",
+                    "hideMenuItems",
+                    "showMenuItems",
+                    "hideAllNonBaseMenuItem",
+                    "showAllNonBaseMenuItem",
+                    "closeWindow",
+                    "scanQRCode",
+                    "chooseWXPay",
+                    "openProductSpecificView",
+                    "addCard",
+                    "chooseCard",
+                    "openCard"
+                }
+            });
+
+        }
+
+        /// <summary>
+        /// 发起支付需要的信息
+        /// </summary>
+        /// <param name="prepayId"></param>
+        /// <returns></returns>
+        public ActionResult GetBrandWcPay(string prepayId)
+        {
+            var timeStamp = ConvertHelper.GetTimeStamp();
+            var nonceStr = ConvertHelper.GetNonce(32);
+            var str = $"appId={WeChatConfig.AppId}&nonceStr={nonceStr}&package=prepay_id={prepayId}&signType=MD5&timeStamp={timeStamp}";
+            return Json(new
+            {
+                appId = WeChatConfig.AppId,
+                timeStamp = ConvertHelper.GetTimeStamp(),
+                nonceStr = ConvertHelper.GetNonce(32),
+                package = "prepay_id=" + prepayId,
+                signType = "MD5",
+                paySign = str.ToMd5().ToUpper()
+            });
+        }
+
+        /// <summary>
+        /// 获取预支付 Id
+        /// </summary>
+        /// <param name="body">商品描述</param>
+        /// <param name="orderNumber">订单号</param>
+        /// <param name="total">支付总金额</param>
+        /// <param name="notify">回掉页面</param>
+        /// <param name="openId"></param>
+        /// <returns></returns>
+        public ActionResult GetPrepayId(string body, string orderNumber, string total, string notify, string openId)
+        {
+            var nonce = ConvertHelper.GetNonce(32);
+            string[] getPr =
+            {
+                "appid=" + WeChatConfig.AppId,
+                "mch_id=" + WeChatConfig.MchId,
+                "nonce_str=" + nonce,
+                "body=" + body,
+                "out_trade_no=" + orderNumber,
+                "total_fee=" + total,
+                "spbill_create_ip=" + HttpContext.Request.UserHostAddress,
+                "notify_url=" + notify,
+                "trade_type=JSAPI",
+                "attach=1233333333",
+                "openid=" + openId,
+            };
+            var sign = (string.Join("&", getPr.OrderBy(x => x)) + "&key=" + WeChatConfig.PayKey).ToMd5().ToUpper();
+            var xml = $@"
+                        <xml>
+                            <appid>{WeChatConfig.AppId}</appid>
+                            <attach>1233333333</attach>
+                            <body>{body}</body>
+                            <mch_id>{WeChatConfig.MchId}</mch_id> 
+                            <nonce_str>{nonce}</nonce_str> 
+                            <notify_url>{notify}</notify_url> 
+                            <openid>{openId}</openid> 
+                            <out_trade_no>{orderNumber}</out_trade_no> 
+                            <spbill_create_ip>{HttpContext.Request.UserHostAddress}</spbill_create_ip> 
+                            <total_fee>{total}</total_fee> 
+                            <trade_type>JSAPI</trade_type> 
+                            <sign>{sign}</sign> 
+                        </xml>";
+            var data = HttpHelper.HttpPost("https://api.mch.weixin.qq.com/pay/unifiedorder", xml);
             return Content(data);
+        }
+
+        public ActionResult SendTemplateMsg()
+        {
+            var userBll = new CsUsersBll();
+            var userList = userBll.GetModelList(" AND OpenId <> ''");
+            var access = GetAccessToken();
+            var url = string.Format(WeChatConfig.SendTemplateUrl, access);
+            var count = 0;
+            var error = 0;
+            foreach (var user in userList)
+            {
+                var res = HttpHelper.HttpPost(url, new
+                {
+                    // 消息实体
+                }.ToJson());
+                if (res.IndexOf("success", StringComparison.Ordinal) > -1)
+                {
+                    count++;
+                }
+                else
+                {
+                    error++;
+                    LogHelper.Log(res, "模板消息发送失败");
+                }
+            }
+
+            return Json(new
+            {
+                code = 1,
+                msg = $"成功消息发送{count}条消息, 失败{error}条"
+            });
+        }
+
+        public ActionResult PayTest()
+        {
+            return View();
         }
     }
 }

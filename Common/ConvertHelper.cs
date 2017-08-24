@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace Common
@@ -107,6 +109,44 @@ namespace Common
             return s;
         }
 
+        /// <summary>
+        /// 基于Sha1的自定义加密字符串方法：输入一个字符串，返回一个由40个字符组成的十六进制的哈希散列（字符串）。
+        /// </summary>
+        /// <param name="str">要加密的字符串</param>
+        /// <returns>加密后的十六进制的哈希散列（字符串）</returns>
+        public static string ToSha1(this string str)
+        {
+            var buffer = Encoding.UTF8.GetBytes(str);
+            var data = SHA1.Create().ComputeHash(buffer);
+            var sb = new StringBuilder();
+            foreach (var t in data)
+            {
+                sb.Append(t.ToString("X2"));
+            }
+            return sb.ToString();
+        }
+
+
+
+        /// <summary>  
+        /// MD5 加密字符串  
+        /// </summary>  
+        /// <param name="str">源字符串</param>  
+        /// <returns>加密后字符串</returns>  
+        public static string ToMd5(this string str)
+        {
+            // 创建MD5类的默认实例：MD5CryptoServiceProvider  
+            var md5 = MD5.Create();
+            var bs = Encoding.UTF8.GetBytes(str);
+            var hs = md5.ComputeHash(bs);
+            var sb = new StringBuilder();
+            foreach (byte b in hs)
+            {
+                sb.Append(b.ToString("x2"));
+            }
+            return sb.ToString();
+        }
+
         public static TToObject Map<TToObject, TFromObject>(this TFromObject from)
         {
             var fs = typeof(TFromObject).GetProperties();
@@ -191,6 +231,7 @@ namespace Common
             }
             return item;
         }
+
     }
 
 }

@@ -190,58 +190,41 @@ namespace Web.Controllers
         public ActionResult ExportCsOrder(CsOrderView.CsOrderWhere para)
         {
             var data = GetList(para, false);
-            var details = _csOrderDetailBll.GetModelList($" AND OrderId IN ({string.Join(",", data.Data.Select(x => x.OrderId))})");
-            var products = _csProductsBll.GetModelList("");
-            var parts = _csPartsBll.GetModelList("");
             var list = new List<CsOrderView.CsOrderExcel>();
             foreach (var order in data.Data)
             {
+                var sendInfo = order.SendAddress.Split('$');
+                var putInfo = order.OrderAddress.Split('$');
                 var item = new CsOrderView.CsOrderExcel
                 {
                     用户订单号 = order.OrderNumber,
+                    寄件公司 = sendInfo.Length > 0 ? sendInfo[0] : "-",
+                    寄联系人 = sendInfo.Length > 1 ? sendInfo[1] : "-",
+                    寄联系电话 = sendInfo.Length > 2 ? sendInfo[2] : "-",
+                    寄件地址 = sendInfo.Length > 3 ? sendInfo[3] : "-",
+                    收件公司 = putInfo.Length > 0 ? putInfo[0] : "-",
+                    联系人 = putInfo.Length > 1 ? putInfo[1] : "-",
+                    联系电话 = putInfo.Length > 2 ? putInfo[2] : "-",
+                    手机号码 = putInfo.Length > 3 ? putInfo[3] : "-",
+                    收件详细地址 = putInfo.Length > 4 ? putInfo[4] : "-",
+                    付款方式 = "寄付月结",
+                    第三方付月结卡号 = "",
+                    寄托物品 = "其他",
+                    寄托物内容 = "大闸蟹",
+                    寄托物编号 = "",
+                    寄托物数量 = "1",
+                    件数 = order.OrderCopies.ToString(),
+                    实际重量单位KG = order.TotalWeight.ToString("0.0"),
+                    计费重量单位KG = order.BillWeight.ToString("0.0"),
+                    业务类型 = "大闸蟹专递",
+                    寄方客户备注 = "可选配件组合：剪刀 + 礼盒 + 保温袋"
                 };
-
-                //var detailWheres = details.Where(x => x.OrderId == order.OrderId);
-                //foreach (var detail in detailWheres)
-                //{
-                //    var product = products.FirstOrDefault(x => x.ProductId == detail.ProductId);
-                //    var part = parts.FirstOrDefault(x => x.PartId == detail.ProductId);
-                //    if (product == null && detail.ChoseType == ChoseType.螃蟹.GetHashCode())
-                //    {
-                //        continue;
-                //    }
-                //    if (part == null && detail.ChoseType == ChoseType.配件.GetHashCode())
-                //    {
-                //        continue;
-                //    }
-                //    var isFirst = detailWheres.ToList().IndexOf(detail) == 0;
-                //    if (!isFirst)
-                //    {
-                //        item = new CsOrderView.CsOrderExcel
-                //        {
-                //            商品名称 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? product?.ProductName : part?.PartName,
-                //            数量 = detail.ProductNumber.ToString(),
-                //            // ReSharper disable once PossibleNullReferenceException
-                //            种类 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? ((ProductType)product.ProductType).ToString() : ((PartType)part.PartType).ToString(),
-                //        };
-                //        list.Add(item);
-                //    }
-                //    else
-                //    {
-                //        item.商品名称 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? product?.ProductName : part?.PartName;
-                //        item.数量 = detail.ProductNumber.ToString();
-                //        // ReSharper disable once PossibleNullReferenceException
-                //        item.种类 = detail.ChoseType == ChoseType.螃蟹.GetHashCode() ? ((ProductType)product.ProductType).ToString() : ((PartType)part.PartType).ToString();
-                //        list.Add(item);
-                //    }
-                //}
-                // 空行 
-                //list.Add(new CsOrderView.CsOrderExcel());
+                list.Add(item);
             }
             var path = $"excel/{DateTime.Now:yyyyMMddHHmmssffff}.xls";
             try
             {
-                NpoiHelper.ExportToExcel(list.ToDataTable(), AppDomain.CurrentDomain.SetupInformation.ApplicationBase + path);
+                NpoiHelper.ExportToExcel(list.ToDataTable(), "D:/" + path);
             }
             catch (Exception e)
             {

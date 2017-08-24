@@ -77,7 +77,8 @@ namespace Model.ViewModel
             // ReSharper disable once InconsistentNaming
             public string 计费重量单位KG { get; set; } = string.Empty;
             public string 业务类型 { get; set; } = string.Empty;
-            public string 是否代收费 { get; set; } = string.Empty;
+            public string 是否代收货款 { get; set; } = string.Empty;
+            public string 代收货款金额 { get; set; } = string.Empty;
             public string 代收卡号 { get; set; } = string.Empty;
             public string 是否保价 { get; set; } = string.Empty;
             public string 保价金额 { get; set; } = string.Empty;
@@ -88,7 +89,7 @@ namespace Model.ViewModel
             public string 是否签回单 { get; set; } = string.Empty;
             public string 是否定时派送 { get; set; } = string.Empty;
             public string 派送日期 { get; set; } = string.Empty;
-            public string 派送时间段 { get; set; } = string.Empty;
+            public string 派送时段 { get; set; } = string.Empty;
             public string 是否电子验收 { get; set; } = string.Empty;
             public string 拍照类型 { get; set; } = string.Empty;
             public string 是否保单配送 { get; set; } = string.Empty;
@@ -107,10 +108,13 @@ namespace Model.ViewModel
             public string 签收短信通知MSG { get; set; } = string.Empty;
             // ReSharper disable once InconsistentNaming
             public string 派件出仓通知SMS { get; set; } = string.Empty;
-            public string 寄件方客户备注 { get; set; } = string.Empty;
-            public string 长单位cm { get; set; } = string.Empty;
-            public string 宽单位cm { get; set; } = string.Empty;
-            public string 高单位cm { get; set; } = string.Empty;
+            public string 寄方客户备注 { get; set; } = string.Empty;
+            // ReSharper disable once InconsistentNaming
+            public string 长单位CM { get; set; } = string.Empty;
+            // ReSharper disable once InconsistentNaming
+            public string 宽单位CM { get; set; } = string.Empty;
+            // ReSharper disable once InconsistentNaming
+            public string 高单位CM { get; set; } = string.Empty;
             public string 扩展字段1 { get; set; } = string.Empty;
             public string 扩展字段2 { get; set; } = string.Empty;
             public string 扩展字段3 { get; set; } = string.Empty;

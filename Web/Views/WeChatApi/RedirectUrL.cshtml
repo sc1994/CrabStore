@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     Layout = null;
 }
 
@@ -7,13 +8,13 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>GetOpenId</title>
+    <title>RedirectUrL</title>
 </head>
 <body>
     <div>
     </div>
     <script>
-        window.open('@Html.Raw(@ViewBag.CodeUrl)', '_self')
+        window.open('@Html.Raw(ViewBag.RedirectUrL)', '_self')
     </script>
 </body>
 </html>

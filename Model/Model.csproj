@@ -63,8 +63,7 @@
     <Compile Include="ViewModel\CsUsersView.cs" />
     <Compile Include="ViewModel\PageInfo.cs" />
     <Compile Include="ViewModel\StatisticView.cs" />
-<Compile Include="DBModel\CsSend.cs" />
-<Compile Include="WeChatModel\Token.cs" />
+    <Compile Include="DBModel\CsSend.cs" />
     <Compile Include="WeChatModel\WeChatConfig.cs" />
   </ItemGroup>
   <ItemGroup />
