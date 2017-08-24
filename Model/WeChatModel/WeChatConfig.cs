@@ -4,6 +4,7 @@
 ****************************************/
 
 using System;
+using System.Collections.Generic;
 
 namespace Model.WeChatModel
 {
@@ -58,10 +59,22 @@ namespace Model.WeChatModel
         public const string SendTemplateUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}";
 
         /// <summary>
+        /// 获取用户列表 Url
+        /// @param access_token
+        /// @param next_openid
+        /// </summary>
+        public const string UserListUrl = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={0}&next_openid={1}";
+
+        /// <summary>
         /// 获取 JsApiTicketUrl Url
         /// @param access_token
         /// </summary>
         public const string JsApiTicketUrl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi";
+
+        /// <summary>
+        /// 获取预支付Id Url
+        /// </summary>
+        public const string PrepayInfoUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 
         /// <summary>
         /// AccessToken 的存放位置, 每次使用之前需要验证的 token 是否过期
@@ -143,4 +156,16 @@ namespace Model.WeChatModel
         public string trade_type { get; set; } = string.Empty;
     }
 
+
+    public class AllUser
+    {
+        // ReSharper disable once InconsistentNaming
+        public string total { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public string count { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public List<string> data { get; set; } = new List<string>();
+        // ReSharper disable once InconsistentNaming
+        public string next_openid { get; set; } = string.Empty;
+    }
 }

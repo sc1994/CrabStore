@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using Common;
+using System;
 using System.Xml;
-using System.Xml.Serialization;
-using BLL;
-using Common;
+using System.Web;
+using System.Linq;
+using System.Web.Mvc;
 using Model.WeChatModel;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Web.Controllers
 {
@@ -193,7 +191,7 @@ namespace Web.Controllers
                             <sign>{sign}</sign> 
                         </xml>";
             LogHelper.Log(xml, "预支付请求参数");
-            var data = HttpHelper.HttpPost("https://api.mch.weixin.qq.com/pay/unifiedorder", xml);
+            var data = HttpHelper.HttpPost(WeChatConfig.PrepayInfoUrl, xml);
             LogHelper.Log(data, "预支付响应参数");
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(data);
@@ -204,7 +202,7 @@ namespace Web.Controllers
                 {
                     code = 0,
                     data,
-                    msg = "微信API响应的数据可能不是XML格式"
+                    msg = "微信支付请求异常, 请查看网络请求信息"
                 });
             }
             var childs = rootNode.ChildNodes;
@@ -235,8 +233,8 @@ namespace Web.Controllers
 
         public ActionResult SendTemplateMsg()
         {
-            var userBll = new CsUsersBll();
-            var userList = userBll.GetModelList(" AND OpenId <> ''");
+            var userList = new List<string>();
+            GetAllOpenId("", userList);
             var access = GetAccessToken();
             var url = string.Format(WeChatConfig.SendTemplateUrl, access);
             var count = 0;
@@ -265,9 +263,28 @@ namespace Web.Controllers
             });
         }
 
+        /// <summary>
+        /// 支付测试
+        /// </summary>
+        /// <returns></returns>
         public ActionResult PayTest()
         {
             return View();
+        }
+
+        public void GetAllOpenId(string start, List<string> openIdList)
+        {
+            var url = string.Format(WeChatConfig.UserListUrl, GetAccessToken(), start);
+            var data = HttpHelper.HttpGet(url);
+            var model = data.JsonToObject<AllUser>();
+            if (model.count.ToInt() > 0 && model.total.ToInt() > model.count.ToInt())
+            {
+                openIdList.AddRange(model.data);
+                if (openIdList.Count < model.total.ToInt())
+                {
+                    GetAllOpenId(model.next_openid, openIdList);
+                }
+            }
         }
     }
 }
