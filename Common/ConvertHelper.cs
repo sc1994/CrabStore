@@ -27,7 +27,14 @@ namespace Common
 
         public static T JsonToObject<T>(this string json)
         {
-            return JsonConvert.DeserializeObject<T>(json);
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+            catch
+            {
+                return Activator.CreateInstance<T>();
+            }
         }
 
         public static T XmlToObject<T>(this string xml)
@@ -143,7 +150,6 @@ namespace Common
         /// <returns>加密后字符串</returns>  
         public static string ToMd5(this string str)
         {
-            // 创建MD5类的默认实例：MD5CryptoServiceProvider  
             var md5 = MD5.Create();
             var bs = Encoding.UTF8.GetBytes(str);
             var hs = md5.ComputeHash(bs);

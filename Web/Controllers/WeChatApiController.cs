@@ -231,35 +231,57 @@ namespace Web.Controllers
             });
         }
 
-        public ActionResult SendTemplateMsg()
+        public ActionResult GetAllOpenId()
         {
             var userList = new List<string>();
             GetAllOpenId("", userList);
+            return Json(userList);
+        }
+
+        /// <summary>
+        /// 发送模板消息
+        /// </summary>
+        /// <param name="body">请求微信api 的json 包 为string类型</param>
+        /// <param name="openId">记录以及返回数据发送结果用, body 依然需要传入此参数</param>
+        /// <returns></returns>
+        public ActionResult SendTemplateMsg(string body, string openId)
+        {
             var access = GetAccessToken();
             var url = string.Format(WeChatConfig.SendTemplateUrl, access);
-            var count = 0;
-            var error = 0;
-            foreach (var user in userList)
+            var res = HttpHelper.HttpPost(url, body);
+            var data = res.JsonToObject<TemplateResponse>();
+            if (data.errcode.IsNullOrEmpty())
             {
-                var res = HttpHelper.HttpPost(url, new
+                LogHelper.Log(res, "模板消息发送失败");
+                return Json(new
                 {
-                    // 消息实体
-                }.ToJson());
-                if (res.IndexOf("success", StringComparison.Ordinal) > -1)
-                {
-                    count++;
-                }
-                else
-                {
-                    error++;
-                    LogHelper.Log(res, "模板消息发送失败");
-                }
+                    code = 0,
+                    data = $"消息发送给{openId}时发生异常, 请求微信服务器失败",
+                    msg = res
+                });
             }
-
+            if (data.errcode.ToInt() == 0)
+            {
+                return Json(new
+                {
+                    code = 1,
+                    data = $"成功消息发送给{openId}"
+                });
+            }
+            if (data.errcode.ToInt() == -1)
+            {
+                return Json(new
+                {
+                    code = 0,
+                    data = $"消息发送给{openId}时发生异常, 系统繁忙"
+                });
+            }
+            LogHelper.Log(res, "模板消息发送失败");
             return Json(new
             {
                 code = 1,
-                msg = $"成功消息发送{count}条消息, 失败{error}条"
+                data = $"消息发送给{openId}时发生异常, 请查看日志",
+                msg = res
             });
         }
 
@@ -277,7 +299,7 @@ namespace Web.Controllers
             var url = string.Format(WeChatConfig.UserListUrl, GetAccessToken(), start);
             var data = HttpHelper.HttpGet(url);
             var model = data.JsonToObject<AllUser>();
-            if (model.count.ToInt() > 0 && model.total.ToInt() > model.count.ToInt())
+            if (model.count.ToInt() > 0 && model.total.ToInt() >= model.count.ToInt())
             {
                 openIdList.AddRange(model.data);
                 if (openIdList.Count < model.total.ToInt())

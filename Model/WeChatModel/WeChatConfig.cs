@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace Model.WeChatModel
 {
@@ -13,22 +14,22 @@ namespace Model.WeChatModel
         /// <summary>
         /// 开发者ID
         /// </summary>
-        public const string AppId = "wx9e7797521695b5d7";
+        public static string AppId => ConfigurationManager.AppSettings["AppId"];
 
         /// <summary>
         /// 开发者密钥
         /// </summary>
-        public const string AppSecret = "52f27e040b80b82eb677f30e66555a05";
+        public static string AppSecret => ConfigurationManager.AppSettings["AppSecret"];
 
         /// <summary>
         /// 商户号
         /// </summary>
-        public const string MchId = "1487318862";
+        public static string MchId => ConfigurationManager.AppSettings["MchId"];
 
         /// <summary>
         /// 支付密钥
         /// </summary>
-        public const string PayKey = "jiangsuosintellinformation201708";
+        public static string PayKey => ConfigurationManager.AppSettings["PayKey"];
 
         /// <summary>
         /// 获取 AccessToken  api 地址
@@ -168,4 +169,16 @@ namespace Model.WeChatModel
         // ReSharper disable once InconsistentNaming
         public string next_openid { get; set; } = string.Empty;
     }
+
+
+    public class TemplateResponse
+    {
+        // ReSharper disable once InconsistentNaming
+        public string errcode { get; set; }
+        // ReSharper disable once InconsistentNaming
+        public string errmsg { get; set; }
+        // ReSharper disable once InconsistentNaming
+        public string msgid { get; set; }
+    }
+
 }

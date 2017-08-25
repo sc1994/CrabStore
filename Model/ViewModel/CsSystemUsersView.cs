@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-namespace Model.ViewModel
+﻿namespace Model.ViewModel
 {
     public class CsSystemUsersView
     {

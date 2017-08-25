@@ -14,7 +14,10 @@ var vm = new Vue({
             PriceEnd: '',
             ProductName: '',
             ProductType: ''
-        }
+        },
+        planDialog: false, // 切换发送消息进度显示
+        percentage: 0, // 进度条进度
+        planList: []
     },
     methods: {
         getList: function () {
@@ -102,6 +105,46 @@ var vm = new Vue({
         selectLast: function () {
             this.getpage(this.currentPage)
             this.dialogVisible = true
+        },
+        sendMsg: function () {
+            var that = this
+            that.planDialog = true
+            ajax('/WeChatApi/GetAllOpenId', {}, function (list) {
+                list.forEach((openId) => {
+                    ajax('/WeChatApi/SendTemplateMsg', {
+                        body: JSON.stringify({
+                            touser: openId,
+                            template_id: 'k9tbEwbpXtySIOJLUb9l7YPeJhFUQKlwVwmHI6D6G1U',
+                            url: '',
+                            topcolor: "#FF0000",
+                            data: {
+                                first: {
+                                    value: '商品降价通知',
+                                },
+                                keyword1: {
+                                    value: '蟹'
+                                },
+                                keyword2: {
+                                    value: '高淳大闸蟹'
+                                },
+                                keyword3: {
+                                    value: new Date().Format('yyyy-M-d')
+                                },
+                                keyword4: {
+                                    value: '部分商品降价'
+                                },
+                                remark: {
+                                    value: '大闸蟹降价啦,赶紧去看看吧~'
+                                }
+                            }
+                        }),
+                        openId: openId
+                    }, function (data) {
+                        that.planList.push(data)
+                        that.percentage = (that.planList / list.length) * 100
+                    })
+                })
+            })
         }
     },
     mounted: function () {
