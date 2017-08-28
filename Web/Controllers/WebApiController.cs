@@ -14,7 +14,13 @@ namespace Web.Controllers
         private readonly CsProductsBll _csProductsBll = new CsProductsBll();
         private readonly CsPriceBll _csPriceBll = new CsPriceBll();
         private readonly CsOrderBll _csOrderBll = new CsOrderBll();
-
+        private readonly CsUsersBll _csUsersBll = new CsUsersBll();
+        private readonly CsSendBll _csSendBll = new CsSendBll();
+        private readonly CsAddressBll _csAddressBll = new CsAddressBll();
+        /// <summary>
+        /// 获取螃蟹价格表和配件价格表
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IHttpActionResult GetIndex()
         {
@@ -97,6 +103,10 @@ namespace Web.Controllers
             return Json(strJson.ToString());
         }
 
+        /// <summary>
+        /// 获取螃蟹产品列表
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IHttpActionResult GetProductList()
         {
@@ -197,6 +207,11 @@ namespace Web.Controllers
             });
         }
 
+        /// <summary>
+        /// 获取配件列表
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public IHttpActionResult GetPartList(int id)
         {
@@ -212,5 +227,64 @@ namespace Web.Controllers
             }).ToList();
             return Json(partList);
         }
+
+        /// <summary>
+        /// 根据openId查询该用户的发货信息和收货信息
+        /// </summary>
+        /// <param name="openId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IHttpActionResult GetAddress(string openId)
+        {
+            CsUsers user = _csUsersBll.GetModel(openId);
+            if (user != null)
+            {
+                //根据userId查询出发件信息和收获地址信息
+                List<CsSend> sendList = _csSendBll.GetModelList(" and UserId="+user.UserId);
+                List<CsAddress> addressList = _csAddressBll.GetModelList(" and UserId="+user.UserId);
+                return Json(new {
+                    status = true,
+                    sendList =sendList,
+                    addressList =addressList
+                });
+            }
+            else
+            {
+                return Json(new {
+                    status = false,
+                    sendList ="",
+                    addressList=""
+                });
+            }
+        }
+
+        [HttpPost]
+        public IHttpActionResult AddUser(CsUsers user)
+        {
+            //CsUsers user = new CsUsers();
+            //user.UserName = 
+            user.UserBalance = 0;
+            user.TotalWight = 0;
+            user.UserState = 1;
+
+            int number = _csUsersBll.Add(user);
+            //int number = 0;
+            if (number > 0)
+            {
+                return Json(new {
+                    status=true,
+                    userid=number
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = false,
+                    userid = 0
+                });
+            }
+        }
+
     }
 }

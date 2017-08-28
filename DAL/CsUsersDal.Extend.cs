@@ -1,3 +1,6 @@
+using Model.DBModel;
+using System.Linq;
+
 namespace DAL
 {
     /// <summary>
@@ -5,6 +8,10 @@ namespace DAL
     /// </summary>
     public partial class CsUsersDal
     {
-
+        public CsUsers GetModel(string openId)
+        {
+            var strSql = "SELECT * FROM CrabShop.dbo.[CsUsers] WHERE OpenId = @openId";
+            return DbClient.Query<CsUsers>(strSql, new { openId }).FirstOrDefault();
+        }
     }
 }
