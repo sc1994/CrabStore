@@ -9,13 +9,15 @@ namespace BLL
     /// </summary>
     public class CsOrderBll : BaseBll<CsOrder, CsOrderEnum, int>
     {
+        private readonly CsOrderDal _dal = new CsOrderDal();
+
         public CsOrderBll() : base(new CsOrderDal()) { }
 
         public CsOrderBll(IBaseDal<CsOrder, CsOrderEnum, int> dal) : base(dal) { }
-        private readonly CsOrderDal dal = new CsOrderDal();
+
         public int TotalNumber(int productId,DateTime nowTime)
         {
-            return dal.TotalNumber(productId, nowTime);
+            return _dal.TotalNumber(productId, nowTime);
         }
     }
 }

@@ -27,8 +27,15 @@
                     currentPage: window.location.href
                 },
                 complete: function (d) {
-                    var config = JSON.parse(d.responseText)
-                    startWx(config)
+                    var data = JSON.parse(d.responseText)
+                    wx.config({
+                        debug: true,
+                        appId: data.appId,
+                        timestamp: data.timestamp,
+                        nonceStr: data.nonceStr,
+                        signature: data.signature,
+                        jsApiList: data.jsApiList
+                    });
                 }
             })
 
@@ -53,17 +60,6 @@
                 }
             })
         })
-
-        function startWx(data) {
-            wx.config({
-                debug: true,
-                appId: data.appId,
-                timestamp: data.timestamp,
-                nonceStr: data.nonceStr,
-                signature: data.signature,
-                jsApiList: data.jsApiList
-            });
-        }
 
         function pay() {
             if (!prepayId) {

@@ -260,9 +260,19 @@ namespace Web.Controllers
             var parts = _csPartsBll.GetModelList("");
             var data = new List<CsOrderView.CsOrderAndDetail>();
             var item = new CsOrderView.CsOrderAndDetail();
+            var lastType=ExcelRow.Other;
             foreach (var order in orders)
             {
                 var type = ExcelRowType(order);
+                if (type == ExcelRow.Empty &&
+                    lastType == ExcelRow.Empty)
+                {
+                    return Json(new ResModel
+                                {
+                                    ResStatus = ResStatue.No,
+                                    Data = "当前Excel中存在多余的空行, 请仔细确认数据, 数据一旦上传将无法撤回"
+                    });
+                }
                 if (type == ExcelRow.Other)
                 {
                     return Json(new ResModel
@@ -357,6 +367,7 @@ namespace Web.Controllers
                         UnitPrice = order.单价.ToDecimal()
                     });
                 }
+                lastType = type;
             }
 
             var count = 0;

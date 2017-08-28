@@ -3,7 +3,10 @@
 // 避免的配置混乱 增加易读性    
 ****************************************/
 
+using Common;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 
 namespace Model.WeChatModel
 {
@@ -12,22 +15,22 @@ namespace Model.WeChatModel
         /// <summary>
         /// 开发者ID
         /// </summary>
-        public const string AppId = "wx9e7797521695b5d7";
+        public static string AppId => ConfigurationManager.AppSettings["AppId"];
 
         /// <summary>
         /// 开发者密钥
         /// </summary>
-        public const string AppSecret = "52f27e040b80b82eb677f30e66555a05";
+        public static string AppSecret => ConfigurationManager.AppSettings["AppSecret"];
 
         /// <summary>
         /// 商户号
         /// </summary>
-        public const string MchId = "1487318862";
+        public static string MchId => ConfigurationManager.AppSettings["MchId"];
 
         /// <summary>
         /// 支付密钥
         /// </summary>
-        public const string PayKey = "jiangsuosintellinformation201708";
+        public static string PayKey => ConfigurationManager.AppSettings["PayKey"];
 
         /// <summary>
         /// 获取 AccessToken  api 地址
@@ -58,10 +61,22 @@ namespace Model.WeChatModel
         public const string SendTemplateUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}";
 
         /// <summary>
+        /// 获取用户列表 Url
+        /// @param access_token
+        /// @param next_openid
+        /// </summary>
+        public const string UserListUrl = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={0}&next_openid={1}";
+
+        /// <summary>
         /// 获取 JsApiTicketUrl Url
         /// @param access_token
         /// </summary>
         public const string JsApiTicketUrl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi";
+
+        /// <summary>
+        /// 获取预支付Id Url
+        /// </summary>
+        public const string PrepayInfoUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 
         /// <summary>
         /// AccessToken 的存放位置, 每次使用之前需要验证的 token 是否过期
@@ -76,8 +91,8 @@ namespace Model.WeChatModel
 
     public class TokenModel
     {
-        public string Value;
-        public DateTime Time;
+        public string Value { get; set; } = string.Empty;
+        public DateTime Time { get; set; } = "1900-1-1".ToDate();
     }
 
     public class AccessTokenModel
@@ -141,6 +156,38 @@ namespace Model.WeChatModel
         public string prepay_id { get; set; } = string.Empty;
         // ReSharper disable once InconsistentNaming
         public string trade_type { get; set; } = string.Empty;
+    }
+
+
+
+    public class AllUser
+    {
+        // ReSharper disable once InconsistentNaming
+        public int total { get; set; }
+        // ReSharper disable once InconsistentNaming
+        public int count { get; set; }
+        // ReSharper disable once InconsistentNaming
+        public AllUserOpenId data { get; set; }
+        // ReSharper disable once InconsistentNaming
+        public string next_openid { get; set; }
+    }
+
+    public class AllUserOpenId
+    {
+        // ReSharper disable once InconsistentNaming
+        public string[] openid { get; set; }
+    }
+
+
+
+    public class TemplateResponse
+    {
+        // ReSharper disable once InconsistentNaming
+        public string errcode { get; set; }
+        // ReSharper disable once InconsistentNaming
+        public string errmsg { get; set; }
+        // ReSharper disable once InconsistentNaming
+        public string msgid { get; set; }
     }
 
 }

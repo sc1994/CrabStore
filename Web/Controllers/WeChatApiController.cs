@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using Common;
+using System;
 using System.Xml;
-using System.Xml.Serialization;
-using BLL;
-using Common;
+using System.Web;
+using System.Linq;
+using System.Web.Mvc;
 using Model.WeChatModel;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Web.Controllers
 {
@@ -34,16 +32,20 @@ namespace Web.Controllers
         public string GetAccessToken()
         {
             if (WeChatConfig.AccessToken == null ||
+                WeChatConfig.AccessToken.Value.IsNullOrEmpty() ||
                 DateTime.Now.AddHours(-2) > WeChatConfig.AccessToken.Time)
             {
                 var data = HttpHelper.HttpGet(string.Format(WeChatConfig.AccessTokenUrl, WeChatConfig.AppId, WeChatConfig.AppSecret));
                 var access = data.JsonToObject<AccessTokenModel>();
-                LogHelper.Log("AccessTokenModel:" + access.ToJson(), "记录获取AccessToken");
-                WeChatConfig.AccessToken = new TokenModel
+                LogHelper.Log(data, "记录获取AccessToken");
+                if (!access.access_token.IsNullOrEmpty())
                 {
-                    Value = access.access_token,
-                    Time = DateTime.Now
-                };
+                    WeChatConfig.AccessToken = new TokenModel
+                    {
+                        Value = access.access_token,
+                        Time = DateTime.Now
+                    };
+                }
                 return access.access_token;
             }
             return WeChatConfig.AccessToken.Value;
@@ -57,12 +59,15 @@ namespace Web.Controllers
                 var url = string.Format(WeChatConfig.JsApiTicketUrl, GetAccessToken());
                 var data = HttpHelper.HttpGet(url);
                 var access = data.JsonToObject<JsApiTicketModel>();
-                LogHelper.Log("JsApiTicket:" + access.ToJson(), "记录获取JsApiTicket");
-                WeChatConfig.JsApiTicket = new TokenModel
+                LogHelper.Log(data, "记录获取JsApiTicket");
+                if (!access.ticket.IsNullOrEmpty())
                 {
-                    Value = access.ticket,
-                    Time = DateTime.Now
-                };
+                    WeChatConfig.JsApiTicket = new TokenModel
+                    {
+                        Value = access.ticket,
+                        Time = DateTime.Now
+                    };
+                }
                 return access.ticket;
             }
             return WeChatConfig.JsApiTicket.Value;
@@ -193,7 +198,7 @@ namespace Web.Controllers
                             <sign>{sign}</sign> 
                         </xml>";
             LogHelper.Log(xml, "预支付请求参数");
-            var data = HttpHelper.HttpPost("https://api.mch.weixin.qq.com/pay/unifiedorder", xml);
+            var data = HttpHelper.HttpPost(WeChatConfig.PrepayInfoUrl, xml);
             LogHelper.Log(data, "预支付响应参数");
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(data);
@@ -204,7 +209,7 @@ namespace Web.Controllers
                 {
                     code = 0,
                     data,
-                    msg = "微信API响应的数据可能不是XML格式"
+                    msg = "微信支付请求异常, 请查看网络请求信息"
                 });
             }
             var childs = rootNode.ChildNodes;
@@ -233,41 +238,85 @@ namespace Web.Controllers
             });
         }
 
-        public ActionResult SendTemplateMsg()
+        [HttpPost]
+        public ActionResult GetAllOpenId()
         {
-            var userBll = new CsUsersBll();
-            var userList = userBll.GetModelList(" AND OpenId <> ''");
+            var userList = new List<string>();
+            GetAllOpenId("", userList);
+            return Json(userList);
+        }
+
+        /// <summary>
+        /// 发送模板消息
+        /// </summary>
+        /// <param name="body">请求微信api 的json 包 为string类型</param>
+        /// <param name="openId">记录以及返回数据发送结果用, body 依然需要传入此参数</param>
+        /// <returns></returns>
+        public ActionResult SendTemplateMsg(string body, string openId)
+        {
+            LogHelper.Log(body);
             var access = GetAccessToken();
             var url = string.Format(WeChatConfig.SendTemplateUrl, access);
-            var count = 0;
-            var error = 0;
-            foreach (var user in userList)
+            var res = HttpHelper.HttpPost(url, body);
+            var data = res.JsonToObject<TemplateResponse>();
+            if (data.errcode.IsNullOrEmpty())
             {
-                var res = HttpHelper.HttpPost(url, new
+                LogHelper.Log(res, "模板消息发送失败");
+                return Json(new
                 {
-                    // 消息实体
-                }.ToJson());
-                if (res.IndexOf("success", StringComparison.Ordinal) > -1)
-                {
-                    count++;
-                }
-                else
-                {
-                    error++;
-                    LogHelper.Log(res, "模板消息发送失败");
-                }
+                    code = 0,
+                    data = $"消息发送给{openId}时发生异常, 请求微信服务器失败",
+                    msg = res
+                });
             }
-
+            if (data.errcode.ToInt() == 0)
+            {
+                return Json(new
+                {
+                    code = 1,
+                    data = $"成功消息发送给{openId}"
+                });
+            }
+            if (data.errcode.ToInt() == -1)
+            {
+                return Json(new
+                {
+                    code = 0,
+                    data = $"消息发送给{openId}时发生异常, 系统繁忙"
+                });
+            }
+            LogHelper.Log(res, "模板消息发送失败");
             return Json(new
             {
-                code = 1,
-                msg = $"成功消息发送{count}条消息, 失败{error}条"
+                code = 0,
+                data = $"消息发送给{openId}时发生异常, 请查看日志",
+                msg = res
             });
         }
 
+        /// <summary>
+        /// 支付测试
+        /// </summary>
+        /// <returns></returns>
         public ActionResult PayTest()
         {
             return View();
+        }
+
+        public void GetAllOpenId(string start, List<string> openIdList)
+        {
+            var url = string.Format(WeChatConfig.UserListUrl, GetAccessToken(), start);
+            var data = HttpHelper.HttpGet(url);
+            LogHelper.Log(data);
+            var model = data.JsonToObject<AllUser>();
+            if (model.count.ToInt() > 0 && model.total.ToInt() >= model.count.ToInt())
+            {
+                openIdList.AddRange(model.data.openid);
+                if (openIdList.Count < model.total.ToInt())
+                {
+                    GetAllOpenId(model.next_openid, openIdList);
+                }
+            }
         }
     }
 }
