@@ -120,7 +120,7 @@ var vm = new Vue({
         },
         importExcel: function () {
             var that = this
-            if (this.fileList.length <= 0) {
+            if (that.fileList.length <= 0) {
                 that.$notify.error({
                     title: '错误',
                     message: '请上传Excel文件'
@@ -197,6 +197,7 @@ var vm = new Vue({
                 setTimeout(function () {
                     document.getElementsByName('file')[0].setAttribute('accept', "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 }, 500)
+                this.fileList = []
             }
         }
     }

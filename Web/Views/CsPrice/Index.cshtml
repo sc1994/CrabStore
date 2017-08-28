@@ -9,7 +9,7 @@
         <el-row>
             <el-col :span="21">
                 <el-button type="primary" icon="edit" @@click="submitPrice()">保存修改</el-button>
-                <el-button type="primary" icon="upload">发布价格</el-button>
+                <el-button type="primary" icon="upload" @@click="sendMsg">发布价格</el-button>
                 <el-button type="primary" icon="date" @@click="selectLast">价格历史</el-button>
             </el-col>
 

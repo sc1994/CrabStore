@@ -32,16 +32,20 @@ namespace Web.Controllers
         public string GetAccessToken()
         {
             if (WeChatConfig.AccessToken == null ||
+                WeChatConfig.AccessToken.Value.IsNullOrEmpty() ||
                 DateTime.Now.AddHours(-2) > WeChatConfig.AccessToken.Time)
             {
                 var data = HttpHelper.HttpGet(string.Format(WeChatConfig.AccessTokenUrl, WeChatConfig.AppId, WeChatConfig.AppSecret));
                 var access = data.JsonToObject<AccessTokenModel>();
-                LogHelper.Log("AccessTokenModel:" + access.ToJson(), "记录获取AccessToken");
-                WeChatConfig.AccessToken = new TokenModel
+                LogHelper.Log(data, "记录获取AccessToken");
+                if (!access.access_token.IsNullOrEmpty())
                 {
-                    Value = access.access_token,
-                    Time = DateTime.Now
-                };
+                    WeChatConfig.AccessToken = new TokenModel
+                    {
+                        Value = access.access_token,
+                        Time = DateTime.Now
+                    };
+                }
                 return access.access_token;
             }
             return WeChatConfig.AccessToken.Value;
@@ -55,12 +59,15 @@ namespace Web.Controllers
                 var url = string.Format(WeChatConfig.JsApiTicketUrl, GetAccessToken());
                 var data = HttpHelper.HttpGet(url);
                 var access = data.JsonToObject<JsApiTicketModel>();
-                LogHelper.Log("JsApiTicket:" + access.ToJson(), "记录获取JsApiTicket");
-                WeChatConfig.JsApiTicket = new TokenModel
+                LogHelper.Log(data, "记录获取JsApiTicket");
+                if (!access.ticket.IsNullOrEmpty())
                 {
-                    Value = access.ticket,
-                    Time = DateTime.Now
-                };
+                    WeChatConfig.JsApiTicket = new TokenModel
+                    {
+                        Value = access.ticket,
+                        Time = DateTime.Now
+                    };
+                }
                 return access.ticket;
             }
             return WeChatConfig.JsApiTicket.Value;
@@ -231,6 +238,7 @@ namespace Web.Controllers
             });
         }
 
+        [HttpPost]
         public ActionResult GetAllOpenId()
         {
             var userList = new List<string>();
@@ -246,6 +254,7 @@ namespace Web.Controllers
         /// <returns></returns>
         public ActionResult SendTemplateMsg(string body, string openId)
         {
+            LogHelper.Log(body);
             var access = GetAccessToken();
             var url = string.Format(WeChatConfig.SendTemplateUrl, access);
             var res = HttpHelper.HttpPost(url, body);
@@ -279,7 +288,7 @@ namespace Web.Controllers
             LogHelper.Log(res, "模板消息发送失败");
             return Json(new
             {
-                code = 1,
+                code = 0,
                 data = $"消息发送给{openId}时发生异常, 请查看日志",
                 msg = res
             });
@@ -298,10 +307,11 @@ namespace Web.Controllers
         {
             var url = string.Format(WeChatConfig.UserListUrl, GetAccessToken(), start);
             var data = HttpHelper.HttpGet(url);
+            LogHelper.Log(data);
             var model = data.JsonToObject<AllUser>();
             if (model.count.ToInt() > 0 && model.total.ToInt() >= model.count.ToInt())
             {
-                openIdList.AddRange(model.data);
+                openIdList.AddRange(model.data.openid);
                 if (openIdList.Count < model.total.ToInt())
                 {
                     GetAllOpenId(model.next_openid, openIdList);

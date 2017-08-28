@@ -3,6 +3,7 @@
 // 避免的配置混乱 增加易读性    
 ****************************************/
 
+using Common;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -90,8 +91,8 @@ namespace Model.WeChatModel
 
     public class TokenModel
     {
-        public string Value;
-        public DateTime Time;
+        public string Value { get; set; } = string.Empty;
+        public DateTime Time { get; set; } = "1900-1-1".ToDate();
     }
 
     public class AccessTokenModel
@@ -158,17 +159,25 @@ namespace Model.WeChatModel
     }
 
 
+
     public class AllUser
     {
         // ReSharper disable once InconsistentNaming
-        public string total { get; set; } = string.Empty;
+        public int total { get; set; }
         // ReSharper disable once InconsistentNaming
-        public string count { get; set; } = string.Empty;
+        public int count { get; set; }
         // ReSharper disable once InconsistentNaming
-        public List<string> data { get; set; } = new List<string>();
+        public AllUserOpenId data { get; set; }
         // ReSharper disable once InconsistentNaming
-        public string next_openid { get; set; } = string.Empty;
+        public string next_openid { get; set; }
     }
+
+    public class AllUserOpenId
+    {
+        // ReSharper disable once InconsistentNaming
+        public string[] openid { get; set; }
+    }
+
 
 
     public class TemplateResponse

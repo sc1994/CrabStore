@@ -109,39 +109,38 @@ var vm = new Vue({
         sendMsg: function () {
             var that = this
             that.planDialog = true
-            ajax('/WeChatApi/GetAllOpenId', {}, function (list) {
+            that.planList = []
+            that.percentage = 0
+            ajax('http://wx.osintell.com/WeChatApi/GetAllOpenId', '', function (list) {
                 list.forEach((openId) => {
-                    ajax('/WeChatApi/SendTemplateMsg', {
-                        body: JSON.stringify({
-                            touser: openId,
-                            template_id: 'k9tbEwbpXtySIOJLUb9l7YPeJhFUQKlwVwmHI6D6G1U',
-                            url: '',
-                            topcolor: "#FF0000",
-                            data: {
-                                first: {
-                                    value: '商品降价通知',
-                                },
-                                keyword1: {
-                                    value: '蟹'
-                                },
-                                keyword2: {
-                                    value: '高淳大闸蟹'
-                                },
-                                keyword3: {
-                                    value: new Date().Format('yyyy-M-d')
-                                },
-                                keyword4: {
-                                    value: '部分商品降价'
-                                },
-                                remark: {
-                                    value: '大闸蟹降价啦,赶紧去看看吧~'
-                                }
+                    ajax('http://wx.osintell.com/WeChatApi/SendTemplateMsg', 'body=' + JSON.stringify({
+                        touser: openId,
+                        template_id: 'k9tbEwbpXtySIOJLUb9l7YPeJhFUQKlwVwmHI6D6G1U',
+                        url: '',
+                        topcolor: "#FF0000",
+                        data: {
+                            first: {
+                                value: '商品降价通知',
+                            },
+                            keyword1: {
+                                value: '蟹'
+                            },
+                            keyword2: {
+                                value: '高淳大闸蟹'
+                            },
+                            keyword3: {
+                                value: new Date().Format('yyyy-M-d')
+                            },
+                            keyword4: {
+                                value: '部分商品降价'
+                            },
+                            remark: {
+                                value: '大闸蟹降价啦,赶紧去看看吧~'
                             }
-                        }),
-                        openId: openId
-                    }, function (data) {
+                        }
+                    }) + '&openId=' + openId, function (data) {
                         that.planList.push(data)
-                        that.percentage = (that.planList / list.length) * 100
+                        that.percentage = (that.planList.length / list.length) * 100
                     })
                 })
             })
