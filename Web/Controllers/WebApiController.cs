@@ -5,6 +5,7 @@ using System.Text;
 using Model.DBModel;
 using System.Web.Http;
 using System.Collections.Generic;
+using System.Net;
 using Common;
 using Model.ViewModel;
 
@@ -236,7 +237,7 @@ namespace Web.Controllers
             });
         }
 
-        [HttpPost]
+        [HttpGet]
         public IHttpActionResult GetCityList(int parentId = 0)
         {
             var csDistrictBll = new CsDistrictBll();
@@ -274,8 +275,7 @@ namespace Web.Controllers
         /// <param name="totalList"></param>
         /// <returns></returns>
         private dynamic GetProductModelView(CsProducts x, IEnumerable<CsOrderView.CsOrderTotalByProduct> totalList)
-        {
-            return new
+            => new
             {
                 x.ProductId,
                 x.ProductImage,
@@ -287,6 +287,5 @@ namespace Web.Controllers
                 number = 0,
                 TypeName = ((ProductType)x.ProductType).ToString()
             };
-        }
     }
 }
