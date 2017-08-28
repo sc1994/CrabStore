@@ -162,5 +162,12 @@ namespace Model.ViewModel
             public CsOrder CsOrder { get; set; } = new CsOrder();
             public List<CsOrderDetail> CsOrderDetails { get; set; } = new List<CsOrderDetail>();
         }
+
+        public class CsOrderTotalByProduct
+        {
+            public int ProductId { get; set; }
+
+            public int Total { get; set; }
+        }
     }
 }

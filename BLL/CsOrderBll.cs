@@ -2,6 +2,9 @@ using DAL;
 using IDAL;
 using Model.DBModel;
 using System;
+using System.Collections.Generic;
+using Model.ViewModel;
+
 namespace BLL
 {
     /// <summary>
@@ -11,13 +14,22 @@ namespace BLL
     {
         private readonly CsOrderDal _dal = new CsOrderDal();
 
-        public CsOrderBll() : base(new CsOrderDal()) { }
-
-        public CsOrderBll(IBaseDal<CsOrder, CsOrderEnum, int> dal) : base(dal) { }
-
-        public int TotalNumber(int productId,DateTime nowTime)
+        public CsOrderBll() : base(new CsOrderDal())
         {
-            return _dal.TotalNumber(productId, nowTime);
+        }
+
+        public CsOrderBll(IBaseDal<CsOrder, CsOrderEnum, int> dal) : base(dal)
+        {
+        }
+
+        /// <summary>
+        /// 根据产品编号查询销售总数
+        /// </summary>
+        /// <param name="productIds"></param>
+        /// <returns></returns>
+        public IEnumerable<CsOrderView.CsOrderTotalByProduct> TotalNumber(string productIds)
+        {
+            return _dal.TotalNumber(productIds);
         }
     }
 }

@@ -6,6 +6,7 @@ using Model.DBModel;
 using System.Web.Http;
 using System.Collections.Generic;
 using Common;
+using Model.ViewModel;
 
 namespace Web.Controllers
 {
@@ -30,18 +31,18 @@ namespace Web.Controllers
             products = _csProductsBll.GetModelList("");
             StringBuilder strJson = new StringBuilder();
             strJson.Append("{");
-            strJson.Append("\"priceDate\":\"" + products.FirstOrDefault().OperationDate.ToString("yyyy年MM月dd日") + "\"");
+            strJson.Append("\"priceDate\":\"" + products.FirstOrDefault()?.OperationDate.ToString("yyyy年MM月dd日") + "\"");
             //大宗采购蟹
             List<CsProducts> product1 = (from product in products
                                          where product.ProductType == 1
                                          select product).ToList();
 
             strJson.Append(",\"priceList1\":[");
-            for (int i = 0; i < (product1.Count() / 2); i++)
+            for (int i = 0; i < (product1.Count / 2); i++)
             {
                 strJson.Append("{\"pn1\":\"" + product1[i].ProductName + "\",\"pv1\":" + product1[i].ProductPrice + ",");
                 strJson.Append("\"pn2\":\"" + product1[i + 6].ProductName + "\",\"pv2\":" + product1[i + 6].ProductPrice + "}");
-                if (i != (product1.Count() / 2 - 1))
+                if (i != (product1.Count / 2 - 1))
                 {
                     strJson.Append(",");
                 }
@@ -51,11 +52,11 @@ namespace Web.Controllers
             List<CsProducts> product2 = (from product in products
                                          where product.ProductType == 2
                                          select product).ToList();
-            for (int j = 0; j < (product2.Count() / 2); j++)
+            for (int j = 0; j < (product2.Count / 2); j++)
             {
                 strJson.Append("{\"pn1\":\"" + product1[j].ProductName + "\",\"pv1\":" + product1[j].ProductPrice + ",");
                 strJson.Append("\"pn2\":\"" + product1[j + 6].ProductName + "\",\"pv2\":" + product1[j + 6].ProductPrice + "}");
-                if (j != (product2.Count() / 2 - 1))
+                if (j != (product2.Count / 2 - 1))
                 {
                     strJson.Append(",");
                 }
@@ -112,76 +113,32 @@ namespace Web.Controllers
         [HttpGet]
         public IHttpActionResult GetProductList()
         {
-            //获取产品列表
+            // 获取产品列表
             List<CsProducts> productList = _csProductsBll.GetModelList("");
+            var totalList = _csOrderBll.TotalNumber(string.Join(",", productList.Select(x => x.ProductId)));
+
             //大宗采购公蟹列表
-            List<CsProducts> proList1 = (from product1 in productList
-                                         where product1.ProductType == 1 && product1.ProductName.StartsWith("公")
-                                         select product1).ToList();
-            var proList11 = proList1.Select(x => new
-            {
-                x.ProductId,
-                x.ProductImage,
-                x.ProductPrice,
-                x.ProductWeight,
-                x.ProductName,
-                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
-                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
-                number = 0,
-                TypeName = "大宗采购"
-            });
-            //大宗采购母蟹列表
-            List<CsProducts> proList2 = (from product2 in productList
-                                         where product2.ProductType == 1 && product2.ProductName.StartsWith("母")
-                                         select product2).ToList();
-            var proList21 = proList2.Select(x => new
-            {
-                x.ProductId,
-                x.ProductImage,
-                x.ProductPrice,
-                x.ProductWeight,
-                x.ProductName,
-                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
-                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
-                number = 0,
-                TypeName = "大宗采购"
-            });
-            //蟹唐直采公蟹列表
-            List<CsProducts> proList3 = (from product3 in productList
-                                         where product3.ProductType == 2 && product3.ProductName.StartsWith("公")
-                                         select product3).ToList();
-            var proList31 = proList3.Select(x => new
-            {
-                x.ProductId,
-                x.ProductImage,
-                x.ProductPrice,
-                x.ProductWeight,
-                x.ProductName,
-                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
-                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
-                number = 0,
-                TypeName = "蟹塘直采"
-            });
+            var proList1 = productList
+                .Where(x => x.ProductType == 1 && x.ProductName.StartsWith("公"))
+                .Select(x => GetProductModelView(x, totalList));
 
-            //蟹塘直采母蟹列表
-            List<CsProducts> proList4 = (from product4 in productList
-                                         where product4.ProductType == 2 && product4.ProductName.StartsWith("母")
-                                         select product4).ToList();
-            var proList41 = proList4.Select(x => new
-            {
-                x.ProductId,
-                x.ProductImage,
-                x.ProductPrice,
-                x.ProductWeight,
-                x.ProductName,
-                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
-                TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
-                number = 0,
-                TypeName = "蟹塘直采"
-            });
+            // 大宗采购母蟹列表
+            var proList2 = productList
+                .Where(x => x.ProductType == 1 && x.ProductName.StartsWith("母"))
+                .Select(x => GetProductModelView(x, totalList));
 
-            //可选配件列表
-            var partList = _csPartsBll.GetModelList(" and PartType=2").Select(x => new
+            // 蟹唐直采公蟹列表
+            var proList3 = productList
+                .Where(x => x.ProductType == 2 && x.ProductName.StartsWith("公"))
+                .Select(x => GetProductModelView(x, totalList));
+
+            // 蟹塘直采母蟹列表
+            var proList4 = productList
+                .Where(x => x.ProductType == 2 && x.ProductName.StartsWith("母"))
+                .Select(x => GetProductModelView(x, totalList));
+
+            // 配件列表
+            var partList = _csPartsBll.GetModelList("").Select(x => new
             {
                 x.PartId,
                 x.PartName,
@@ -189,29 +146,18 @@ namespace Web.Controllers
                 x.PartWeight,
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 number = 0,
-                TypeName = "可选配件"
-            }).ToList();
-
-            //必须选配件列表
-            var partList1 = _csPartsBll.GetModelList(" and PartType=1").Select(x => new
-            {
-                x.PartId,
-                x.PartName,
-                x.PartPrice,
-                x.PartWeight,
-                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
-                number = 0,
-                TypeName = "必选配件"
-            }).ToList();
+                TypeName = ((PartType)x.PartType).ToString(),
+                x.PartType
+            });
 
             return Json(new
             {
-                proList1 = proList11,
-                proList2 = proList21,
-                proList3 = proList31,
-                proList4 = proList41,
-                partList,
-                partList1
+                proList1,
+                proList2,
+                proList3,
+                proList4,
+                partList = partList.Where(x => x.PartType == PartType.可选配件.GetHashCode()),
+                partList1 = partList.Where(x => x.PartType == PartType.必选配件.GetHashCode())
             });
         }
 
@@ -303,9 +249,44 @@ namespace Web.Controllers
             }));
         }
 
-        public IHttpActionResult GetCsOrderList(string openId)
+        public IHttpActionResult GetCsOrderList(int userId = 0)
         {
-            return Json("");
+            if (userId < 1)
+            {
+                return Json(new
+                {
+                    code = ResStatue.No,
+                    data = "缺少必要的参数"
+                });
+            }
+            var list = _csOrderBll.GetModelList($" AND UserId = {userId} AND RowStatus = {RowStatus.有效.GetHashCode()} ");
+            return Json(new
+            {
+                code = ResStatue.Yes,
+                data = list
+            });
+        }
+
+        /// <summary>
+        /// 获取 Product 视图对应实体
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="totalList"></param>
+        /// <returns></returns>
+        private dynamic GetProductModelView(CsProducts x, IEnumerable<CsOrderView.CsOrderTotalByProduct> totalList)
+        {
+            return new
+            {
+                x.ProductId,
+                x.ProductImage,
+                x.ProductPrice,
+                x.ProductWeight,
+                x.ProductName,
+                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
+                TotalNumber = totalList.FirstOrDefault(t => t.ProductId == x.ProductId)?.Total ?? 0,
+                number = 0,
+                TypeName = ((ProductType)x.ProductType).ToString()
+            };
         }
     }
 }
