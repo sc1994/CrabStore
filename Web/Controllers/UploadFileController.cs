@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using Common;
+using System.IO;
+using System.Web.Mvc;
 
 namespace Web.Controllers
 {
@@ -50,7 +47,7 @@ namespace Web.Controllers
             }
             catch (Exception e)
             {
-                LogHelper.Log(e.Message + "--------path:" + path);
+                LogHelper.Log(e.Message + "--------path:" + path, "文件上传异常");
             }
             return Json(new ResModel
             {

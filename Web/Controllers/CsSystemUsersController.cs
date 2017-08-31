@@ -19,10 +19,7 @@ namespace Web.Controllers
             {
                 return Redirect("~/");
             }
-            else
-            {
-                return View();
-            }
+            return View();
         }
 
         public ActionResult GetCsSystemUsersPage(CsSystemUsersView.CsSystemUsersWhere para)
