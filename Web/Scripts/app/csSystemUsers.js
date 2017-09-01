@@ -21,6 +21,15 @@ var vm = new Vue({
             DeleteDescribe: '',
             SysUserId: 0
         },
+        oldInfo: {
+            SysUserName: '',
+            SysUserPassword: '',
+            SysUserType: '2',
+            SysUserState: '1',
+            DeleteDate: '',
+            DeleteDescribe: '',
+            SysUserId: 0
+        },
         rules: {
             SysUserName: [{
                 required: true,
@@ -67,6 +76,15 @@ var vm = new Vue({
                 DeleteDescribe: '',
                 SysUserId: 0
             }
+            this.oldInfo = {
+                SysUserName: '',
+                SysUserPassword: '',
+                SysUserType: '2',
+                SysUserState: '1',
+                DeleteDate: '',
+                DeleteDescribe: '',
+                SysUserId: 0
+            }
         },
         getInfo: function (id) {
             var that = this
@@ -79,6 +97,7 @@ var vm = new Vue({
                 that.dialogVisible = true
                 if (data.code === 1) {
                     that.info = data.data
+                    that.oldInfo = data.data
                 } else {
                     that.$notify.error({
                         title: '错误',
@@ -90,7 +109,9 @@ var vm = new Vue({
         submitInfo: function () {
             var that = this
             that.dialogLoading = true
-            that.info.SysUserPassword = md5(that.info.SysUserPassword)
+            if (that.oldInfo.SysUserPassword != that.info.SysUserPassword) {
+                that.info.SysUserPassword = md5(that.info.SysUserPassword)
+            }
             ajax('/CsSystemUsers/SubmitCsSystemUsers', that.info, function (data) {
                 if (data.code === 1) {
                     that.$notify({

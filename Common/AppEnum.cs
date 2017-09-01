@@ -18,7 +18,7 @@
     public enum ProductType
     {
         大宗采购 = 1,
-        包塘直补 = 2
+        蟹塘直采 = 2
     }
 
     public enum ChoseType

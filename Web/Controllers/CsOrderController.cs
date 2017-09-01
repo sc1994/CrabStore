@@ -60,6 +60,7 @@ namespace Web.Controllers
 
             var parts = new List<CsParts>();
             var products = new List<CsProducts>();
+
             #region 相关配件和蟹
             if (csOrderDetails.Any(x => x.ChoseType == ChoseType.配件.GetHashCode()))
             {

@@ -24,6 +24,5 @@ namespace IDAL
         List<TModel> GetModelList(string where);
 
         List<TModel> GetModelPage(TEnum order, string where, int pageIndex, int pageSize, out int total);
-
     }
 }
