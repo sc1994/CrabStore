@@ -24,5 +24,18 @@ namespace DAL
                          " and Convert(varchar(7),b.OrderDate,23)='" + DateTime.Now.ToString("yyyy-MM") + "' GROUP BY a.ProductId";
             return DbClient.Query<CsOrderView.CsOrderTotalByProduct>(strSql);
         }
+        /// <summary>
+        /// 根据产品编号与月份查询销售总数
+        /// 根据产品编号查询销售总数
+        /// </summary>
+        /// <param name="productId">产品编号</param>
+        /// <param name="nowTime">月份</param>
+        /// <returns></returns>
+        public int TotalNumber(int productId, DateTime nowTime)
+        {
+            var strSql = "select sum(ProductNumber) from CsOrderDetail a inner join CsOrder b on a.OrderId = b.OrderId where a.ProductId= " + productId
+                        + " and Convert(varchar(7),b.OrderDate,23)='" + nowTime.ToString("yyyy-MM") + "'";
+            return DbClient.ExecuteScalar<int>(strSql);
+        }
     }
 }

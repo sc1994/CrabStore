@@ -31,5 +31,16 @@ namespace BLL
         {
             return _dal.TotalNumber(productIds);
         }
+        /// <summary>
+        /// 根据产品编号与月份查询销售总数
+        /// 根据产品编号查询销售总数
+        /// </summary>
+        /// <param name="productId">产品编号</param>
+        /// <param name="nowTime">月份</param>
+        /// <returns></returns>
+        public int TotalNumber(int productId, DateTime nowTime)
+        {
+            return _dal.TotalNumber(productId,nowTime);
+        }
     }
 }
