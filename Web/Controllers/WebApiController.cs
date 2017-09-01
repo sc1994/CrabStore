@@ -249,21 +249,65 @@ namespace Web.Controllers
             if (user != null)
             {
                 //根据userId查询出发件信息和收获地址信息
-                List<CsSend> sendList = _csSendBll.GetModelList(" and UserId=" + user.UserId);
-                List<CsAddress> addressList = _csAddressBll.GetModelList(" and UserId=" + user.UserId);
+                List<CsSend> sendList = _csSendBll.GetModelList(" and UserId=" + user.UserId).OrderBy(x=>x.IsDefault).ThenBy(x=>x.SendId).ToList();
+                List<CsAddress> addressList = _csAddressBll.GetModelList(" and UserId=" + user.UserId).OrderBy(x=>x.IsDefault).ThenBy(x=>x.AddressId).ToList();
+                CsDistrictBll disBLL = new CsDistrictBll();
+                int firstPrice = 0, fllowPrice = 0;
+
+                if (addressList.Count > 0)
+                {
+                    string province = addressList[0].Details.Split('&')[0];
+                    CsDistrict district = disBLL.GetModel(" Name ='"+province+"'");
+                    if (district != null)
+                    {
+                        firstPrice = district.FirstPrice;
+                        fllowPrice = district.FllowPrice;
+                    }
+                }
+                 
                 return Json(new
                 {
                     status = true,
+                    user,
                     sendList,
-                    addressList
+                    addressList,
+                    firstPrice,
+                    fllowPrice
                 });
             }
             return Json(new
             {
                 status = false,
+                user="",
                 sendList = "",
-                addressList = ""
+                addressList = "",
+                firstPrice=0,
+                fllowPrice=0
             });
+        }
+
+        /// <summary>
+        /// 根据openid获取该用户信息
+        /// </summary>
+        /// <param name="openId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IHttpActionResult GetUserInfo(string openId)
+        {
+            CsUsers user = _csUsersBll.GetModel(openId);
+            if (user != null)
+            {
+                return Json(new {
+                    status=true,
+                    user
+                });
+            }else
+            {
+                return Json(new
+                {
+                    status = false
+                });
+            }
         }
 
         [HttpPost]
@@ -282,15 +326,18 @@ namespace Web.Controllers
                     userid = number
                 });
             }
-
-            return Json(new
+            else
             {
-                status = false,
-                userid = 0
-            });
+
+                return Json(new
+                {
+                    status = false,
+                    userid = 0
+                });
+            }
         }
 
-        [HttpPost]
+        [HttpGet]
         public IHttpActionResult GetCityList(int parentId = 0)
         {
             var csDistrictBll = new CsDistrictBll();
@@ -299,13 +346,58 @@ namespace Web.Controllers
             {
                 x.ParentId,
                 x.Id,
-                x.Name
+                x.Name,
+                x.FirstPrice,
+                x.FllowPrice
             }));
+        }
+
+        /// <summary>
+        /// 添加联系地址
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IHttpActionResult AddAddress(CsAddress address)
+        {
+            address.CompanyName = "-";
+            address.Mobile = "-";
+            bool bl= _csAddressBll.ExistsByWhere($" And UserId={address.UserId}");
+            address.IsDefault = bl?1:2;
+            int addressId =_csAddressBll.Add(address);
+            if (addressId > 0)
+            {
+                return Json(new
+                {
+                    status = true,
+                    addressid = addressId
+                });
+            }
+            else
+            {
+
+                return Json(new
+                {
+                    status = false,
+                    addressid = 0
+                });
+            }
         }
 
         public IHttpActionResult GetCsOrderList(string openId)
         {
             return Json("");
+        }
+
+        /// <summary>
+        /// 添加订单
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IHttpActionResult AddOrder()
+        {
+            return Json(new {
+            });
         }
     }
 }

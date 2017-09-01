@@ -1,3 +1,6 @@
+using Model.DBModel;
+using System.Linq;
+
 namespace DAL
 {
     /// <summary>
@@ -5,6 +8,10 @@ namespace DAL
     /// </summary>
     public partial class CsDistrictDal
     {
-
+        public CsDistrict GetModel(string strWhere)
+        {
+            var strSql = "SELECT top 1 * FROM CrabShop.dbo.[CsDistrict] WHERE "+strWhere;
+            return DbClient.Query<CsDistrict>(strSql, null).FirstOrDefault();;
+        }
     }
 }

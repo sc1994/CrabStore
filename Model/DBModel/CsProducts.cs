@@ -41,7 +41,7 @@ namespace Model.DBModel
         public decimal ProductPrice { get; set; }
 
         /// <summary>
-        /// 商品状�1表示正常 0表示下架
+        /// 商品状态 1表示正常 0表示下架
         /// </summary>
         public int ProductState { get; set; }
 
@@ -49,6 +49,11 @@ namespace Model.DBModel
         /// 操作时间
         /// </summary>
         public DateTime OperationDate { get; set; } = ToDateTime("getdate");
+
+        /// <summary>
+        /// 螃蟹库存
+        /// </summary>
+        public int ProductStock { get; set; }
 
     }
 
@@ -80,12 +85,16 @@ namespace Model.DBModel
         /// </summary>
         ProductPrice,
         /// <summary>
-        /// 商品状�1表示正常 0表示下架
+        /// 商品状态 1表示正常 0表示下架
         /// </summary>
         ProductState,
         /// <summary>
         /// 操作时间
         /// </summary>
         OperationDate,
+        /// <summary>
+        /// 螃蟹库存
+        /// </summary>
+        ProductStock,
     }
 }

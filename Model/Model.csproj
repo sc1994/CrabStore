@@ -62,6 +62,7 @@
     <Compile Include="ViewModel\CsProductsView.cs" />
     <Compile Include="ViewModel\CsSystemUsersView.cs" />
     <Compile Include="ViewModel\CsUsersView.cs" />
+    <Compile Include="ViewModel\OrderView.cs" />
     <Compile Include="ViewModel\PageInfo.cs" />
     <Compile Include="ViewModel\StatisticView.cs" />
     <Compile Include="DBModel\CsSend.cs" />

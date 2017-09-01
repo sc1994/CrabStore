@@ -11,5 +11,11 @@ namespace BLL
         public CsDistrictBll() : base(new CsDistrictDal()) { }
 
         public CsDistrictBll(IBaseDal<CsDistrict, CsDistrictEnum, int> dal) : base(dal) { }
+        private readonly CsDistrictDal disDAL = new CsDistrictDal();
+        public CsDistrict GetModel(string strWhere)
+        {
+            return disDAL.GetModel(strWhere);
+        }
+
     }
 }
