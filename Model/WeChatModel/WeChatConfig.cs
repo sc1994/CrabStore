@@ -5,7 +5,6 @@
 
 using Common;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 
 namespace Model.WeChatModel
@@ -77,6 +76,16 @@ namespace Model.WeChatModel
         /// 获取预支付Id Url
         /// </summary>
         public const string PrepayInfoUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+
+        /// <summary>
+        /// 微信服务器地址
+        /// </summary>
+        public const string WeChatHost = "http://test.osintell.cn";
+
+        /// <summary>
+        /// 价格变更的模板
+        /// </summary>
+        public const string TemplatePrice = "k9tbEwbpXtySIOJLUb9l7YPeJhFUQKlwVwmHI6D6G1U";
 
         /// <summary>
         /// AccessToken 的存放位置, 每次使用之前需要验证的 token 是否过期
@@ -158,8 +167,6 @@ namespace Model.WeChatModel
         public string trade_type { get; set; } = string.Empty;
     }
 
-
-
     public class AllUser
     {
         // ReSharper disable once InconsistentNaming
@@ -178,8 +185,6 @@ namespace Model.WeChatModel
         public string[] openid { get; set; }
     }
 
-
-
     public class TemplateResponse
     {
         // ReSharper disable once InconsistentNaming
@@ -189,5 +194,4 @@ namespace Model.WeChatModel
         // ReSharper disable once InconsistentNaming
         public string msgid { get; set; }
     }
-
 }

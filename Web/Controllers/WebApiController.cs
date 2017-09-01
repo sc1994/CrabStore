@@ -37,7 +37,7 @@ namespace Web.Controllers
                                          select product).ToList();
 
             strJson.Append(",\"priceList1\":[");
-            for (int i = 0; i < (product1.Count() / 2); i++)
+            for (int i = 0; i < (product1.Count / 2); i++)
             {
                 strJson.Append("{\"pn1\":\"" + product1[i].ProductName + "\",\"pv1\":" + product1[i].ProductPrice + ",");
                 strJson.Append("\"pn2\":\"" + product1[i + 6].ProductName + "\",\"pv2\":" + product1[i + 6].ProductPrice + "}");

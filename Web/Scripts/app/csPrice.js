@@ -61,7 +61,8 @@ var vm = new Vue({
                 }
                 subModel.push({
                     ProductId: p.ProductId,
-                    ProductPrice: p.ProductPrice
+                    ProductPrice: p.ProductPrice,
+                    ProductStock: p.ProductStock
                 })
             })
             if (count > 0) {
@@ -111,16 +112,16 @@ var vm = new Vue({
             that.planDialog = true
             that.planList = []
             that.percentage = 0
-            ajax('http://wx.osintell.com/WeChatApi/GetAllOpenId', '', function (list) {
+            ajax(host + '/WeChatApi/GetAllOpenId', '', function (list) {
                 list.forEach((openId) => {
-                    ajax('http://wx.osintell.com/WeChatApi/SendTemplateMsg', 'body=' + JSON.stringify({
+                    ajax(host + '/WeChatApi/SendTemplateMsg', 'body=' + JSON.stringify({
                         touser: openId,
-                        template_id: 'k9tbEwbpXtySIOJLUb9l7YPeJhFUQKlwVwmHI6D6G1U',
-                        url: '',
+                        template_id: tempId,
+                        url: 'http://dzx.osintell.cn/',
                         topcolor: "#FF0000",
                         data: {
                             first: {
-                                value: '商品降价通知',
+                                value: '商品降价通知'
                             },
                             keyword1: {
                                 value: '蟹'

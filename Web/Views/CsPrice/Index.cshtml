@@ -32,9 +32,16 @@
             </el-table-column>
             <el-table-column label="螃蟹价格">
                 <template scope="scope">
-                    <el-input type="number" style="width:40%"
-                        v-model="scope.row.ProductPrice" placeholder="请输入价格">
+                    <el-input type="number" style="width:50%"
+                              v-model="scope.row.ProductPrice" placeholder="请输入价格">
                     </el-input>&nbsp;&nbsp;￥
+                </template>
+            </el-table-column>
+            <el-table-column label="库存">
+                <template scope="scope">
+                    <el-input type="number" style="width:40%"
+                              v-model="scope.row.ProductStock" placeholder="请输入库存">
+                    </el-input>&nbsp;&nbsp;个
                 </template>
             </el-table-column>
             <el-table-column label="商品状态" prop="ProductState" width="130px" sortable>
@@ -139,5 +146,9 @@
 </div>
 
 @section script{
+    <script>
+        host = '@ViewBag.Host';
+        tempId = '@ViewBag.TempId';
+    </script>
     <script src="../../Scripts/app/csPrice.js"></script>
 }

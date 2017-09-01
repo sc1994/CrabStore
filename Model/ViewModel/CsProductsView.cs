@@ -16,7 +16,8 @@
             public string ProductName { get; set; } = string.Empty;
             public string ProductImage { get; set; } = string.Empty;
             public string ProductWeight { get; set; } = string.Empty;
-            public string ProductPrice { get; set; } = string.Empty;
+            public decimal ProductPrice { get; set; }
+            public decimal ProductStock { get; set; }
             public string ProductState { get; set; } = string.Empty;
             public string OperationDate { get; set; } = string.Empty;
         }

@@ -7,6 +7,7 @@ using BLL;
 using Common;
 using Model.DBModel;
 using Model.ViewModel;
+using Model.WeChatModel;
 using SqlHelper;
 
 namespace Web.Controllers
@@ -17,6 +18,8 @@ namespace Web.Controllers
         // GET: CsPrice
         public ActionResult Index()
         {
+            ViewBag.Host = WeChatConfig.WeChatHost;
+            ViewBag.TempId = WeChatConfig.TemplatePrice;
             return View();
         }
 
@@ -27,6 +30,15 @@ namespace Web.Controllers
             {
                 var sh = new SqlHelper<CsProducts>();
                 sh.AddUpdate(CsProductsEnum.ProductPrice.ToString(), product.ProductPrice);
+                sh.AddUpdate(CsProductsEnum.ProductStock.ToString(), product.ProductStock);
+                if (product.ProductStock <= 0)
+                {
+                    sh.AddUpdate(CsProductsEnum.ProductState.ToString(), ProductState.已下架.GetHashCode());
+                }
+                else
+                {
+                    sh.AddUpdate(CsProductsEnum.ProductState.ToString(), ProductState.在售.GetHashCode());
+                }
                 sh.AddUpdate(CsProductsEnum.OperationDate.ToString(), DateTime.Now);
                 sh.AddWhere(CsProductsEnum.ProductId, product.ProductId);
                 if (sh.Update() > 0)
