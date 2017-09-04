@@ -390,14 +390,30 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// 添加订单
+        /// 添加订单，发起支付
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IHttpActionResult AddOrder()
+        public IHttpActionResult AddOrder(OrderModel order)
         {
-            return Json(new {
-            });
+            int orderId = _csOrderBll.AddOrder(order);//获得生成订单编号
+            if (orderId > 0)
+            {
+                return Json(new
+                {
+                    status=true,
+                    orderid=orderId
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = false,
+                    orderid = orderId
+                });
+            }
+            
         }
     }
 }

@@ -139,6 +139,86 @@ namespace DAL
                 return 0;
             }
         }
+
+        /// <summary>
+        /// 执行事务操作
+        /// </summary>
+        /// <returns></returns>
+        public static object ExecuteScalar(SqlConnection connection, SqlTransaction trans,string SQLString, params SqlParameter[] cmdParms)
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                try
+                {
+                    PrepareCommand(cmd, connection, trans, SQLString, cmdParms);
+                    object obj = cmd.ExecuteScalar();
+                    cmd.Parameters.Clear();
+                    if ((Object.Equals(obj, null)) || (Object.Equals(obj, System.DBNull.Value)))
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return obj;
+                    }
+                }
+                catch (SqlException e)
+                {
+                    //trans.Rollback();
+                    //LogHelper.Log("sql:" + SQLString + "; msg:" + e.Message, "执行SQL异常");
+                    throw new Exception(e.Message + "---------SQL:" + SQLString);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 2012-2-29新增重载，执行SQL语句，返回影响的记录数
+        /// </summary>
+        /// <param name="connection">SqlConnection对象</param>
+        /// <param name="trans">SqlTransaction对象</param>
+        /// <param name="SQLString">SQL语句</param>
+        /// <returns>影响的记录数</returns>
+        public static int ExecuteSql(SqlConnection connection, SqlTransaction trans, string SQLString, params SqlParameter[] cmdParms)
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                try
+                {
+                    PrepareCommand(cmd, connection, trans, SQLString, cmdParms);
+                    int rows = cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+                    return rows;
+                }
+                catch (SqlException e)
+                {
+                    //trans.Rollback();
+                    //LogHelper.Log("sql:" + SQLString + "; msg:" + e.Message, "执行SQL异常");
+                    throw new Exception(e.Message + "---------SQL:" + SQLString);
+                }
+            }
+        }
+        private static void PrepareCommand(SqlCommand cmd, SqlConnection conn, SqlTransaction trans, string cmdText, SqlParameter[] cmdParms)
+        {
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+            cmd.Connection = conn;
+            cmd.CommandText = cmdText;
+            if (trans != null)
+                cmd.Transaction = trans;
+            cmd.CommandType = CommandType.Text;//cmdType;
+            if (cmdParms != null)
+            {
+                foreach (SqlParameter parameter in cmdParms)
+                {
+                    if ((parameter.Direction == ParameterDirection.InputOutput || parameter.Direction == ParameterDirection.Input) &&
+                        (parameter.Value == null))
+                    {
+                        parameter.Value = DBNull.Value;
+                    }
+                    cmd.Parameters.Add(parameter);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -157,6 +237,9 @@ namespace DAL
                 throw new NoNullAllowedException(nameof(ConnString));
             return new SqlConnection(ConnString);
         }
+        
     }
+
+    
     #endregion
 }
