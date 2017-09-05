@@ -249,22 +249,22 @@ namespace Web.Controllers
             if (user != null)
             {
                 //根据userId查询出发件信息和收获地址信息
-                List<CsSend> sendList = _csSendBll.GetModelList(" and UserId=" + user.UserId).OrderBy(x=>x.IsDefault).ThenBy(x=>x.SendId).ToList();
-                List<CsAddress> addressList = _csAddressBll.GetModelList(" and UserId=" + user.UserId).OrderBy(x=>x.IsDefault).ThenBy(x=>x.AddressId).ToList();
+                List<CsSend> sendList = _csSendBll.GetModelList(" and UserId=" + user.UserId).OrderBy(x => x.IsDefault).ThenBy(x => x.SendId).ToList();
+                List<CsAddress> addressList = _csAddressBll.GetModelList(" and UserId=" + user.UserId).OrderBy(x => x.IsDefault).ThenBy(x => x.AddressId).ToList();
                 CsDistrictBll disBLL = new CsDistrictBll();
                 int firstPrice = 0, fllowPrice = 0;
 
                 if (addressList.Count > 0)
                 {
                     string province = addressList[0].Details.Split('&')[0];
-                    CsDistrict district = disBLL.GetModel(" Name ='"+province+"'");
+                    CsDistrict district = disBLL.GetModel(" Name ='" + province + "'");
                     if (district != null)
                     {
                         firstPrice = district.FirstPrice;
                         fllowPrice = district.FllowPrice;
                     }
                 }
-                 
+
                 return Json(new
                 {
                     status = true,
@@ -278,11 +278,11 @@ namespace Web.Controllers
             return Json(new
             {
                 status = false,
-                user="",
+                user = "",
                 sendList = "",
                 addressList = "",
-                firstPrice=0,
-                fllowPrice=0
+                firstPrice = 0,
+                fllowPrice = 0
             });
         }
 
@@ -297,11 +297,13 @@ namespace Web.Controllers
             CsUsers user = _csUsersBll.GetModel(openId);
             if (user != null)
             {
-                return Json(new {
-                    status=true,
+                return Json(new
+                {
+                    status = true,
                     user
                 });
-            }else
+            }
+            else
             {
                 return Json(new
                 {
@@ -362,9 +364,9 @@ namespace Web.Controllers
         {
             address.CompanyName = "-";
             address.Mobile = "-";
-            bool bl= _csAddressBll.ExistsByWhere($" And UserId={address.UserId}");
-            address.IsDefault = bl?1:2;
-            int addressId =_csAddressBll.Add(address);
+            bool bl = _csAddressBll.ExistsByWhere($" And UserId={address.UserId}");
+            address.IsDefault = bl ? 1 : 2;
+            int addressId = _csAddressBll.Add(address);
             if (addressId > 0)
             {
                 return Json(new
@@ -401,8 +403,8 @@ namespace Web.Controllers
             {
                 return Json(new
                 {
-                    status=true,
-                    orderid=orderId
+                    status = true,
+                    orderid = orderId
                 });
             }
             else
@@ -413,7 +415,48 @@ namespace Web.Controllers
                     orderid = orderId
                 });
             }
-            
+
+        }
+
+        /// <summary>
+        /// 修改订单状态
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderState"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IHttpActionResult UpdateOrderState(CsOrder order)
+        {
+
+             int number = _csOrderBll.UpdateOrderState(order.OrderId,order.OrderState);            
+            //int number = 0;
+            if (number > 0)
+            {
+                return Json(new { status = true });
+            }
+            else
+            {
+                return Json(new { status = false });
+            }
+
+        }
+
+        /// <summary>
+        /// 修改预支付信息
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        public IHttpActionResult UpdatePrepaymentId(CsOrder order)
+        {
+            int number = _csOrderBll.UpdatePrepaymentId(order.OrderId, order.PrepaymentId);
+            if (number > 0)
+            {
+                return Json(new { status = true });
+            }
+            else
+            {
+                return Json(new { status = false });
+            }
         }
     }
 }

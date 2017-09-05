@@ -43,9 +43,38 @@ namespace BLL
             return _dal.TotalNumber(productId,nowTime);
         }
 
+        /// <summary>
+        /// 添加订单
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public int AddOrder(OrderModel order)
         {
             return _dal.AddOrder(order);
         }
+
+        /// <summary>
+        /// 订单添加预支付编号
+        /// </summary>
+        /// <param name="orderId">订单编号</param>
+        /// <param name="prepaymentId">预支付编号</param>
+        /// <returns></returns>
+        public int UpdatePrepaymentId(int orderId,string prepaymentId)
+        {
+            return _dal.UpdatePrepaymentId(orderId, prepaymentId);
+        }
+
+        /// <summary>
+        /// 订单修改状态
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="orderState"></param>
+        /// <returns></returns>
+        public int UpdateOrderState(int orderId,int orderState)
+        {
+            return _dal.UpdateOrderState(orderId, orderState);
+
+        }
+
     }
 }

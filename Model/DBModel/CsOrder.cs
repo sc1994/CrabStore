@@ -100,6 +100,11 @@ namespace Model.DBModel
         /// </summary>
         public string DeleteDescribe { get; set; } = string.Empty;
 
+        /// <summary>
+        /// 预支付编号
+        /// </summary>
+        public string PrepaymentId { get; set; } = string.Empty;
+
     }
 
 
@@ -177,5 +182,9 @@ namespace Model.DBModel
         /// 删除描述
         /// </summary>
         DeleteDescribe,
+        /// <summary>
+        /// 预支付编号
+        /// </summary>
+        PrepaymentId,
     }
 }

@@ -74,7 +74,7 @@ namespace DAL
                         _csOrder.BillWeight = order.sendweight;
                         _csOrder.RowStatus = 1;
                         StringBuilder strSql1 = new StringBuilder();
-                        strSql1.Append("insert into CsOrder (OrderNumber,UserId,TotalMoney,DiscountMoeny,ActualMoney,OrderDate,OrderState,OrderAddress,");
+                        strSql1.Append("insert into CsOrder (OrderNumber,UserId,TotalMoney,DiscountMoney,ActualMoney,OrderDate,OrderState,OrderAddress,");
                         strSql1.Append("SendAddress,CargoNumber,OrderCopies,TotalWeight,BillWeight,RowStatus ) values (@OrderNumber,");
                         strSql1.Append("@UserId,@TotalMoney,@DiscountMoney,@ActualMoney,@OrderDate,@OrderState,@OrderAddress,@SendAddress,@CargoNumber,@OrderCopies,");
                         strSql1.Append("@TotalWeight,@BillWeight,@RowStatus);select @@Identity;");
@@ -84,7 +84,7 @@ namespace DAL
                             new SqlParameter("@UserId",SqlDbType.Int,4),
                             new SqlParameter("@TotalMoney",SqlDbType.Decimal,18),
                             new SqlParameter("@DiscountMoney",SqlDbType.Decimal,18),
-                            new SqlParameter("@ActualMoeny",SqlDbType.Decimal,18),
+                            new SqlParameter("@ActualMoney",SqlDbType.Decimal,18),
                             new SqlParameter("@OrderDate",SqlDbType.DateTime),
                             new SqlParameter("@OrderState",SqlDbType.Int,4),
                             new SqlParameter("@OrderAddress",SqlDbType.NVarChar,500),
@@ -141,17 +141,20 @@ namespace DAL
                                 parameter4[1].Value = cart.id;
                                 number += DbClient.ExecuteSql(conn, trans, strSql4.ToString(), parameter4);
                             }
-                            foreach (CartItem cart in order.partNumList)
+                            if (order.partNumList != null)
                             {
-                                CsOrderDetail orderDetail = new CsOrderDetail();
-                                orderDetail.OrderId = orderid;
-                                orderDetail.ProductId = cart.id;
-                                orderDetail.UnitPrice = cart.price;
-                                orderDetail.ProductNumber = cart.num;
-                                orderDetail.TotalPrice = (cart.price * cart.num);
-                                orderDetail.ChoseType = 2;
-                                detailList.Add(orderDetail);
-                                totalNumber++;
+                                foreach (CartItem cart in order.partNumList)
+                                {
+                                    CsOrderDetail orderDetail = new CsOrderDetail();
+                                    orderDetail.OrderId = orderid;
+                                    orderDetail.ProductId = cart.id;
+                                    orderDetail.UnitPrice = cart.price;
+                                    orderDetail.ProductNumber = cart.num;
+                                    orderDetail.TotalPrice = (cart.price * cart.num);
+                                    orderDetail.ChoseType = 2;
+                                    detailList.Add(orderDetail);
+                                    totalNumber++;
+                                }
                             }
                             foreach (PartItem part in order.partList)
                             {
@@ -168,7 +171,7 @@ namespace DAL
                             foreach (CsOrderDetail detail in detailList)
                             {
                                 StringBuilder strSql2 = new StringBuilder();
-                                strSql2.Append("insert into CsOrderDetail (OrderId,ProdcutId,UnitPrice,ProductNumber,TotalPrice,ChoseType )");
+                                strSql2.Append("insert into CsOrderDetail (OrderId,ProductId,UnitPrice,ProductNumber,TotalPrice,ChoseType )");
                                 strSql2.Append("values(@OrderId,@ProductId,@UnitPrice,@ProductNumber,@TotalPrice,@ChoseType)");
                                 SqlParameter[] parameter2 =
                                 {
@@ -193,7 +196,7 @@ namespace DAL
                             strSql3.Append("update CsUsers set UserBalance=UserBalance+@Balance,TotalWight=TotalWight+@Weight where UserId=@UserId ");
                             SqlParameter[] parameter3 =
                             {
-                                new SqlParameter("@Blance",SqlDbType.Decimal,18),
+                                new SqlParameter("@Balance",SqlDbType.Decimal,18),
                                 new SqlParameter("@Weight",SqlDbType.Decimal,18),
                                 new SqlParameter("@UserId",SqlDbType.Int,4)
                             };
@@ -209,7 +212,7 @@ namespace DAL
                             SqlParameter[] parameter5 =
                             {
                                 new SqlParameter("@UserId",SqlDbType.Int,4),
-                                new SqlParameter("@RebateMoeny",SqlDbType.Decimal,18),
+                                new SqlParameter("@RebateMoney",SqlDbType.Decimal,18),
                                 new SqlParameter("@RebateWeight",SqlDbType.Decimal,18),
                                 new SqlParameter("@RebateTime",SqlDbType.DateTime)
                             };
