@@ -64,6 +64,7 @@ var vm = new Vue({
                     ProductPrice: p.ProductPrice,
                     ProductStock: p.ProductStock
                 })
+                return true;
             })
             if (count > 0) {
                 that.$notify.error({
@@ -117,7 +118,7 @@ var vm = new Vue({
                     ajax(host + '/WeChatApi/SendTemplateMsg', 'body=' + JSON.stringify({
                         touser: openId,
                         template_id: tempId,
-                        url: 'http://dzx.osintell.cn/',
+                        url: host,
                         topcolor: "#FF0000",
                         data: {
                             first: {
