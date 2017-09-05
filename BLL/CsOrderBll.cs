@@ -42,5 +42,10 @@ namespace BLL
         {
             return _dal.TotalNumber(productId,nowTime);
         }
+
+        public int AddOrder(OrderModel order)
+        {
+            return _dal.AddOrder(order);
+        }
     }
 }
