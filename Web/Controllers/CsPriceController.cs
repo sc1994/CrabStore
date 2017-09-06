@@ -81,6 +81,7 @@ namespace Web.Controllers
             sh.AddShow(CsPriceEnum.PriceId);
             sh.AddShow(CsProductsEnum.ProductName);
             sh.AddShow(CsProductsEnum.ProductType);
+            sh.AddShow(CsProductsEnum.ProductNumber);
             sh.AddShow(CsProductsEnum.ProductPrice + " AS CurrentPrice");
 
             sh.AddJoin(JoinEnum.LeftJoin, "CsProducts", "product", "ProductId", "ProductId");
@@ -107,7 +108,7 @@ namespace Web.Controllers
             {
                 data = list.Select(x => new CsPriceView.CsPricePage
                 {
-                    ProductName = $"{x.ProductName}( {x.ProductId} )",
+                    ProductName = $"{x.ProductName}( {x.ProductNumber} )",
                     CurrentPrice = "￥ " + x.CurrentPrice.ToDecimal().ToString("N2"),
                     PriceNumber = "￥ " + x.PriceNumber.ToDecimal().ToString("N2"),
                     PriceDate = x.PriceDate.ToDate().ToString("yyyy-M-d HH:mm:ss"),

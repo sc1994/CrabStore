@@ -21,7 +21,5 @@
             public string ProductState { get; set; } = string.Empty;
             public string OperationDate { get; set; } = string.Empty;
         }
-
-
     }
 }

@@ -50,6 +50,10 @@ namespace Model.ViewModel
             public string UserPhone { get; set; } = string.Empty;
             public string OrderAddress { get; set; } = string.Empty;
             public string OrderDelivery { get; set; } = string.Empty;
+            public string OrderCopies { get; set; } = string.Empty;
+            public string TotalWeight { get; set; } = string.Empty;
+            public string BillWeight { get; set; } = string.Empty;
+            public string SendAddress { get; set; } = string.Empty;
             public List<CsOrderDetailExtend> CsOrderDetails { get; set; } = new List<CsOrderDetailExtend>();
         }
 
@@ -125,11 +129,12 @@ namespace Model.ViewModel
 
         public class CsOrderImport
         {
-            public string 订单编号 { get; set; } = string.Empty;
+            public string 发货人 { get; set; } = string.Empty;
+            public string 发货人电话 { get; set; } = string.Empty;
             public string 收货人 { get; set; } = string.Empty;
-            public string 联系电话 { get; set; } = string.Empty;
+            public string 收货人电话 { get; set; } = string.Empty;
             public string 收货地址 { get; set; } = string.Empty;
-            public string 商品名称 { get; set; } = string.Empty;
+            public string 商品编码 { get; set; } = string.Empty;
             public string 种类 { get; set; } = string.Empty;
             public string 数量 { get; set; } = string.Empty;
             public string 单价 { get; set; } = string.Empty;

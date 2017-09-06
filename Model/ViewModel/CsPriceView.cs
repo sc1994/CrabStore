@@ -26,6 +26,7 @@ namespace Model.ViewModel
             public string PriceNumber { get; set; } = string.Empty;
             public string PriceDate { get; set; } = string.Empty;
             public string ProductType { get; set; } = string.Empty;
+            public string ProductNumber { get; set; } = string.Empty;
         }
     }
 }

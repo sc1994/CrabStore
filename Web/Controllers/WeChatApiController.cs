@@ -277,6 +277,7 @@ namespace Web.Controllers
                     data = $"成功消息发送给{openId}"
                 });
             }
+            LogHelper.Log(res, "模板消息发送失败");
             if (data.errcode.ToInt() == -1)
             {
                 return Json(new
@@ -285,7 +286,6 @@ namespace Web.Controllers
                     data = $"消息发送给{openId}时发生异常, 系统繁忙"
                 });
             }
-            LogHelper.Log(res, "模板消息发送失败");
             return Json(new
             {
                 code = 0,

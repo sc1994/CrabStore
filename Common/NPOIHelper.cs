@@ -150,36 +150,5 @@ namespace Common
             }
 
         }
-
-        /// <summary>
-        /// 合并单元格
-        /// </summary>
-        /// <param name="sheet">要合并单元格所在的sheet</param>
-        /// <param name="rowstart">开始行的索引</param>
-        /// <param name="rowend">结束行的索引</param>
-        /// <param name="colstart">开始列的索引</param>
-        /// <param name="colend">结束列的索引</param>
-        public static void SetCellRangeAddress(ISheet sheet, int rowstart, int rowend, int colstart, int colend)
-        {
-            var cellRangeAddress = new CellRangeAddress(rowstart, rowend, colstart, colend);
-            sheet.AddMergedRegion(cellRangeAddress);
-        }
-
-        /// <summary>
-        /// 设置下拉选项
-        /// </summary>
-        /// <param name="sheet">sheet</param>
-        /// <param name="rowstart">开始行的索引</param>
-        /// <param name="rowend">结束行的索引</param>
-        /// <param name="colstart">开始列的索引</param>
-        /// <param name="colend">结束列的索引</param>
-        /// <param name="list">下拉框中的数据</param>
-        public static void SetCellRangeAddressList(ISheet sheet, int rowstart, int rowend, int colstart, int colend, List<string> list)
-        {
-            var constraint = DVConstraint.CreateExplicitListConstraint(list.ToArray());
-            var regions = new CellRangeAddressList(rowstart, rowend, colstart, colend);
-            var datalist = new HSSFDataValidation(regions, constraint);
-            sheet.AddValidationData(datalist);
-        }
     }
 }

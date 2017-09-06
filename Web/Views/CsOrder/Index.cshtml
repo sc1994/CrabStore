@@ -147,10 +147,22 @@
                     <el-col :span="3">{{oldInfo.ActualMoney}}</el-col>
                 </el-row>
                 <el-row>
+                    <el-col :span="4" class="layout-right">份数：</el-col>
+                    <el-col :span="3">{{oldInfo.OrderCopies}}</el-col>
+                    <el-col :span="3" class="layout-right">总重量：</el-col>
+                    <el-col :span="3">{{oldInfo.TotalWeight}}</el-col>
+                    <el-col :span="3" class="layout-right">计费重量：</el-col>
+                    <el-col :span="3">{{oldInfo.BillWeight}}</el-col>
+                </el-row>
+                <el-row>
                     <el-col :span="4" class="layout-right">下单用户：</el-col>
                     <el-col :span="8">{{oldInfo.UserName}}</el-col>
                     <el-col :span="4" class="layout-right">联系方式：</el-col>
                     <el-col :span="8">{{oldInfo.UserPhone}}</el-col>
+                </el-row>
+                <el-row>
+                    <el-col span="4" class="layout-right">寄件信息：</el-col>
+                    <el-col span="20">{{oldInfo.SendAddress}}</el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">地址信息：</el-col>
