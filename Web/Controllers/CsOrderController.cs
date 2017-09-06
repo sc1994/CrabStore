@@ -125,7 +125,7 @@ namespace Web.Controllers
                 UserPhone = user.UserPhone,
                 CsOrderDetails = csOrderDetailExtends,
                 OrderDelivery = csOrder.OrderDelivery,
-                OrderAddress = csOrder.OrderAddress.Trim('$').Replace("$$","$").Replace("$", "//"),
+                OrderAddress = csOrder.OrderAddress.Trim('$').Replace("$$", "$").Replace("$", "//"),
                 SendAddress = csOrder.SendAddress.Trim('$').Replace("$$", "$").Replace("$", "//")
             });
         }
@@ -297,7 +297,7 @@ namespace Web.Controllers
                     Data = "当前Excel中没有数据,请确认文件是否包含规定完整的数据"
                 });
             }
-            var users = _csUsersBll.GetModelList($" AND (UserName IN ('{string.Join("','", orders.Select(x => x.收货人))}') OR UserPhone IN ('{string.Join("','", orders.Select(x => x.联系电话))}'))");
+            var users = _csUsersBll.GetModelList($" AND (UserName IN ('{string.Join("','", orders.Select(x => x.收货人))}') OR UserPhone IN ('{string.Join("','", orders.Select(x => x.收货人电话))}'))");
             var products = _csProductsBll.GetModelList("");
             var parts = _csPartsBll.GetModelList("");
             var data = new List<CsOrderView.CsOrderAndDetail>();
@@ -331,12 +331,8 @@ namespace Web.Controllers
             }
 
             // 将尾部空行删除只保留一个
-            foreach (var end in endEmpty)
-            {
-                orders.RemoveAt(end);
-            }
+            endEmpty.ForEach(x => orders.RemoveAt(x));
             orders.Add(new CsOrderView.CsOrderImport());
-
 
             foreach (var order in orders)
             {
@@ -379,21 +375,22 @@ namespace Web.Controllers
                 }
                 if (type == ExcelRow.Order)
                 {
-                    var user = users.FirstOrDefault(x => x.UserPhone == order.联系电话 && x.UserName == order.收货人);
+                    var user = users.FirstOrDefault(x => x.UserPhone == order.收货人电话 && x.UserName == order.收货人);
                     int userId;
                     if (user == null)
                     {
-                        userId = _csUsersBll.Add(new CsUsers
+                        user = new CsUsers
                         {
                             UserSex = "先生",
                             UserName = order.收货人,
-                            UserPhone = order.联系电话,
+                            UserPhone = order.收货人电话,
                             OpenId = "",
                             Remarks = "",
                             TotalWight = 0,
                             UserBalance = 0,
                             UserState = 1
-                        });
+                        };
+                        userId = _csUsersBll.Add(user);
                     }
                     else
                     {
@@ -408,7 +405,8 @@ namespace Web.Controllers
                         UserId = userId,
                         ActualMoney = order.实收金额.ToDecimal(),
                         OrderDelivery = order.货运单号,
-                        OrderAddress = order.收货地址,
+                        SendAddress = $"{order.发货人}${order.发货人电话}",
+                        OrderAddress = $"${order.收货人}" + $"({user.UserSex})$${order.收货人电话}${order.收货地址})",
                         DeleteDate = "1900-1-1".ToDate(),
                         DiscountMoney = order.总金额.ToDecimal() - order.实收金额.ToDecimal(),
                         OrderDate = DateTime.Now,
@@ -565,6 +563,8 @@ namespace Web.Controllers
             sh.AddShow(CsOrderEnum.SendAddress);
             sh.AddShow(CsOrderEnum.BillWeight);
             sh.AddShow(CsOrderEnum.TotalWeight);
+            sh.AddShow(CsOrderEnum.CargoNumber);
+            sh.AddShow(CsOrderEnum.OrderCopies);
 
             sh.AddJoin(JoinEnum.LeftJoin, "CsUsers", "cu", "UserId", "UserId");
 
@@ -625,7 +625,9 @@ namespace Web.Controllers
                 row.总金额.IsNullOrEmpty() &&
                 row.收货人.IsNullOrEmpty() &&
                 row.收货地址.IsNullOrEmpty() &&
-                row.联系电话.IsNullOrEmpty() &&
+                row.收货人电话.IsNullOrEmpty() &&
+                row.发货人.IsNullOrEmpty() &&
+                row.发货人电话.IsNullOrEmpty() &&
                 !row.商品编码.IsNullOrEmpty() &&
                 !row.单价.IsNullOrEmpty() &&
                 !row.数量.IsNullOrEmpty()
@@ -637,7 +639,9 @@ namespace Web.Controllers
                 row.总金额.IsNullOrEmpty() &&
                 row.收货人.IsNullOrEmpty() &&
                 row.收货地址.IsNullOrEmpty() &&
-                row.联系电话.IsNullOrEmpty() &&
+                row.收货人电话.IsNullOrEmpty() &&
+                row.发货人.IsNullOrEmpty() &&
+                row.发货人电话.IsNullOrEmpty() &&
                 row.货运单号.IsNullOrEmpty() &&
                 row.商品编码.IsNullOrEmpty() &&
                 row.单价.IsNullOrEmpty() &&
@@ -649,7 +653,12 @@ namespace Web.Controllers
                 !row.总金额.IsNullOrEmpty() &&
                 !row.收货人.IsNullOrEmpty() &&
                 !row.收货地址.IsNullOrEmpty() &&
-                !row.联系电话.IsNullOrEmpty())
+                !row.收货人电话.IsNullOrEmpty() &&
+                !row.发货人.IsNullOrEmpty() &&
+                !row.发货人电话.IsNullOrEmpty() &&
+                !row.商品编码.IsNullOrEmpty() &&
+                !row.单价.IsNullOrEmpty() &&
+                !row.数量.IsNullOrEmpty())
             {
                 return ExcelRow.Order;
             }
