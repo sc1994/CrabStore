@@ -73,8 +73,16 @@ namespace BLL
         public int UpdateOrderState(int orderId,int orderState)
         {
             return _dal.UpdateOrderState(orderId, orderState);
-
         }
 
+        /// <summary>
+        /// 根据openId查询订单列表
+        /// </summary>
+        /// <param name="openId"></param>
+        /// <returns></returns>
+        public List<CsOrder> GetModelListByOpenId(string openId)
+        {
+            return _dal.GetModelListByOpenId(openId);
+        }
     }
 }

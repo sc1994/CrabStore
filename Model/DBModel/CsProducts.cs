@@ -55,6 +55,11 @@ namespace Model.DBModel
         /// </summary>
         public int ProductStock { get; set; }
 
+        /// <summary>
+        /// 商品编码
+        /// </summary>
+        public string ProductNumber { get; set; } = string.Empty;
+
     }
 
 
@@ -96,5 +101,9 @@ namespace Model.DBModel
         /// 螃蟹库存
         /// </summary>
         ProductStock,
+        /// <summary>
+        /// 商品编码
+        /// </summary>
+        ProductNumber,
     }
 }

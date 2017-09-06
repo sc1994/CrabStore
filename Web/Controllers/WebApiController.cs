@@ -30,7 +30,7 @@ namespace Web.Controllers
             products = _csProductsBll.GetModelList("");
             StringBuilder strJson = new StringBuilder();
             strJson.Append("{");
-            strJson.Append("\"priceDate\":\"" + products.FirstOrDefault().OperationDate.ToString("yyyy年MM月dd日") + "\"");
+            strJson.Append("\"priceDate\":\"" + products.FirstOrDefault().OperationDate.ToString("MM-dd") + "\"");
             //大宗采购蟹
             List<CsProducts> product1 = (from product in products
                                          where product.ProductType == 1
@@ -318,8 +318,21 @@ namespace Web.Controllers
             user.UserBalance = 0;
             user.TotalWight = 0;
             user.UserState = 1;
-
-            int number = _csUsersBll.Add(user);
+            int number = 0;
+            //根据手机号先关联
+            CsUsers oldUser = _csUsersBll.GetModelByTelPhone(user.UserPhone);
+            if (oldUser != null)
+            {
+                oldUser.OpenId = user.OpenId;
+                bool bl = _csUsersBll.Update(oldUser);
+                if (bl)
+                {
+                    number = oldUser.UserId;
+                }
+            }else
+            {
+                number = _csUsersBll.Add(user);
+            }
             if (number > 0)
             {
                 return Json(new
@@ -386,9 +399,34 @@ namespace Web.Controllers
             }
         }
 
+        /// <summary>
+        /// 根据开发编号获取本人订单
+        /// </summary>
+        /// <param name="openId"></param>
+        /// <returns></returns>
         public IHttpActionResult GetCsOrderList(string openId)
         {
-            return Json("");
+            var list = _csOrderBll.GetModelListByOpenId(openId).OrderByDescending(x=>x.OrderId);
+            return Json(list.Select(x => new {
+                x.OrderId,
+                x.OrderNumber,
+                x.UserId,
+                x.TotalMoney,
+                x.DiscountMoney,
+                x.ActualMoney,
+                OrderDate=x.OrderDate.ToString("yyyy-MM-dd"),
+                x.OrderState,
+                consignee =x.OrderAddress.Split('$')[1],
+                telphone =x.OrderAddress.Split('$')[3],
+                address =x.OrderAddress.Split('$')[4],                
+                x.SendAddress,
+                x.OrderDelivery,
+                x.OrderCopies,
+                x.TotalWeight,
+                x.BillWeight,
+                x.ExpressMoney,
+                x.ServiceMoney
+            }));
         }
 
         /// <summary>

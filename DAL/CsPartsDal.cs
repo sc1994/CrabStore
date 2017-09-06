@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsParts] (");
-            strSql.Append("PartType,PartName,PartWeight,PartPrice,OperationDate,PartState");
+            strSql.Append("PartType,PartName,PartWeight,PartPrice,OperationDate,PartState,PartNumber");
             strSql.Append(") VALUES (");
-            strSql.Append("@PartType,@PartName,@PartWeight,@PartPrice,@OperationDate,@PartState);");
+            strSql.Append("@PartType,@PartName,@PartWeight,@PartPrice,@OperationDate,@PartState,@PartNumber);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsParts] SET ");
-            strSql.Append("PartType = @PartType,PartName = @PartName,PartWeight = @PartWeight,PartPrice = @PartPrice,OperationDate = @OperationDate,PartState = @PartState");
+            strSql.Append("PartType = @PartType,PartName = @PartName,PartWeight = @PartWeight,PartPrice = @PartPrice,OperationDate = @OperationDate,PartState = @PartState,PartNumber = @PartNumber");
             strSql.Append(" WHERE PartId = @PartId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

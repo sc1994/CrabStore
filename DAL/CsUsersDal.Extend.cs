@@ -13,5 +13,10 @@ namespace DAL
             var strSql = "SELECT * FROM CrabShop.dbo.[CsUsers] WHERE OpenId = @openId";
             return DbClient.Query<CsUsers>(strSql, new { openId }).FirstOrDefault();
         }
+        public CsUsers GetModelByTelPhone(string telPhone)
+        {
+            var strSql = $"select top 1 * from CsUsers where UserPhone='{telPhone}' ";
+            return DbClient.Query<CsUsers>(strSql).FirstOrDefault();
+        }
     }
 }

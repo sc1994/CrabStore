@@ -17,5 +17,9 @@ namespace BLL
         {
             return userDAL.GetModel(openId);
         }
+        public CsUsers GetModelByTelPhone(string telPhone)
+        {
+            return userDAL.GetModelByTelPhone(telPhone);
+        }
     }
 }

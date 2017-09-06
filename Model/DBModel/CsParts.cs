@@ -45,6 +45,11 @@ namespace Model.DBModel
         /// </summary>
         public int PartState { get; set; }
 
+        /// <summary>
+        /// 配件编码
+        /// </summary>
+        public string PartNumber { get; set; } = string.Empty;
+
     }
 
 
@@ -78,5 +83,9 @@ namespace Model.DBModel
         /// 配件状态 1可用  0 删除
         /// </summary>
         PartState,
+        /// <summary>
+        /// 配件编码
+        /// </summary>
+        PartNumber,
     }
 }

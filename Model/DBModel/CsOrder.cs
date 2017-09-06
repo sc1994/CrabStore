@@ -105,6 +105,16 @@ namespace Model.DBModel
         /// </summary>
         public string PrepaymentId { get; set; } = string.Empty;
 
+        /// <summary>
+        /// 运费
+        /// </summary>
+        public decimal ExpressMoney { get; set; }
+
+        /// <summary>
+        /// 服务费
+        /// </summary>
+        public decimal ServiceMoney { get; set; }
+
     }
 
 
@@ -186,5 +196,13 @@ namespace Model.DBModel
         /// 预支付编号
         /// </summary>
         PrepaymentId,
+        /// <summary>
+        /// 运费
+        /// </summary>
+        ExpressMoney,
+        /// <summary>
+        /// 服务费
+        /// </summary>
+        ServiceMoney,
     }
 }

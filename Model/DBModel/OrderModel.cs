@@ -44,12 +44,12 @@ namespace Model.DBModel
         /// <summary>
         /// 实际重量
         /// </summary>
-        public int totalweight { get; set; }
+        public decimal totalweight { get; set; }
 
         /// <summary>
         /// 寄件重量
         /// </summary>
-        public int sendweight { get; set; }
+        public decimal sendweight { get; set; }
 
         /// <summary>
         /// 购买螃蟹列表
@@ -75,6 +75,15 @@ namespace Model.DBModel
         /// 已使用余额数
         /// </summary>
         public  decimal usebalance { get; set; }
+
+        /// <summary>
+        /// 快递费用
+        /// </summary>
+        public decimal expressmoney { get; set; }
+        /// <summary>
+        /// 服务费
+        /// </summary>
+        public decimal servicemoney { get; set; }
     }
 
     public class CartItem

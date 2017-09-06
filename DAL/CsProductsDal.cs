@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsProducts] (");
-            strSql.Append("ProductType,ProductName,ProductImage,ProductWeight,ProductPrice,ProductState,OperationDate,ProductStock");
+            strSql.Append("ProductType,ProductName,ProductImage,ProductWeight,ProductPrice,ProductState,OperationDate,ProductStock,ProductNumber");
             strSql.Append(") VALUES (");
-            strSql.Append("@ProductType,@ProductName,@ProductImage,@ProductWeight,@ProductPrice,@ProductState,@OperationDate,@ProductStock);");
+            strSql.Append("@ProductType,@ProductName,@ProductImage,@ProductWeight,@ProductPrice,@ProductState,@OperationDate,@ProductStock,@ProductNumber);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsProducts] SET ");
-            strSql.Append("ProductType = @ProductType,ProductName = @ProductName,ProductImage = @ProductImage,ProductWeight = @ProductWeight,ProductPrice = @ProductPrice,ProductState = @ProductState,OperationDate = @OperationDate,ProductStock = @ProductStock");
+            strSql.Append("ProductType = @ProductType,ProductName = @ProductName,ProductImage = @ProductImage,ProductWeight = @ProductWeight,ProductPrice = @ProductPrice,ProductState = @ProductState,OperationDate = @OperationDate,ProductStock = @ProductStock,ProductNumber = @ProductNumber");
             strSql.Append(" WHERE ProductId = @ProductId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

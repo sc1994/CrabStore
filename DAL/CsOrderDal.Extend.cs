@@ -6,6 +6,7 @@ using Model.DBModel;
 using System.Data.SqlClient;
 using System.Text;
 using System.Data;
+using System.Linq;
 
 namespace DAL
 {
@@ -43,7 +44,7 @@ namespace DAL
         }
 
         /// <summary>
-        /// 带有存储过程 添加支付订单
+        /// 带有事务操作 添加支付订单
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
@@ -72,12 +73,14 @@ namespace DAL
                         _csOrder.OrderCopies = order.totalNumber;
                         _csOrder.TotalWeight = order.totalweight;
                         _csOrder.BillWeight = order.sendweight;
+                        _csOrder.ExpressMoney = order.expressmoney;
+                        _csOrder.ServiceMoney = order.servicemoney;
                         _csOrder.RowStatus = 1;
                         StringBuilder strSql1 = new StringBuilder();
                         strSql1.Append("insert into CsOrder (OrderNumber,UserId,TotalMoney,DiscountMoney,ActualMoney,OrderDate,OrderState,OrderAddress,");
-                        strSql1.Append("SendAddress,CargoNumber,OrderCopies,TotalWeight,BillWeight,RowStatus ) values (@OrderNumber,");
+                        strSql1.Append("SendAddress,CargoNumber,OrderCopies,TotalWeight,BillWeight,RowStatus,ExpressMoney,ServiceMoney ) values (@OrderNumber,");
                         strSql1.Append("@UserId,@TotalMoney,@DiscountMoney,@ActualMoney,@OrderDate,@OrderState,@OrderAddress,@SendAddress,@CargoNumber,@OrderCopies,");
-                        strSql1.Append("@TotalWeight,@BillWeight,@RowStatus);select @@Identity;");
+                        strSql1.Append("@TotalWeight,@BillWeight,@RowStatus,@ExpressMoney,@ServiceMoney);select @@Identity;");
                         SqlParameter[] parameter1 =
                         {
                             new SqlParameter("@OrderNumber",SqlDbType.VarChar,50),
@@ -93,7 +96,9 @@ namespace DAL
                             new SqlParameter("@OrderCopies",SqlDbType.Int,4),
                             new SqlParameter("@TotalWeight",SqlDbType.Decimal,18),
                             new SqlParameter("@BillWeight",SqlDbType.Decimal,18),
-                            new SqlParameter("@RowStatus",SqlDbType.TinyInt,4)
+                            new SqlParameter("@RowStatus",SqlDbType.TinyInt,4),
+                            new SqlParameter("@ExpressMoney",SqlDbType.Decimal,18),
+                            new SqlParameter("@SeviceMoney",SqlDbType.Decimal,18)
                         };
                         parameter1[0].Value = _csOrder.OrderNumber;
                         parameter1[1].Value = _csOrder.UserId;
@@ -109,6 +114,8 @@ namespace DAL
                         parameter1[11].Value = _csOrder.TotalWeight;
                         parameter1[12].Value = _csOrder.BillWeight;
                         parameter1[13].Value = _csOrder.RowStatus;
+                        parameter1[14].Value = _csOrder.ExpressMoney;
+                        parameter1[15].Value = _csOrder.ServiceMoney;
                         object obj = DbClient.ExecuteScalar(conn, trans, strSql1.ToString(), parameter1);
                         if (obj != null)
                         {
@@ -275,6 +282,17 @@ namespace DAL
         {
             string strSql = $"select top 1 PrepaymentId from CsOrder where OrderId={orderId}";
             return DbClient.ExecuteScalar<string>(strSql);
+        }
+        
+        /// <summary>
+        /// 根据openid 得到订单列表
+        /// </summary>
+        /// <param name="openId"></param>
+        /// <returns></returns>
+        public List<CsOrder> GetModelListByOpenId(string openId)
+        {
+            var strSql = $"select a.* from CsOrder a inner join CsUsers b on a.UserId = b.UserId where a.OrderState!=0 and  b.OpenId='{openId}'";
+            return DbClient.Query<CsOrder>(strSql).ToList();
         }
     }
 }
