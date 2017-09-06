@@ -98,7 +98,7 @@ namespace DAL
                             new SqlParameter("@BillWeight",SqlDbType.Decimal,18),
                             new SqlParameter("@RowStatus",SqlDbType.TinyInt,4),
                             new SqlParameter("@ExpressMoney",SqlDbType.Decimal,18),
-                            new SqlParameter("@SeviceMoney",SqlDbType.Decimal,18)
+                            new SqlParameter("@ServiceMoney",SqlDbType.Decimal,18)
                         };
                         parameter1[0].Value = _csOrder.OrderNumber;
                         parameter1[1].Value = _csOrder.UserId;
@@ -122,6 +122,7 @@ namespace DAL
                             int orderid = Convert.ToInt32(obj);
                             int totalNumber = 2;//应总共操作记录影响行数 基础数据2为用户修改与返利记录添加
                             decimal weight = 0;
+                            int carbNumber = 0;//总共购买螃蟹数量
                             //添加购物详细
                             List<CsOrderDetail> detailList = new List<CsOrderDetail>();
                             foreach (CartItem cart in order.cartFoodList)
@@ -135,6 +136,7 @@ namespace DAL
                                 orderDetail.ChoseType = 1;
                                 weight += (cart.weight * cart.num);
                                 totalNumber += 2;
+                                carbNumber += cart.num;
                                 detailList.Add(orderDetail);
                                 //修改库存数
                                 StringBuilder strSql4 = new StringBuilder();
@@ -156,7 +158,7 @@ namespace DAL
                                     orderDetail.OrderId = orderid;
                                     orderDetail.ProductId = cart.id;
                                     orderDetail.UnitPrice = cart.price;
-                                    orderDetail.ProductNumber = cart.num;
+                                    orderDetail.ProductNumber = cart.id== 10009?carbNumber:1;
                                     orderDetail.TotalPrice = (cart.price * cart.num);
                                     orderDetail.ChoseType = 2;
                                     detailList.Add(orderDetail);
@@ -169,7 +171,7 @@ namespace DAL
                                 orderDetail.OrderId = orderid;
                                 orderDetail.ProductId = part.PartId;
                                 orderDetail.UnitPrice = part.PartPrice;
-                                orderDetail.ProductNumber = part.number;
+                                orderDetail.ProductNumber = part.PartId==10004?carbNumber:1;
                                 orderDetail.TotalPrice = (part.PartPrice * part.number);
                                 orderDetail.ChoseType = 2;
                                 detailList.Add(orderDetail);
@@ -289,10 +291,17 @@ namespace DAL
         /// </summary>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public List<CsOrder> GetModelListByOpenId(string openId)
+        public List<CsOrder> GetModelListByOpenId(string openId,int num,int size,out int total)
         {
-            var strSql = $"select a.* from CsOrder a inner join CsUsers b on a.UserId = b.UserId where a.OrderState!=0 and  b.OpenId='{openId}'";
-            return DbClient.Query<CsOrder>(strSql).ToList();
+            var strSql = new StringBuilder();
+            strSql.Append($"SELECT top ({size}) * FROM ( SELECT ");
+            strSql.Append($"ROW_NUMBER() OVER ( ORDER BY OrderId DESC ) AS ROWNUMBER,b.* ");
+            strSql.Append(" FROM  CsOrder b inner join CsUsers c on b.UserId = c.UserId ");
+            strSql.Append($" WHERE 1 = 1 and c.OpenId='{openId}' ");
+            strSql.Append(" ) A");
+            strSql.Append($" WHERE ROWNUMBER BETWEEN {(num - 1) * size + 1} AND {num * size}; ");
+            total = DbClient.ExecuteScalar<int>($"SELECT COUNT(1) FROM CsOrder b inner join CsUsers c on b.UserId = c.UserId WHERE 1 = 1 and c.OpenId='{openId}';");
+            return DbClient.Query<CsOrder>(strSql.ToString()).ToList();
         }
     }
 }

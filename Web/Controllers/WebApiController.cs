@@ -400,33 +400,37 @@ namespace Web.Controllers
         }
 
         /// <summary>
-        /// 根据开发编号获取本人订单
+        /// 根据开发编号获取本人订单,分页查询
         /// </summary>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public IHttpActionResult GetCsOrderList(string openId)
+        public IHttpActionResult GetCsOrderList(string openId,int num,int size)
         {
-            var list = _csOrderBll.GetModelListByOpenId(openId).OrderByDescending(x=>x.OrderId);
-            return Json(list.Select(x => new {
-                x.OrderId,
-                x.OrderNumber,
-                x.UserId,
-                x.TotalMoney,
-                x.DiscountMoney,
-                x.ActualMoney,
-                OrderDate=x.OrderDate.ToString("yyyy-MM-dd"),
-                x.OrderState,
-                consignee =x.OrderAddress.Split('$')[1],
-                telphone =x.OrderAddress.Split('$')[3],
-                address =x.OrderAddress.Split('$')[4],                
-                x.SendAddress,
-                x.OrderDelivery,
-                x.OrderCopies,
-                x.TotalWeight,
-                x.BillWeight,
-                x.ExpressMoney,
-                x.ServiceMoney
-            }));
+            int total = 0;
+            var list = _csOrderBll.GetModelListByOpenId(openId, num, size, out total);
+            return Json(new {
+              list= list.Select(x => new {
+                    x.OrderId,
+                    x.OrderNumber,
+                    x.UserId,
+                    x.TotalMoney,
+                    x.DiscountMoney,
+                    x.ActualMoney,
+                    OrderDate = x.OrderDate.ToString("yyyy-MM-dd"),
+                    x.OrderState,
+                    consignee = x.OrderAddress.Split('$')[1],
+                    telphone = x.OrderAddress.Split('$')[3],
+                    address = x.OrderAddress.Split('$')[4],
+                    x.SendAddress,
+                    x.OrderDelivery,
+                    x.OrderCopies,
+                    x.TotalWeight,
+                    x.BillWeight,
+                    x.ExpressMoney,
+                    x.ServiceMoney
+                }),
+                total
+            });
         }
 
         /// <summary>
