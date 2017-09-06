@@ -23,12 +23,12 @@ namespace Web.Controllers
                 OperationDate = x.OperationDate.ToString("yyyy-M-d"),
                 ProductId = x.ProductId,
                 ProductState = ((ProductState)x.ProductState).ToString(),
-                ProductName = x.ProductName,
+                ProductName = $"{x.ProductName}({x.ProductNumber})",
                 ProductType = ((ProductType)x.ProductType).ToString(),
                 ProductImage = x.ProductImage,
                 ProductPrice = x.ProductPrice.ToString("N2").ToDecimal(),
                 ProductStock = x.ProductStock,
-                ProductWeight = x.ProductWeight.ToString("N2")
+                ProductWeight = x.ProductWeight.ToString("0.00")
             }));
         }
 

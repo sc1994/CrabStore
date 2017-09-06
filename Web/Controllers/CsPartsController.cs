@@ -31,13 +31,13 @@ namespace Web.Controllers
             {
                 data = list.Select(x => new CsPartsView.CsPartList
                 {
-                    PartName = x.PartName,
+                    PartName = $"{x.PartName}({x.PartNumber})",
                     PartState = ((RowStatus)x.PartState).ToString(),
                     PartType = ((PartType)x.PartType).ToString(),
                     PartId = x.PartId,
                     OperationDate = x.OperationDate.ToString("yyyy-M-d"),
                     PartPrice = x.PartPrice.ToString("0.00"),
-                    PartWeight = x.PartWeight.ToString("0.00")
+                    PartWeight = x.PartWeight.ToString("0.000")
                 }),
                 sql = sh.SqlString.ToString()
             });

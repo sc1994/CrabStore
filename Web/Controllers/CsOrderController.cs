@@ -118,11 +118,15 @@ namespace Web.Controllers
                 TotalMoney = "￥" + csOrder.TotalMoney.ToString("N2"),
                 ActualMoney = "￥" + csOrder.ActualMoney.ToString("N2"),
                 DiscountMoney = "￥" + csOrder.DiscountMoney.ToString("N2"),
+                OrderCopies = csOrder.OrderCopies + " 份",
+                TotalWeight = csOrder.TotalWeight + " KG",
+                BillWeight = csOrder.BillWeight + " KG",
                 UserName = $"{user.UserName}({user.UserSex})",
                 UserPhone = user.UserPhone,
                 CsOrderDetails = csOrderDetailExtends,
                 OrderDelivery = csOrder.OrderDelivery,
-                OrderAddress = csOrder.OrderAddress
+                OrderAddress = csOrder.OrderAddress.Trim('$').Replace("$$","$").Replace("$", "//"),
+                SendAddress = csOrder.SendAddress.Trim('$').Replace("$$", "$").Replace("$", "//")
             });
         }
 
@@ -191,18 +195,55 @@ namespace Web.Controllers
         public ActionResult ExportCsOrder(CsOrderView.CsOrderWhere para)
         {
             var data = GetList(para, false);
+            if (!data.Data.Any())
+            {
+                return Json(new ResModel
+                {
+                    Data = "没有任何可以导出数据",
+                    ResStatus = ResStatue.No
+                });
+            }
             var list = new List<CsOrderView.CsOrderExcel>();
+            var detail = _csOrderDetailBll.GetModelList($" AND OrderId IN ({string.Join(",", data.Data.Select(x => x.OrderId))})");
+            if (detail.All(x => x.ChoseType != ChoseType.配件.GetHashCode()))
+            {
+                return Json(new ResModel
+                {
+                    Data = "当前条件下的订单有误(存在未购买任何配件订单), 请检查数据",
+                    ResStatus = ResStatue.No
+                });
+            }
+            var parts = _csPartsBll.GetModelList($" AND PartId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.配件.GetHashCode()).Select(x => x.ProductId))})");
+            if (detail.All(x => x.ChoseType != ChoseType.螃蟹.GetHashCode()))
+            {
+                return Json(new ResModel
+                {
+                    Data = "当前条件下的订单有误(存在未购买任何螃蟹订单), 请检查数据",
+                    ResStatus = ResStatue.No
+                });
+            }
+            var products = _csProductsBll.GetModelList($" AND ProductId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.螃蟹.GetHashCode()).Select(x => x.ProductId))})");
             foreach (var order in data.Data)
             {
+                var total = string.Empty;
+                foreach (var d in detail.Where(x => x.OrderId == order.OrderId).OrderBy(x => x.ChoseType))
+                {
+                    if (d.ChoseType == ChoseType.螃蟹.GetHashCode())
+                    {
+                        total += products.FirstOrDefault(x => x.ProductId == d.ProductId)?.ProductNumber + "" + d.ProductNumber;
+                        continue;
+                    }
+                    total += parts.FirstOrDefault(x => x.PartId == d.ProductId)?.PartNumber + "" + d.ProductNumber;
+                }
                 var sendInfo = order.SendAddress.Split('$');
                 var putInfo = order.OrderAddress.Split('$');
                 var item = new CsOrderView.CsOrderExcel
                 {
                     用户订单号 = order.OrderNumber,
-                    寄件公司 = sendInfo.Length > 0 ? sendInfo[0] : "-",
-                    寄联系人 = sendInfo.Length > 1 ? sendInfo[1] : "-",
-                    寄联系电话 = sendInfo.Length > 2 ? sendInfo[2] : "-",
-                    寄件地址 = sendInfo.Length > 3 ? sendInfo[3] : "-",
+                    寄件公司 = "-",
+                    寄联系人 = sendInfo.Length > 0 ? sendInfo[0] : "-",
+                    寄联系电话 = sendInfo.Length > 1 ? sendInfo[1] : "-",
+                    寄件地址 = sendInfo.Length > 2 ? sendInfo[2] : "-",
                     收件公司 = putInfo.Length > 0 ? putInfo[0] : "-",
                     联系人 = putInfo.Length > 1 ? putInfo[1] : "-",
                     联系电话 = putInfo.Length > 2 ? putInfo[2] : "-",
@@ -211,12 +252,12 @@ namespace Web.Controllers
                     付款方式 = "寄付月结",
                     第三方付月结卡号 = "",
                     寄托物品 = "其他",
-                    寄托物内容 = "大闸蟹",
+                    寄托物内容 = $"大闸蟹({total}T{detail.Where(x => x.OrderId == order.OrderId).Sum(x => x.ProductNumber)})",
                     寄托物编号 = "",
-                    寄托物数量 = "1",
+                    寄托物数量 = order.CargoNumber.ToString(),
                     件数 = order.OrderCopies.ToString(),
-                    实际重量单位KG = order.TotalWeight.ToString("0.0"),
-                    计费重量单位KG = order.BillWeight.ToString("0.0"),
+                    实际重量单位KG = order.TotalWeight.ToString("0.000"),
+                    计费重量单位KG = order.BillWeight.ToString("0.000"),
                     业务类型 = "大闸蟹专递",
                     寄方客户备注 = "可选配件组合：剪刀 + 礼盒 + 保温袋"
                 };
@@ -261,19 +302,45 @@ namespace Web.Controllers
             var parts = _csPartsBll.GetModelList("");
             var data = new List<CsOrderView.CsOrderAndDetail>();
             var item = new CsOrderView.CsOrderAndDetail();
-            var lastType=ExcelRow.Other;
+            var lastType = ExcelRow.Other; // 记录上一行状态
+            var endEmpty = new List<int>(); // 记录尾部空行
+            var overEndEmpty = false; // 尾部空行是否结束
+            for (int i = orders.Count - 1; i >= 0; i--)
+            {
+                var type = ExcelRowType(orders[i]);
+                if (type == ExcelRow.Empty &&
+                    !overEndEmpty)
+                {
+                    endEmpty.Add(i);
+                }
+                else
+                {
+                    overEndEmpty = true;
+                }
+                if (type == ExcelRow.Empty &&
+                    lastType == ExcelRow.Empty &&
+                    overEndEmpty)
+                {
+                    return Json(new ResModel
+                    {
+                        ResStatus = ResStatue.No,
+                        Data = "当前Excel中,两个订单信息中间,存在连续多空行.请仔细确认数据, 数据一旦上传将无法撤回"
+                    });
+                }
+                lastType = type;
+            }
+
+            // 将尾部空行删除只保留一个
+            foreach (var end in endEmpty)
+            {
+                orders.RemoveAt(end);
+            }
+            orders.Add(new CsOrderView.CsOrderImport());
+
+
             foreach (var order in orders)
             {
                 var type = ExcelRowType(order);
-                if (type == ExcelRow.Empty &&
-                    lastType == ExcelRow.Empty)
-                {
-                    return Json(new ResModel
-                                {
-                                    ResStatus = ResStatue.No,
-                                    Data = "当前Excel中存在多余的空行, 请仔细确认数据, 数据一旦上传将无法撤回"
-                    });
-                }
                 if (type == ExcelRow.Other)
                 {
                     return Json(new ResModel
@@ -288,8 +355,8 @@ namespace Web.Controllers
                     item = new CsOrderView.CsOrderAndDetail();
                     continue;
                 }
-                var product = products.FirstOrDefault(x => x.ProductName == order.商品名称 && ((ProductType)x.ProductType).ToString() == order.种类);
-                var part = parts.FirstOrDefault(x => x.PartName == order.商品名称 && ((PartType)x.PartType).ToString() == order.种类);
+                var product = products.FirstOrDefault(x => x.ProductNumber == order.商品编码);
+                var part = parts.FirstOrDefault(x => x.PartNumber == order.商品编码);
                 var pId = 0; // 商品Id
                 var cType = ChoseType.螃蟹; // 蟹或配件
                 if (product == null && part == null)
@@ -297,7 +364,7 @@ namespace Web.Controllers
                     return Json(new ResModel
                     {
                         ResStatus = ResStatue.No,
-                        Data = $"商品名称{order.商品名称}/种类{ order.种类},不存在与数据库中,请仔细确认数据"
+                        Data = $"商品编码:{order.商品编码},不存在与数据库中,请仔细确认数据"
                     });
                 }
                 if (product != null)
@@ -368,9 +435,7 @@ namespace Web.Controllers
                         UnitPrice = order.单价.ToDecimal()
                     });
                 }
-                lastType = type;
             }
-
             var count = 0;
             var countDetail = 0;
             foreach (var d in data)
@@ -497,6 +562,9 @@ namespace Web.Controllers
             sh.AddShow(CsUsersEnum.UserName);
             sh.AddShow(CsUsersEnum.UserPhone);
             sh.AddShow(CsUsersEnum.UserSex);
+            sh.AddShow(CsOrderEnum.SendAddress);
+            sh.AddShow(CsOrderEnum.BillWeight);
+            sh.AddShow(CsOrderEnum.TotalWeight);
 
             sh.AddJoin(JoinEnum.LeftJoin, "CsUsers", "cu", "UserId", "UserId");
 
@@ -558,8 +626,7 @@ namespace Web.Controllers
                 row.收货人.IsNullOrEmpty() &&
                 row.收货地址.IsNullOrEmpty() &&
                 row.联系电话.IsNullOrEmpty() &&
-                !row.商品名称.IsNullOrEmpty() &&
-                !row.种类.IsNullOrEmpty() &&
+                !row.商品编码.IsNullOrEmpty() &&
                 !row.单价.IsNullOrEmpty() &&
                 !row.数量.IsNullOrEmpty()
             )
@@ -572,8 +639,7 @@ namespace Web.Controllers
                 row.收货地址.IsNullOrEmpty() &&
                 row.联系电话.IsNullOrEmpty() &&
                 row.货运单号.IsNullOrEmpty() &&
-                row.商品名称.IsNullOrEmpty() &&
-                row.种类.IsNullOrEmpty() &&
+                row.商品编码.IsNullOrEmpty() &&
                 row.单价.IsNullOrEmpty() &&
                 row.数量.IsNullOrEmpty())
             {

@@ -24,7 +24,7 @@
             style="width: 100%">
             <el-table-column label="Id" prop="ProductId" width="120">
             </el-table-column>
-            <el-table-column label="商品名称" prop="ProductName" sortable>
+            <el-table-column label="商品名称(编码)" prop="ProductName" sortable>
             </el-table-column>
             <el-table-column label="螃蟹类型" prop="ProductType" sortable>
             </el-table-column>
@@ -101,7 +101,7 @@
             <el-table v-loading.body="priceLoading" :data="priceList">
                 <el-table-column label="Id" prop="PriceId" width="80">
                 </el-table-column>
-                <el-table-column label="商品名称(编号)" prop="ProductName">
+                <el-table-column label="商品名称(编码)" prop="ProductName">
                 </el-table-column>
                 <el-table-column label="蟹类型" prop="ProductType">
                 </el-table-column>
