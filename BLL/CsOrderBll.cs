@@ -80,9 +80,9 @@ namespace BLL
         /// </summary>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public List<CsOrder> GetModelListByOpenId(string openId)
+        public List<CsOrder> GetModelListByOpenId(string openId,int num,int size,out int total)
         {
-            return _dal.GetModelListByOpenId(openId);
+            return _dal.GetModelListByOpenId(openId,num,size,out total);
         }
     }
 }
