@@ -5,6 +5,7 @@ using System.Text;
 using Model.DBModel;
 using System.Web.Http;
 using System.Collections.Generic;
+using Common;
 
 namespace Web.Controllers
 {
@@ -416,7 +417,7 @@ namespace Web.Controllers
                     x.DiscountMoney,
                     x.ActualMoney,
                     OrderDate = x.OrderDate.ToString("yyyy-MM-dd"),
-                    x.OrderState,
+                    OrderState = ((OrderState)x.OrderState).ToString(),
                     consignee = x.OrderAddress.Split('$')[1],
                     telphone = x.OrderAddress.Split('$')[3],
                     address = x.OrderAddress.Split('$')[4],
