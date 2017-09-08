@@ -263,6 +263,7 @@
     <Content Include="Scripts\md5.min.js" />
     <Content Include="Scripts\vue\vue-router.js" />
     <Content Include="Scripts\vue\vue.js" />
+    <Content Include="Scripts\vue\vue.min.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

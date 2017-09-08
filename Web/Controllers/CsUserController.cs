@@ -22,7 +22,7 @@ namespace Web.Controllers
             if (order.Rebate != -1)
                 orderSql += $" Rebate {(OrderEnum)order.Rebate},";
             if (order.TotalPrice != -1)
-                orderSql += $" Rebate {(OrderEnum)order.TotalPrice},";
+                orderSql += $" TotalPrice {(OrderEnum)order.TotalPrice},";
 
             var sh = new SqlHelper<CsUsersView.CsUsersPage>("V_UsersInfo")
             {
