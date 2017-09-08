@@ -13,7 +13,7 @@ namespace Model.DBModel
         /// <summary>
         /// 订单序号，主键、自动增长
         /// </summary>
-        public int OrderId { get; set; }
+        public int OrderId { get; set; } = ToInt("");
 
         /// <summary>
         /// 订单编号 客户显示所用 当前时间生产
@@ -23,22 +23,22 @@ namespace Model.DBModel
         /// <summary>
         /// 下单用户
         /// </summary>
-        public int UserId { get; set; }
+        public int UserId { get; set; } = ToInt("");
 
         /// <summary>
         /// 总金额
         /// </summary>
-        public decimal TotalMoney { get; set; }
+        public decimal TotalMoney { get; set; } = ToDecimal("");
 
         /// <summary>
         /// 优惠金额
         /// </summary>
-        public decimal DiscountMoney { get; set; }
+        public decimal DiscountMoney { get; set; } = ToDecimal("");
 
         /// <summary>
         /// 实际金额
         /// </summary>
-        public decimal ActualMoney { get; set; }
+        public decimal ActualMoney { get; set; } = ToDecimal("");
 
         /// <summary>
         /// 下单时间
@@ -48,7 +48,7 @@ namespace Model.DBModel
         /// <summary>
         /// 订单状态 0 取消订单 1已下单未至支付 2支付成功 3 配货中 4 已发货
         /// </summary>
-        public int OrderState { get; set; }
+        public int OrderState { get; set; } = ToInt("1");
 
         /// <summary>
         /// 订单地址信息
@@ -68,27 +68,27 @@ namespace Model.DBModel
         /// <summary>
         /// 寄托物数量
         /// </summary>
-        public int CargoNumber { get; set; }
+        public int CargoNumber { get; set; } = ToInt("");
 
         /// <summary>
         /// 份数 默认值1
         /// </summary>
-        public int OrderCopies { get; set; }
+        public int OrderCopies { get; set; } = ToInt("1");
 
         /// <summary>
         /// 总重量
         /// </summary>
-        public decimal TotalWeight { get; set; }
+        public decimal TotalWeight { get; set; } = ToDecimal("");
 
         /// <summary>
         /// 计费重量
         /// </summary>
-        public decimal BillWeight { get; set; }
+        public decimal BillWeight { get; set; } = ToDecimal("");
 
         /// <summary>
         /// 数据状态 0 删除 1 有效
         /// </summary>
-        public int RowStatus { get; set; }
+        public int RowStatus { get; set; } = ToInt("1");
 
         /// <summary>
         /// 删除时间
@@ -108,12 +108,12 @@ namespace Model.DBModel
         /// <summary>
         /// 运费
         /// </summary>
-        public decimal ExpressMoney { get; set; }
+        public decimal ExpressMoney { get; set; } = ToDecimal("0");
 
         /// <summary>
         /// 服务费
         /// </summary>
-        public decimal ServiceMoney { get; set; }
+        public decimal ServiceMoney { get; set; } = ToDecimal("0");
 
     }
 

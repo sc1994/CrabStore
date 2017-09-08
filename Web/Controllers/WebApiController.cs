@@ -146,6 +146,7 @@ namespace Web.Controllers
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
                 number = 0,
+                
                 TypeName = "大宗采购"
             });
             //蟹唐直采公蟹列表
@@ -191,7 +192,8 @@ namespace Web.Controllers
                 x.PartWeight,
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 number = 0,
-                TypeName = "可选配件"
+                TypeName = "可选配件",
+                x.PartImage
             }).ToList();
 
             //必须选配件列表
@@ -203,7 +205,8 @@ namespace Web.Controllers
                 x.PartWeight,
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 number = 0,
-                TypeName = "必选配件"
+                TypeName = "必选配件",
+                x.PartImage
             }).ToList();
 
             return Json(new
