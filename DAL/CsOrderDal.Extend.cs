@@ -15,6 +15,7 @@ namespace DAL
     /// </summary>
     public partial class CsOrderDal
     {
+        public static Random random = new Random();
         /// <summary>
         /// 根据产品编号查询销售总数
         /// </summary>
@@ -40,8 +41,7 @@ namespace DAL
         {
             var strSql = "select sum(ProductNumber*OrderCopies) from CsOrderDetail a inner join CsOrder b on a.OrderId = b.OrderId where a.ProductId= " + productId
                         + " and Convert(varchar(7),b.OrderDate,23)='" + nowTime.ToString("yyyy-MM") + "'";
-            int day = DateTime.Now.Day;
-            Random random = new Random();
+            int day = DateTime.Now.Day;            
             int number= random.Next(100*day,200*(day+1));
             return DbClient.ExecuteScalar<int>(strSql)+number;
         }
