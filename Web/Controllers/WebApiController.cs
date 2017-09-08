@@ -130,6 +130,7 @@ namespace Web.Controllers
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
                 number = 0,
+                x.ProductStock,//库存
                 TypeName = "大宗采购"
             });
             //大宗采购母蟹列表
@@ -146,7 +147,7 @@ namespace Web.Controllers
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
                 number = 0,
-                
+                x.ProductStock,//库存
                 TypeName = "大宗采购"
             });
             //蟹唐直采公蟹列表
@@ -163,6 +164,7 @@ namespace Web.Controllers
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
                 number = 0,
+                x.ProductStock,//库存
                 TypeName = "蟹塘直采"
             });
 
@@ -180,6 +182,7 @@ namespace Web.Controllers
                 OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
                 number = 0,
+                x.ProductStock,//库存
                 TypeName = "蟹塘直采"
             });
 

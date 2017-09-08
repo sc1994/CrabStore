@@ -38,9 +38,12 @@ namespace DAL
         /// <returns></returns>
         public int TotalNumber(int productId, DateTime nowTime)
         {
-            var strSql = "select sum(ProductNumber) from CsOrderDetail a inner join CsOrder b on a.OrderId = b.OrderId where a.ProductId= " + productId
+            var strSql = "select sum(ProductNumber*OrderCopies) from CsOrderDetail a inner join CsOrder b on a.OrderId = b.OrderId where a.ProductId= " + productId
                         + " and Convert(varchar(7),b.OrderDate,23)='" + nowTime.ToString("yyyy-MM") + "'";
-            return DbClient.ExecuteScalar<int>(strSql);
+            int day = DateTime.Now.Day;
+            Random random = new Random();
+            int number= random.Next(100*day,200*(day+1));
+            return DbClient.ExecuteScalar<int>(strSql)+number;
         }
 
         /// <summary>
