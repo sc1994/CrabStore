@@ -161,8 +161,8 @@ namespace DAL
                                     orderDetail.OrderId = orderid;
                                     orderDetail.ProductId = cart.id;
                                     orderDetail.UnitPrice = cart.price;
-                                    orderDetail.ProductNumber = cart.id== 10009?carbNumber:1;
-                                    orderDetail.TotalPrice = (cart.price *orderDetail.ProductNumber);
+                                    orderDetail.ProductNumber = cart.id == 10009 ? carbNumber : 1;
+                                    orderDetail.TotalPrice = (cart.price * cart.num);
                                     orderDetail.ChoseType = 2;
                                     detailList.Add(orderDetail);
                                     totalNumber++;
@@ -174,8 +174,8 @@ namespace DAL
                                 orderDetail.OrderId = orderid;
                                 orderDetail.ProductId = part.PartId;
                                 orderDetail.UnitPrice = part.PartPrice;
-                                orderDetail.ProductNumber = part.PartId==10004?carbNumber:1;
-                                orderDetail.TotalPrice = (part.PartPrice *orderDetail.ProductNumber);
+                                orderDetail.ProductNumber = part.PartId == 10004 ? carbNumber : 1;
+                                orderDetail.TotalPrice = (part.PartPrice * part.number);
                                 orderDetail.ChoseType = 2;
                                 detailList.Add(orderDetail);
                                 totalNumber++;
@@ -253,6 +253,7 @@ namespace DAL
                     }
                     catch (Exception ex)
                     {
+                        LogHelper.Log(ex.Message);
                         trans.Rollback();
                         return 0;
 
@@ -266,10 +267,10 @@ namespace DAL
         /// <param name="orderId"></param>
         /// <param name="prepaymentid"></param>
         /// <returns></returns>
-        public int UpdatePrepaymentId(int orderId,string prepaymentid)
+        public int UpdatePrepaymentId(int orderId, string prepaymentid)
         {
             string strSql = $"update CsOrder set PrepaymentId='{prepaymentid}' where OrderId={orderId}";
-            return  DbClient.Excute(strSql);
+            return DbClient.Excute(strSql);
         }
 
         /// <summary>
@@ -278,7 +279,7 @@ namespace DAL
         /// <param name="orderid"></param>
         /// <param name="orderState"></param>
         /// <returns></returns>
-        public int UpdateOrderState(int orderid,int orderState)
+        public int UpdateOrderState(int orderid, int orderState)
         {
             string strSql = $"update CsOrder set OrderState={orderState} where OrderId={orderid}";
             return DbClient.Excute(strSql);
@@ -288,13 +289,13 @@ namespace DAL
             string strSql = $"select top 1 PrepaymentId from CsOrder where OrderId={orderId}";
             return DbClient.ExecuteScalar<string>(strSql);
         }
-        
+
         /// <summary>
         /// 根据openid 得到订单列表
         /// </summary>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public List<CsOrder> GetModelListByOpenId(string openId,int num,int size,out int total)
+        public List<CsOrder> GetModelListByOpenId(string openId, int num, int size, out int total)
         {
             var strSql = new StringBuilder();
             strSql.Append($"SELECT top ({size}) * FROM ( SELECT ");
@@ -306,6 +307,5 @@ namespace DAL
             total = DbClient.ExecuteScalar<int>($"SELECT COUNT(1) FROM CsOrder b inner join CsUsers c on b.UserId = c.UserId WHERE 1 = 1 and c.OpenId='{openId}';");
             return DbClient.Query<CsOrder>(strSql.ToString()).ToList();
         }
-
     }
 }

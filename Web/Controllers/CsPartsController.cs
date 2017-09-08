@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using BLL;
 using Common;
@@ -80,7 +81,13 @@ namespace Web.Controllers
 
         public ActionResult SubmitCsParts(CsParts model)
         {
-            if (_csPartsBll.Update(model))
+            var sh = new SqlHelper<CsParts>();
+            sh.AddUpdate(CsPartsEnum.OperationDate.ToString(), DateTime.Now);
+            sh.AddUpdate(CsPartsEnum.PartWeight.ToString(), model.PartWeight);
+            sh.AddUpdate(CsPartsEnum.PartPrice.ToString(), model.PartPrice);
+            sh.AddUpdate(CsPartsEnum.PartState.ToString(), model.PartState);
+            sh.AddWhere(CsPartsEnum.PartId, model.PartId);
+            if (sh.Update() > 0)
             {
                 return Json(new ResModel
                 {

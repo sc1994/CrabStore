@@ -174,5 +174,11 @@ namespace Model.ViewModel
 
             public int Total { get; set; }
         }
+
+        public class CsOrderBatchDis
+        {
+            public string 订单编号 { get; set; } = string.Empty;
+            public string 运单号 { get; set; } = string.Empty;
+        }
     }
 }
