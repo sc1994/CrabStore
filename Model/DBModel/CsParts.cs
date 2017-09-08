@@ -50,6 +50,11 @@ namespace Model.DBModel
         /// </summary>
         public string PartNumber { get; set; } = string.Empty;
 
+        /// <summary>
+        /// 配件图片
+        /// </summary>
+        public string PartImage { get; set; } = string.Empty;
+
     }
 
 
@@ -87,5 +92,9 @@ namespace Model.DBModel
         /// 配件编码
         /// </summary>
         PartNumber,
+        /// <summary>
+        /// 配件图片
+        /// </summary>
+        PartImage,
     }
 }
