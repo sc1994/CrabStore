@@ -114,14 +114,14 @@ namespace Common
                     colCount++;
                 }
 
-                for (var rowNum = (sheet.FirstRowNum) + 1; rowNum <= sheet.LastRowNum; rowNum++)
+                for (var rowNum = sheet.FirstRowNum + 1; rowNum <= sheet.LastRowNum; rowNum++)
                 {
                     var row = sheet.GetRow(rowNum);
                     var dataRow = table.NewRow();
                     var cellNumber = 0;
                     for (var colNum = 0; colNum < colCount; colNum++)
                     {
-                        var cell = row.GetCell(colNum);
+                        var cell = row?.GetCell(colNum);
                         if (cell != null)
                         {
                             switch (cell.CellType)

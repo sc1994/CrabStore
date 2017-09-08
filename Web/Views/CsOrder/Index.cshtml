@@ -93,7 +93,9 @@
             </el-col>
         </el-row>
         <div class="table-btn">
-            <el-button type="primary" icon="upload" @@click="excelVisible=!excelVisible">导入</el-button>
+            <el-button type="primary" icon="search" @@click="batchDising()">批量配送</el-button>
+            <el-button type="primary" icon="search" @@click="changeExcelVisible(1)">批量发货</el-button>
+            <el-button type="primary" icon="upload" @@click="changeExcelVisible(0)">导入</el-button>
             <el-button type="primary" icon="upload2" @@click="exportExcel">导出</el-button>
             <el-button type="primary" icon="search" @@click="getpage(currentPage)">搜索</el-button>
         </div>
@@ -241,18 +243,30 @@
             </span>
         </el-dialog>
         <el-dialog title="上传Excel文件"
-            :visible.sync="excelVisible" size="tiny" name="xls">
+                   :visible.sync="excelVisible" size="tiny" name="xls">
             <el-upload action="../UploadFile/UploadFile"
-            :on-success="uploadSuccess"
-            :on-remove="uploadRemove"
-            :before-upload="uploadBefore"
-            :file-list="fileList" list-type="picture">
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传xls/xlsx文件，且需要保证严格按照给出的模板填写表格，导入的数据不能撤回</div>
+                       :on-success="uploadSuccess"
+                       :on-remove="uploadRemove"
+                       :before-upload="uploadBefore"
+                       :file-list="fileList" list-type="picture">
+                <el-button size="small" type="primary">点击上传</el-button>
+                <div slot="tip" class="el-upload__tip">只能上传xls/xlsx文件，且需要保证严格按照给出的模板填写表格，导入的数据不能撤回</div>
             </el-upload>
             <span slot="footer" class="dialog-footer">
                 <el-button @@click="excelVisible = false">取 消</el-button>
                 <el-button type="primary" @@click="importExcel" :loading="btnLoading">导 入</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog title="错误详细信息"
+                :visible.sync="msg.msgVisible" size="tiny">
+            <h4>{{msg.msgTitle}}</h4>
+            <div style="overflow: auto; height: auto;max-height: 600px">
+                <div style="padding: 2px" v-for="m in msg.msgOrderIds">
+                    <el-alert :title="m" show-icon :closable="false"></el-alert>
+                </div>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @@click="msg.msgVisible = false">取 消</el-button>
             </span>
         </el-dialog>
     </div>

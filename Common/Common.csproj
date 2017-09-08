@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonEqualityComparer.cs" />
     <Compile Include="ConvertHelper.cs" />
     <Compile Include="AppEnum.cs" />
     <Compile Include="HttpHelper.cs" />

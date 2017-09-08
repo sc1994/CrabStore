@@ -132,7 +132,7 @@
             <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage" status="success"></el-progress>
         </div>
         <h4>详细</h4>
-        <div>
+        <div style="overflow: auto; height: auto;max-height: 600px">
             <div style="padding: 5px" v-for="p in planList">
                 <el-alert :title="p.data" :type="p.code === 1 ? 'success' : 'error'" 
                     show-icon :closable="false"></el-alert>

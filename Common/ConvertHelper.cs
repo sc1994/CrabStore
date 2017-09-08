@@ -229,6 +229,11 @@ namespace Common
             return (from object row in table.Rows select CreateItemFromRow<T>((DataRow)row, properties)).ToList();
         }
 
+        public static IEnumerable<T> Distinct<T, TV>(this IEnumerable<T> source, Func<T, TV> keySelector)
+        {
+            return source.Distinct(new CommonEqualityComparer<T, TV>(keySelector));
+        }
+
         private static T CreateItemFromRow<T>(DataRow row, IEnumerable<PropertyInfo> properties) where T : new()
         {
             var item = new T();
@@ -245,6 +250,7 @@ namespace Common
             }
             return item;
         }
+
     }
 
 }

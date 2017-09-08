@@ -213,7 +213,7 @@ namespace Web.Controllers
                     ResStatus = ResStatue.No
                 });
             }
-            var parts = _csPartsBll.GetModelList($" AND PartId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.配件.GetHashCode()).Select(x => x.ProductId))})");
+            var parts = _csPartsBll.GetModelList($" AND PartId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.配件.GetHashCode()).Select(x => x.ProductId))}) AND PartType = {PartType.可选配件.GetHashCode()}");
             if (detail.All(x => x.ChoseType != ChoseType.螃蟹.GetHashCode()))
             {
                 return Json(new ResModel
@@ -233,7 +233,12 @@ namespace Web.Controllers
                         total += products.FirstOrDefault(x => x.ProductId == d.ProductId)?.ProductNumber + "" + d.ProductNumber;
                         continue;
                     }
-                    total += parts.FirstOrDefault(x => x.PartId == d.ProductId)?.PartNumber + "" + d.ProductNumber;
+                    if (total.IndexOf("P", StringComparison.Ordinal) < 0
+                        && total.IndexOf("-", StringComparison.Ordinal) < 0)
+                    {
+                        total += "-";
+                    }
+                    total += parts.FirstOrDefault(x => x.PartId == d.ProductId)?.PartNumber;
                 }
                 var sendInfo = order.SendAddress.Split('$');
                 var putInfo = order.OrderAddress.Split('$');
@@ -252,14 +257,14 @@ namespace Web.Controllers
                     付款方式 = "寄付月结",
                     第三方付月结卡号 = "",
                     寄托物品 = "其他",
-                    寄托物内容 = $"大闸蟹({total}T{detail.Where(x => x.OrderId == order.OrderId).Sum(x => x.ProductNumber)})",
+                    寄托物内容 = $"{total.TrimEnd('-')}-T{detail.Where(x => x.OrderId == order.OrderId).Sum(x => x.ProductNumber)}",
                     寄托物编号 = "",
                     寄托物数量 = order.CargoNumber.ToString(),
                     件数 = order.OrderCopies.ToString(),
-                    实际重量单位KG = order.TotalWeight.ToString("0.000"),
-                    计费重量单位KG = order.BillWeight.ToString("0.000"),
+                    实际重量单位KG = "-",
+                    计费重量单位KG = "-",
                     业务类型 = "大闸蟹专递",
-                    寄方客户备注 = "可选配件组合：剪刀 + 礼盒 + 保温袋"
+                    寄方客户备注 = ""
                 };
                 list.Add(item);
             }
@@ -288,7 +293,20 @@ namespace Web.Controllers
             path = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + path.Replace("..", "");
             var fileArr = path.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
             var fileName = fileArr[fileArr.Length - 1];
-            var orders = NpoiHelper.ReadExcel(path.Replace("/" + fileName, ""), fileName).ToList<CsOrderView.CsOrderImport>();
+            IList<CsOrderView.CsOrderImport> orders;
+            try
+            {
+                orders = NpoiHelper.ReadExcel(path.Replace("/" + fileName, ""), fileName).ToList<CsOrderView.CsOrderImport>();
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(ex.ToJson(), "execl文件读取失败");
+                return Json(new ResModel
+                {
+                    ResStatus = ResStatue.No,
+                    Data = "execl 文件读取失败,请确认文件数据正确, 请检查日志描述"
+                });
+            }
             if (!orders.Any())
             {
                 return Json(new ResModel
@@ -438,6 +456,14 @@ namespace Web.Controllers
             var countDetail = 0;
             foreach (var d in data)
             {
+                if (d.CsOrder.RowStatus == RowStatus.无效.GetHashCode())
+                {
+                    return Json(new ResModel
+                    {
+                        ResStatus = ResStatue.No,
+                        Data = "存在无效订单,请检查表格总的数据是否满足要求"
+                    });
+                }
                 var orderId = _csOrderBll.Add(d.CsOrder);
                 foreach (var detail in d.CsOrderDetails)
                 {
@@ -452,6 +478,112 @@ namespace Web.Controllers
             {
                 ResStatus = ResStatue.Yes,
                 Data = $"导入{count}条订单记录,以及共计{countDetail}条商品记录"
+            });
+        }
+
+        /// <summary>
+        /// 批量更新配货中
+        /// </summary>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        public ActionResult BatchDising(CsOrderView.CsOrderWhere para)
+        {
+            var data = GetList(para, false).Data.Where(x => x.OrderState == OrderState.支付成功.GetHashCode());
+            if (!data.Any())
+            {
+                return Json(new ResModel
+                {
+                    ResStatus = ResStatue.No,
+                    Data = "没有查询到需要更新的数据"
+                });
+            }
+            var sh = new SqlHelper<CsOrder>();
+            sh.AddUpdate(CsOrderEnum.OrderState.ToString(), OrderState.配货中.GetHashCode());
+            sh.AddWhere($" AND OrderId IN ({string.Join(",", data.Select(x => x.OrderId))})");
+            var count = sh.Update();
+            return Json(new ResModel
+            {
+                ResStatus = ResStatue.Yes,
+                Data = $"执行成功,更新{count}条数据."
+            });
+        }
+
+        /// <summary>
+        /// 批量更新已发货
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public ActionResult BatchDis(string path)
+        {
+            path = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + path.Replace("..", "");
+            var fileArr = path.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+            var fileName = fileArr[fileArr.Length - 1];
+            IEnumerable<CsOrderView.CsOrderBatchDis> orders;
+            try
+            {
+                orders = NpoiHelper.ReadExcel(path.Replace("/" + fileName, ""), fileName)
+                                       .ToList<CsOrderView.CsOrderBatchDis>()
+                                       .Where(x => !x.订单编号.IsNullOrEmpty() && !x.运单号.IsNullOrEmpty());
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(ex.ToJson(), "execl文件读取失败");
+                return Json(new ResModel
+                {
+                    ResStatus = ResStatue.No,
+                    Data = "execl 文件读取失败,请确认文件数据正确, 请检查日志描述"
+                });
+            }
+
+            if (!orders.Any())
+            {
+                return Json(new ResModel
+                {
+                    ResStatus = ResStatue.No,
+                    Data = "当前Excel中没有数据,请确认文件是否包含规定完整的数据"
+                });
+            }
+            if (orders.Any(x => x.订单编号.IsNullOrEmpty() || x.运单号.IsNullOrEmpty()))
+            {
+                return Json(new ResModel
+                {
+                    ResStatus = ResStatue.No,
+                    Data = "当前Excel中存在空数据,请确认数据的完整性, 数据一旦上传将无法撤回"
+                });
+            }
+            var distinct = orders.Distinct(x => x.订单编号);
+            if (distinct.Count() != orders.Count())
+            {
+                return Json(new
+                {
+                    code = ResStatue.Warn.GetHashCode(),
+                    data = "存在重复的订单编号,请依据给出的数据检查, 数据一旦上传将无法撤回",
+                    orderIds = orders.Except(distinct).Select(x => x.订单编号)
+                });
+            }
+            var data = _csOrderBll.GetModelList($" AND OrderNumber IN ('{string.Join("','", orders.Select(x => x.订单编号))}')");
+            if (data.Count != orders.Count())
+            {
+                return Json(new
+                {
+                    code = ResStatue.Warn.GetHashCode(),
+                    data = "存在有误的订单编号,请依据给出的数据检查, 数据一旦上传将无法撤回",
+                    orderIds = orders.Select(x => x.订单编号.Trim()).Except(data.Select(x => x.OrderNumber))
+                });
+            }
+            var count = 0;
+            foreach (var order in orders)
+            {
+                var sh = new SqlHelper<CsOrder>();
+                sh.AddUpdate("OrderState", OrderState.已发货.GetHashCode());
+                sh.AddUpdate("OrderDelivery", order.运单号);
+                sh.AddWhere($" AND OrderNumber = '{order.订单编号}'");
+                count += sh.Update();
+            }
+            return Json(new ResModel
+            {
+                ResStatus = ResStatue.Yes,
+                Data = $"更新成功, 共计更新{count}条数据."
             });
         }
 
@@ -499,15 +631,19 @@ namespace Web.Controllers
             var data = new List<StatisticView.StatisticList>();
             foreach (var product in products)
             {
+                var total = orders
+                    .Where(x => x.ProductId == product.ProductId)
+                    .Sum(x => x.ProductNumber);
+                if (total <= 0)
+                {
+                    continue;
+                }
                 var item = new StatisticView.StatisticList
                 {
                     ProductId = product.ProductId,
                     ProductName = product.ProductName,
                     ProductType = ((ProductType)product.ProductType).ToString(),
                 };
-                var total = orders
-                    .Where(x => x.ProductId == product.ProductId)
-                    .Sum(x => x.ProductNumber);
                 item.Total = $"{total} 只 / 计 {total * product.ProductWeight} 斤";
                 var stock = orders
                     .Where(x => x.ProductId == product.ProductId && x.OrderState == OrderState.配货中.GetHashCode())
