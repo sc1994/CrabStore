@@ -13,6 +13,7 @@ namespace BLL
     public class CsOrderBll : BaseBll<CsOrder, CsOrderEnum, int>
     {
         private readonly CsOrderDal _dal = new CsOrderDal();
+        private readonly CsOrderDetailBll _orderBll = new CsOrderDetailBll();
 
         public CsOrderBll() : base(new CsOrderDal())
         {

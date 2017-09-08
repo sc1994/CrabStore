@@ -159,7 +159,7 @@ namespace DAL
                                     orderDetail.ProductId = cart.id;
                                     orderDetail.UnitPrice = cart.price;
                                     orderDetail.ProductNumber = cart.id== 10009?carbNumber:1;
-                                    orderDetail.TotalPrice = (cart.price * cart.num);
+                                    orderDetail.TotalPrice = (cart.price *orderDetail.ProductNumber);
                                     orderDetail.ChoseType = 2;
                                     detailList.Add(orderDetail);
                                     totalNumber++;
@@ -172,7 +172,7 @@ namespace DAL
                                 orderDetail.ProductId = part.PartId;
                                 orderDetail.UnitPrice = part.PartPrice;
                                 orderDetail.ProductNumber = part.PartId==10004?carbNumber:1;
-                                orderDetail.TotalPrice = (part.PartPrice * part.number);
+                                orderDetail.TotalPrice = (part.PartPrice *orderDetail.ProductNumber);
                                 orderDetail.ChoseType = 2;
                                 detailList.Add(orderDetail);
                                 totalNumber++;
@@ -303,5 +303,6 @@ namespace DAL
             total = DbClient.ExecuteScalar<int>($"SELECT COUNT(1) FROM CsOrder b inner join CsUsers c on b.UserId = c.UserId WHERE 1 = 1 and c.OpenId='{openId}';");
             return DbClient.Query<CsOrder>(strSql.ToString()).ToList();
         }
+
     }
 }

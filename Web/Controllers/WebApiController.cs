@@ -6,6 +6,7 @@ using Model.DBModel;
 using System.Web.Http;
 using System.Collections.Generic;
 using Common;
+using Model.ViewModel;
 
 namespace Web.Controllers
 {
@@ -17,6 +18,7 @@ namespace Web.Controllers
         private readonly CsUsersBll _csUsersBll = new CsUsersBll();
         private readonly CsAddressBll _csAddressBll = new CsAddressBll();
         private readonly CsProductsBll _csProductsBll = new CsProductsBll();
+        private readonly CsOrderDetailBll _csOrderDetailBll = new CsOrderDetailBll();
 
         /// <summary>
         /// 获取螃蟹价格表和配件价格表
@@ -499,6 +501,71 @@ namespace Web.Controllers
             {
                 return Json(new { status = false });
             }
+        }
+
+        /// <summary>
+        /// 根据订单编号获取订单详情
+        /// </summary>
+        /// <param name="orderId">订单编号</param>
+        /// <returns></returns>
+        public IHttpActionResult GetOrderInfoByOrderId(int id)
+        {
+            CsOrder order= _csOrderBll.GetModel(id);
+            List<CsOrderDetail> orderList = _csOrderDetailBll.GetModelList($" and OrderId={id}");
+            List<CsProducts> productList = _csProductsBll.GetModelList("");
+            List<CsParts> partList = _csPartsBll.GetModelList("");
+            //螃蟹列表
+            var crabList = orderList.Where(x=>x.ChoseType==1).Select(x => new
+            {
+                x.OrderId,
+                x.ProductId,
+                ProductName =productList.FirstOrDefault(y=>y.ProductId==x.ProductId).ProductName,
+                ProductType =((ProductType)productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductType).ToString(),
+                x.ProductNumber,
+                x.UnitPrice,
+                x.TotalPrice
+            });
+            //必选配件列表
+            var partMustList = orderList.Where(x => x.ChoseType == 2 && x.ProductId < 10005).Select(x => new
+            {
+                x.OrderId,
+                x.ProductId,
+                PartName=partList.FirstOrDefault(y=>y.PartId==x.ProductId).PartName,
+                PartType="必选配件",
+                x.ProductNumber,
+                x.UnitPrice,
+                x.TotalPrice
+            });
+            //可选配件列表
+            var partOptList = orderList.Where(x => x.ChoseType == 2 && x.ProductId >= 10005).Select(x => new
+            {
+                x.OrderId,
+                x.ProductId,
+                PartName = partList.FirstOrDefault(y => y.PartId == x.ProductId).PartName,
+                PartType = "配件",
+                x.ProductNumber,
+                x.UnitPrice,
+                x.TotalPrice
+            });
+            return Json(new {
+                order,
+                crabList,
+                partMustList,
+                partOptList
+            });
+        }
+
+        /// <summary>
+        ///根据openId获取用户返利信息
+        /// </summary>
+        /// <param name="openId"></param>
+        /// <returns></returns>
+        public IHttpActionResult GetUserRebateInfo(string openId)
+        {
+            UserRebateView userRebate = _csUsersBll.GetUserRebateInfo(openId);
+            return Json(new {
+                userRebate
+            });
         }
     }
 }

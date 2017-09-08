@@ -1,6 +1,8 @@
 using DAL;
 using IDAL;
 using Model.DBModel;
+using Model.ViewModel;
+
 namespace BLL
 {
     /// <summary>
@@ -20,6 +22,10 @@ namespace BLL
         public CsUsers GetModelByTelPhone(string telPhone)
         {
             return userDAL.GetModelByTelPhone(telPhone);
+        }
+        public UserRebateView GetUserRebateInfo(string openId)
+        {
+            return userDAL.GetUserRebateInfo(openId);
         }
     }
 }
