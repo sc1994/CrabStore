@@ -118,7 +118,7 @@ var vm = new Vue({
                     ajax(host + '/WeChatApi/SendTemplateMsg', 'body=' + JSON.stringify({
                         touser: openId,
                         template_id: tempId,
-                        url: host,
+                        url: wechat,
                         topcolor: "#FF0000",
                         data: {
                             first: {

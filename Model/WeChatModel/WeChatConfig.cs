@@ -83,6 +83,11 @@ namespace Model.WeChatModel
         public const string WeChatHost = "http://test.osintell.cn";
 
         /// <summary>
+        /// 微信服务器地址
+        /// </summary>
+        public const string WeChatHome = "http://dzx.osintell.cn";
+
+        /// <summary>
         /// 价格变更的模板
         /// </summary>
         public const string TemplatePrice = "k9tbEwbpXtySIOJLUb9l7YPeJhFUQKlwVwmHI6D6G1U";

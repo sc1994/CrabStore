@@ -213,9 +213,7 @@ var vm = new Vue({
                         message: data.data,
                         type: "success"
                     });
-                    if (that.where.Status !== "2") {
-                        that.getpage(that.currentPage)
-                    }
+                    that.getpage(1)
                 } else {
                     that.$notify.error({
                         title: "错误",

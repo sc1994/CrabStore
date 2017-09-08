@@ -19,6 +19,7 @@ namespace Web.Controllers
         public ActionResult Index()
         {
             ViewBag.Host = WeChatConfig.WeChatHost;
+            ViewBag.wechat = WeChatConfig.WeChatHome;
             ViewBag.TempId = WeChatConfig.TemplatePrice;
             return View();
         }
