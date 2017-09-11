@@ -27,7 +27,7 @@
             </el-col>
         </el-row> 
         <el-row>
-            <el-col :span="2" class="layout-right layout-where">
+            @*<el-col :span="2" class="layout-right layout-where">
                 余额排序：
             </el-col>
             <el-col :span="6">
@@ -37,8 +37,8 @@
                     <el-option key="0" label="降序" value="0">
                     </el-option>
                 </el-select>
-            </el-col>
-            <el-col :span="2" class="layout-right layout-where">
+            </el-col>*@
+            @*<el-col :span="2" class="layout-right layout-where">
                 返利排序：
             </el-col>
             <el-col :span="6">
@@ -48,7 +48,7 @@
                     <el-option key="0" label="降序" value="0">
                     </el-option>
                 </el-select>
-            </el-col>
+            </el-col>*@
             <el-col :span="2" class="layout-right layout-where">
                 消费排序：
             </el-col>
@@ -75,14 +75,14 @@
             </el-table-column>
             <el-table-column label="联系方式" prop="UserPhone">
             </el-table-column>
-            <el-table-column label="累计返利金额" prop="Rebate">
-            </el-table-column>
+            @*<el-table-column label="累计返利金额" prop="Rebate">
+            </el-table-column>*@
             <el-table-column label="累计消费金额" prop="TotalPrice">
             </el-table-column>
             <el-table-column label="累计消费重量" prop="TotalWeight">
             </el-table-column>
-            <el-table-column label="当前余额" prop="UserBalance">
-            </el-table-column>
+            @*<el-table-column label="当前余额" prop="UserBalance">
+            </el-table-column>*@
             <el-table-column label="操作">
                 <template scope="scope">
                     <el-button size="small" class="table-detail-btn"

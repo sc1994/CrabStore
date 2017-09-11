@@ -17,10 +17,10 @@ namespace Web.Controllers
         public ActionResult GetCsUsersPage(CsUsersView.CsUsersWhere para, CsUsersView.CsUsersOrder order)
         {
             var orderSql = string.Empty;
-            if (order.Balance != -1)
-                orderSql += $" UserBalance {(OrderEnum)order.Balance},";
-            if (order.Rebate != -1)
-                orderSql += $" Rebate {(OrderEnum)order.Rebate},";
+            //if (order.Balance != -1)
+            //    orderSql += $" UserBalance {(OrderEnum)order.Balance},";
+            //if (order.Rebate != -1)
+            //    orderSql += $" Rebate {(OrderEnum)order.Rebate},";
             if (order.TotalPrice != -1)
                 orderSql += $" TotalPrice {(OrderEnum)order.TotalPrice},";
 

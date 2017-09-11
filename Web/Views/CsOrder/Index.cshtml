@@ -27,43 +27,6 @@
         </el-row> 
         <el-row :gutter="20">
             <el-col :span="2" class="layout-right layout-where">
-                总金额：
-            </el-col>
-            <el-col :span="2">
-                <el-input v-model="where.TotalStart" placeholder="最小金额"></el-input>
-            </el-col>
-            <el-col :span="4">
-                 <el-input v-model="where.TotalEnd" placeholder="最大金额" style="width:50%"></el-input> 
-            </el-col>
-            <el-col :span="2" class="layout-right layout-where">
-                优惠金额：
-            </el-col>
-            <el-col :span="2" class="number">
-                <el-input v-model="where.DiscountStart" placeholder="最小金额"></el-input>
-            </el-col>
-            <el-col :span="4">
-                 <el-input v-model="where.DiscountEnd" placeholder="最大金额" style="width:50%"></el-input> 
-            </el-col>
-
-            <el-col :span="2" class="layout-right layout-where">
-                实际金额：
-            </el-col>
-            <el-col :span="2">
-                <el-input v-model="where.ActualStart" placeholder="最小金额"></el-input>
-            </el-col>
-            <el-col :span="4">
-                 <el-input v-model="where.ActualEnd" placeholder="最大金额" style="width:50%"></el-input> 
-            </el-col>
-        </el-row> 
-        <el-row :gutter="20">
-            <el-col :span="2" class="layout-right layout-where">
-                下单时间：
-            </el-col>
-            <el-col :span="6">
-                <el-date-picker v-model="where.Time" type="datetimerange" placeholder="选择时间范围" @@change="getpage(1)">
-                </el-date-picker>
-            </el-col>
-            <el-col :span="2" class="layout-right layout-where">
                 订单状态：
             </el-col>
             <el-col :span="6">
@@ -81,6 +44,33 @@
                 </el-select>
             </el-col>
             <el-col :span="2" class="layout-right layout-where">
+                总金额：
+            </el-col>
+            <el-col :span="2">
+                <el-input v-model="where.TotalStart" placeholder="最小金额"></el-input>
+            </el-col>
+            <el-col :span="4">
+                 <el-input v-model="where.TotalEnd" placeholder="最大金额" style="width:50%"></el-input> 
+            </el-col>
+            @*<el-col :span="2" class="layout-right layout-where">
+                优惠金额：
+            </el-col>
+            <el-col :span="2" class="number">
+                <el-input v-model="where.DiscountStart" placeholder="最小金额"></el-input>
+            </el-col>
+            <el-col :span="4">
+                 <el-input v-model="where.DiscountEnd" placeholder="最大金额" style="width:50%"></el-input> 
+            </el-col>*@
+            @*<el-col :span="2" class="layout-right layout-where">
+                实际金额：
+            </el-col>
+            <el-col :span="2">
+                <el-input v-model="where.ActualStart" placeholder="最小金额"></el-input>
+            </el-col>
+            <el-col :span="4">
+                 <el-input v-model="where.ActualEnd" placeholder="最大金额" style="width:50%"></el-input> 
+            </el-col>*@
+            <el-col :span="2" class="layout-right layout-where">
                 数据状态：
             </el-col>
             <el-col :span="6">
@@ -91,6 +81,16 @@
                     </el-option>
                 </el-select>
             </el-col>
+        </el-row> 
+        <el-row :gutter="20">
+            <el-col :span="2" class="layout-right layout-where">
+                下单时间：
+            </el-col>
+            <el-col :span="6">
+                <el-date-picker v-model="where.Time" type="datetimerange" placeholder="选择时间范围" @@change="getpage(1)">
+                </el-date-picker>
+            </el-col>
+            
         </el-row>
         <div class="table-btn">
             <el-button type="primary" icon="search" @@click="batchDising()">批量配送</el-button>
@@ -143,10 +143,10 @@
                 <el-row>
                     <el-col :span="4" class="layout-right">总金额：</el-col>
                     <el-col :span="3">{{oldInfo.TotalMoney}}</el-col>
-                    <el-col :span="3" class="layout-right">优惠金额：</el-col>
+                    @*<el-col :span="3" class="layout-right">优惠金额：</el-col>
                     <el-col :span="3">{{oldInfo.DiscountMoney}}</el-col>
                     <el-col :span="3" class="layout-right">实际金额：</el-col>
-                    <el-col :span="3">{{oldInfo.ActualMoney}}</el-col>
+                    <el-col :span="3">{{oldInfo.ActualMoney}}</el-col>*@
                 </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">份数：</el-col>
@@ -163,8 +163,8 @@
                     <el-col :span="8">{{oldInfo.UserPhone}}</el-col>
                 </el-row>
                 <el-row>
-                    <el-col span="4" class="layout-right">寄件信息：</el-col>
-                    <el-col span="20">{{oldInfo.SendAddress}}</el-col>
+                    <el-col :span="4" class="layout-right">寄件信息：</el-col>
+                    <el-col :span="20">{{oldInfo.SendAddress}}</el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">地址信息：</el-col>

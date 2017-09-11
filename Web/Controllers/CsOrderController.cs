@@ -639,12 +639,12 @@ namespace Web.Controllers
                     continue;
                 }
                 var item = new StatisticView.StatisticList
-                {
-                    ProductId = product.ProductId,
-                    ProductName = product.ProductName,
-                    ProductType = ((ProductType)product.ProductType).ToString(),
-                };
-                item.Total = $"{total} 只 / 计 {total * product.ProductWeight} 斤";
+                           {
+                               ProductId = product.ProductId,
+                               ProductName = product.ProductName,
+                               ProductType = ((ProductType) product.ProductType).ToString(),
+                               Total = $"{total} 只 / 计 {total * product.ProductWeight} 斤",
+                           };
                 var stock = orders
                     .Where(x => x.ProductId == product.ProductId && x.OrderState == OrderState.配货中.GetHashCode())
                     .Sum(x => x.ProductNumber);
@@ -706,14 +706,14 @@ namespace Web.Controllers
 
             if (para.RowStatus > -1)
                 sh.AddWhere(CsOrderEnum.RowStatus, para.RowStatus);
-            if (para.ActualStart > 0)
-                sh.AddWhere(CsOrderEnum.ActualMoney, para.ActualStart, RelationEnum.GreaterEqual);
-            if (para.ActualEnd > 0)
-                sh.AddWhere(CsOrderEnum.ActualMoney, para.ActualEnd, RelationEnum.LessEqual);
-            if (para.DiscountStart > 0)
-                sh.AddWhere(CsOrderEnum.DiscountMoney, para.DiscountStart, RelationEnum.GreaterEqual);
-            if (para.DiscountEnd > 0)
-                sh.AddWhere(CsOrderEnum.DiscountMoney, para.DiscountEnd, RelationEnum.LessEqual);
+            //if (para.ActualStart > 0)
+            //    sh.AddWhere(CsOrderEnum.ActualMoney, para.ActualStart, RelationEnum.GreaterEqual);
+            //if (para.ActualEnd > 0)
+            //    sh.AddWhere(CsOrderEnum.ActualMoney, para.ActualEnd, RelationEnum.LessEqual);
+            //if (para.DiscountStart > 0)
+            //    sh.AddWhere(CsOrderEnum.DiscountMoney, para.DiscountStart, RelationEnum.GreaterEqual);
+            //if (para.DiscountEnd > 0)
+            //    sh.AddWhere(CsOrderEnum.DiscountMoney, para.DiscountEnd, RelationEnum.LessEqual);
             if (para.TotalStart > 0)
                 sh.AddWhere(CsOrderEnum.TotalMoney, para.TotalStart, RelationEnum.GreaterEqual);
             if (para.TotalEnd > 0)
