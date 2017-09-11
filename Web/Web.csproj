@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Web</RootNamespace>
     <AssemblyName>Web</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -237,6 +237,15 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\10001.jpg" />
+    <Content Include="Images\10002.jpg" />
+    <Content Include="Images\10003.jpg" />
+    <Content Include="Images\10004.jpg" />
+    <Content Include="Images\10005.jpg" />
+    <Content Include="Images\10006.jpg" />
+    <Content Include="Images\10007.jpg" />
+    <Content Include="Images\10008.jpg" />
+    <Content Include="Images\10009.jpg" />
     <Content Include="Images\g2.5.gif" />
     <Content Include="Images\g3.5.gif" />
     <Content Include="Images\g3.gif" />

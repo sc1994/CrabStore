@@ -41,9 +41,9 @@ namespace DAL
         {
             var strSql = "select sum(ProductNumber*OrderCopies) from CsOrderDetail a inner join CsOrder b on a.OrderId = b.OrderId where a.ProductId= " + productId
                         + " and Convert(varchar(7),b.OrderDate,23)='" + nowTime.ToString("yyyy-MM") + "'";
-            int day = DateTime.Now.Day;            
-            int number= random.Next(100*day,200*(day+1));
-            return DbClient.ExecuteScalar<int>(strSql)+number;
+            int day = DateTime.Now.Day;
+            int number = random.Next(100 * day, 200 * (day + 1));
+            return DbClient.ExecuteScalar<int>(strSql) + number;
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace DAL
                         _csOrder.OrderNumber = DateTime.Now.ToString("yyyyMMddHHmmssffff");
                         _csOrder.UserId = order.userid;
                         _csOrder.TotalMoney = order.totalmoney;
-                        _csOrder.DiscountMoney = order.usebalance;
+                        _csOrder.DiscountMoney = 0;
                         _csOrder.ActualMoney = order.finalPrice;
                         _csOrder.OrderDate = DateTime.Now;
                         _csOrder.OrderState = 1;
@@ -123,10 +123,11 @@ namespace DAL
                         if (obj != null)
                         {
                             int orderid = Convert.ToInt32(obj);
-                            int totalNumber = 2;//应总共操作记录影响行数 基础数据2为用户修改与返利记录添加
-                            decimal weight = 0;
-                            int carbNumber = 0;//总共购买螃蟹数量
+                            int totalNumber = 0;//应总共操作记录影响行数
+                            //decimal weight = 0;
+                            int carbNumber = 0;//总共购买螃蟹数
                             //添加购物详细
+                            //购买螃蟹列表
                             List<CsOrderDetail> detailList = new List<CsOrderDetail>();
                             foreach (CartItem cart in order.cartFoodList)
                             {
@@ -137,22 +138,13 @@ namespace DAL
                                 orderDetail.ProductNumber = cart.num;
                                 orderDetail.TotalPrice = (cart.price * cart.num);
                                 orderDetail.ChoseType = 1;
-                                weight += (cart.weight * cart.num);
-                                totalNumber += 2;
+                                //weight += (cart.weight * cart.num);
+                                totalNumber++;
                                 carbNumber += cart.num;
                                 detailList.Add(orderDetail);
-                                //修改库存数
-                                StringBuilder strSql4 = new StringBuilder();
-                                strSql4.Append("update CsProducts set ProductStock=ProductStock-@Number where ProductId=@ProductId ");
-                                SqlParameter[] parameter4 =
-                                {
-                                    new SqlParameter("@Number",SqlDbType.Int,4),
-                                    new SqlParameter("@ProductId",SqlDbType.Int,4)
-                                };
-                                parameter4[0].Value = cart.num * order.totalNumber;
-                                parameter4[1].Value = cart.id;
-                                number += DbClient.ExecuteSql(conn, trans, strSql4.ToString(), parameter4);
                             }
+
+                            //购买可选配件列表
                             if (order.partNumList != null)
                             {
                                 foreach (CartItem cart in order.partNumList)
@@ -168,6 +160,7 @@ namespace DAL
                                     totalNumber++;
                                 }
                             }
+                            //购买必选配件列表
                             foreach (PartItem part in order.partList)
                             {
                                 CsOrderDetail orderDetail = new CsOrderDetail();
@@ -175,7 +168,7 @@ namespace DAL
                                 orderDetail.ProductId = part.PartId;
                                 orderDetail.UnitPrice = part.PartPrice;
                                 orderDetail.ProductNumber = part.PartId == 10004 ? carbNumber : 1;
-                                orderDetail.TotalPrice = (part.PartPrice * part.number);
+                                orderDetail.TotalPrice = (part.PartPrice * orderDetail.ProductNumber);
                                 orderDetail.ChoseType = 2;
                                 detailList.Add(orderDetail);
                                 totalNumber++;
@@ -202,37 +195,6 @@ namespace DAL
                                 parameter2[5].Value = detail.ChoseType;
                                 number += DbClient.ExecuteSql(conn, trans, strSql2.ToString(), parameter2);
                             }
-
-                            //修改用户表用户的金额和购买总量
-                            StringBuilder strSql3 = new StringBuilder();
-                            strSql3.Append("update CsUsers set UserBalance=UserBalance+@Balance,TotalWight=TotalWight+@Weight where UserId=@UserId ");
-                            SqlParameter[] parameter3 =
-                            {
-                                new SqlParameter("@Balance",SqlDbType.Decimal,18),
-                                new SqlParameter("@Weight",SqlDbType.Decimal,18),
-                                new SqlParameter("@UserId",SqlDbType.Int,4)
-                            };
-                            parameter3[0].Value = (order.balancePrice - order.usebalance);//本次获得返利金额减去本次是有的余额
-                            parameter3[1].Value = weight;
-                            parameter3[2].Value = order.userid;
-                            number += DbClient.ExecuteSql(conn, trans, strSql3.ToString(), parameter3);
-
-                            // 添加返利记录
-                            StringBuilder strSql5 = new StringBuilder();
-                            strSql5.Append("insert into CsRebate (UserId,RebateMoney,RebateWeight,RebateTime) values (");
-                            strSql5.Append("@UserId,@RebateMoney,@RebateWeight,@RebateTime)");
-                            SqlParameter[] parameter5 =
-                            {
-                                new SqlParameter("@UserId",SqlDbType.Int,4),
-                                new SqlParameter("@RebateMoney",SqlDbType.Decimal,18),
-                                new SqlParameter("@RebateWeight",SqlDbType.Decimal,18),
-                                new SqlParameter("@RebateTime",SqlDbType.DateTime)
-                            };
-                            parameter5[0].Value = order.userid;
-                            parameter5[1].Value = order.balancePrice;
-                            parameter5[2].Value = weight;
-                            parameter5[3].Value = DateTime.Now;
-                            number += DbClient.ExecuteSql(conn, trans, strSql5.ToString(), parameter5);
                             if (number != totalNumber)
                             {
                                 trans.Rollback();
@@ -243,7 +205,6 @@ namespace DAL
                                 trans.Commit();
                                 return orderid;
                             }
-
                         }
                         else
                         {
@@ -256,7 +217,6 @@ namespace DAL
                         LogHelper.Log(ex.Message);
                         trans.Rollback();
                         return 0;
-
                     }
                 }
             }
@@ -306,6 +266,62 @@ namespace DAL
             strSql.Append($" WHERE ROWNUMBER BETWEEN {(num - 1) * size + 1} AND {num * size}; ");
             total = DbClient.ExecuteScalar<int>($"SELECT COUNT(1) FROM CsOrder b inner join CsUsers c on b.UserId = c.UserId WHERE 1 = 1 and c.OpenId='{openId}';");
             return DbClient.Query<CsOrder>(strSql.ToString()).ToList();
+        }
+
+        /// <summary>
+        /// 支付完成，修改订单状态，生成扣除库存与修改用户购买重量
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public int FinshOrder(int orderId, int userId, decimal totalWeight, int orderCopies)
+        {
+            int number = 0;//实际操作影响行数
+            using (SqlConnection conn = (SqlConnection)DataSource.GetConnection())
+            {
+                conn.Open();
+                using (SqlTransaction trans = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        //第一步骤：修改订单状态为支付完成但未配货
+                        string strSql1 = $"update CsOrder set OrderState=2 where OrderId={orderId}";
+                        number += DbClient.ExecuteSql(conn, trans, strSql1, null);
+                        //第二步骤:修改螃蟹库存
+                        CsOrderDetailDal orderDetailDal = new CsOrderDetailDal();
+                        //查询出本次订单中购买螃蟹列表
+                        List<CsOrderDetail> DetailList = orderDetailDal.GetModelList(" and OrderId=" + orderId + " and ChoseType=1");
+                        if (DetailList.Count > 0)
+                        {
+                            foreach (CsOrderDetail OrderDetail in DetailList)
+                            {
+                                string strSql2 = $"update CsProducts set ProductStock=ProductStock-{OrderDetail.ProductNumber} where ProductId={OrderDetail.ProductId}";
+                                number += DbClient.ExecuteSql(conn, trans, strSql2, null);
+                            }
+                        }
+                        //第三步，修改用户的购买累计重量
+                        decimal total = totalWeight * orderCopies;
+                        string strSql3 = $"update CsUsers set TotalWight=TotalWight+{total} where UserId={userId}";
+                        number += DbClient.ExecuteSql(conn, trans, strSql3, null);
+                        if (number == (DetailList.Count + 2))
+                        {
+                            trans.Commit();
+                            return number;
+                        }
+                        else
+                        {
+                            trans.Rollback();
+                            return 0;
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.Log(ex.Message);
+                        trans.Rollback();
+                        return 0;
+                    }
+                }
+            }
         }
     }
 }

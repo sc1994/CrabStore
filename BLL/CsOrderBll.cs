@@ -41,7 +41,7 @@ namespace BLL
         /// <returns></returns>
         public int TotalNumber(int productId, DateTime nowTime)
         {
-            return _dal.TotalNumber(productId,nowTime);
+            return _dal.TotalNumber(productId, nowTime);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace BLL
         /// <param name="orderId">订单编号</param>
         /// <param name="prepaymentId">预支付编号</param>
         /// <returns></returns>
-        public int UpdatePrepaymentId(int orderId,string prepaymentId)
+        public int UpdatePrepaymentId(int orderId, string prepaymentId)
         {
             return _dal.UpdatePrepaymentId(orderId, prepaymentId);
         }
@@ -71,7 +71,7 @@ namespace BLL
         /// <param name="orderId"></param>
         /// <param name="orderState"></param>
         /// <returns></returns>
-        public int UpdateOrderState(int orderId,int orderState)
+        public int UpdateOrderState(int orderId, int orderState)
         {
             return _dal.UpdateOrderState(orderId, orderState);
         }
@@ -81,9 +81,19 @@ namespace BLL
         /// </summary>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public List<CsOrder> GetModelListByOpenId(string openId,int num,int size,out int total)
+        public List<CsOrder> GetModelListByOpenId(string openId, int num, int size, out int total)
         {
-            return _dal.GetModelListByOpenId(openId,num,size,out total);
+            return _dal.GetModelListByOpenId(openId, num, size, out total);
+        }
+
+        /// <summary>
+        /// 支付完成，修改订单状态，生成扣除库存与修改用户购买重量
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public int FinshOrder(int orderId, int userId, decimal totalWeight, int orderCopies)
+        {
+            return _dal.FinshOrder(orderId, userId, totalWeight, orderCopies);
         }
     }
 }

@@ -509,6 +509,20 @@ namespace Web.Controllers
             }
         }
 
+        public IHttpActionResult FinshOrder(CsOrder order)
+        {
+            int number = _csOrderBll.FinshOrder(order.OrderId,order.UserId,order.TotalWeight,order.OrderCopies);
+            if (number > 0)
+            {
+                return Json(new {
+                status=true});
+            }
+            else
+            {
+                return Json(new { status = false });
+            }
+        }
+
         /// <summary>
         /// 根据订单编号获取订单详情
         /// </summary>
@@ -566,11 +580,14 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public IHttpActionResult GetUserRebateInfo(string openId)
+        public IHttpActionResult GetUserRebateInfo(string openId )
         {
             UserRebateView userRebate = _csUsersBll.GetUserRebateInfo(openId);
+            CsRebateBll rebateBLL = new CsRebateBll();
+            List<CsRebate> rebateList = rebateBLL.GetModelList(" and  UserId="+userRebate.UserId+" and RebateMoney>0 ");
             return Json(new {
-                userRebate
+                userRebate,
+                rebateList
             });
         }
     }
