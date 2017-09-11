@@ -145,7 +145,7 @@ namespace DAL
                             }
 
                             //购买可选配件列表
-                            if (order.partNumList != null)
+                            if (order.partNumList.Count>0)
                             {
                                 foreach (CartItem cart in order.partNumList)
                                 {

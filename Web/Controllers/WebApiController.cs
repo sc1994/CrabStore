@@ -41,8 +41,8 @@ namespace Web.Controllers
             strJson.Append(",\"priceList1\":[");
             for (int i = 0; i < (product1.Count / 2); i++)
             {
-                strJson.Append("{\"pn1\":\"" + product1[i].ProductName + "\",\"pv1\":" + product1[i].ProductPrice + ",");
-                strJson.Append("\"pn2\":\"" + product1[i + 6].ProductName + "\",\"pv2\":" + product1[i + 6].ProductPrice + "}");
+                strJson.Append("{\"pn1\":\"" + product1[i].ProductName + "\",\"pv1\":" +(product1[i].ProductState==1? product1[i].ProductPrice:'-') + ",");
+                strJson.Append("\"pn2\":\"" + product1[i + 6].ProductName + "\",\"pv2\":" + (product1[i+6].ProductState==1?product1[i + 6].ProductPrice:'-') + "}");
                 if (i != (product1.Count() / 2 - 1))
                 {
                     strJson.Append(",");
@@ -55,8 +55,8 @@ namespace Web.Controllers
                                          select product).ToList();
             for (int j = 0; j < (product2.Count() / 2); j++)
             {
-                strJson.Append("{\"pn1\":\"" + product1[j].ProductName + "\",\"pv1\":" + product1[j].ProductPrice + ",");
-                strJson.Append("\"pn2\":\"" + product1[j + 6].ProductName + "\",\"pv2\":" + product1[j + 6].ProductPrice + "}");
+                strJson.Append("{\"pn1\":\"" + product2[j].ProductName + "\",\"pv1\":" +(product2[j].ProductState==1? product2[j].ProductPrice:'-') + ",");
+                strJson.Append("\"pn2\":\"" + product2[j + 6].ProductName + "\",\"pv2\":" + (product2[j].ProductState==1? product2[j + 6].ProductPrice:'-') + "}");
                 if (j != (product2.Count() / 2 - 1))
                 {
                     strJson.Append(",");
@@ -131,7 +131,8 @@ namespace Web.Controllers
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
                 number = 0,
                 x.ProductStock,//库存
-                TypeName = "大宗采购"
+                TypeName = "大宗采购",
+                x.ProductState//库存状态
             });
             //大宗采购母蟹列表
             List<CsProducts> proList2 = (from product2 in productList
@@ -148,7 +149,8 @@ namespace Web.Controllers
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
                 number = 0,
                 x.ProductStock,//库存
-                TypeName = "大宗采购"
+                TypeName = "大宗采购",
+                x.ProductState,//库存状态
             });
             //蟹唐直采公蟹列表
             List<CsProducts> proList3 = (from product3 in productList
@@ -165,7 +167,8 @@ namespace Web.Controllers
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
                 number = 0,
                 x.ProductStock,//库存
-                TypeName = "蟹塘直采"
+                TypeName = "蟹塘直采",
+                x.ProductState//库存状态
             });
 
             //蟹塘直采母蟹列表
@@ -183,7 +186,8 @@ namespace Web.Controllers
                 TotalNumber = _csOrderBll.TotalNumber(x.ProductId, DateTime.Now),
                 number = 0,
                 x.ProductStock,//库存
-                TypeName = "蟹塘直采"
+                TypeName = "蟹塘直采",
+                x.ProductState//库存状态
             });
 
             //可选配件列表
@@ -573,22 +577,6 @@ namespace Web.Controllers
                 partMustList,
                 partOptList
             });
-        }
-
-        /// <summary>
-        ///根据openId获取用户返利信息
-        /// </summary>
-        /// <param name="openId"></param>
-        /// <returns></returns>
-        public IHttpActionResult GetUserRebateInfo(string openId )
-        {
-            UserRebateView userRebate = _csUsersBll.GetUserRebateInfo(openId);
-            CsRebateBll rebateBLL = new CsRebateBll();
-            List<CsRebate> rebateList = rebateBLL.GetModelList(" and  UserId="+userRebate.UserId+" and RebateMoney>0 ");
-            return Json(new {
-                userRebate,
-                rebateList
-            });
-        }
+        }        
     }
 }
