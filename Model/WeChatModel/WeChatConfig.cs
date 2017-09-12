@@ -1,6 +1,7 @@
 ﻿/****************************************
 // 定义了 微信 需要的基础配置 区别与web.config 
 // 避免的配置混乱 增加易读性    
+// 但是易变动配置依然选择配置在web.confog中,方便线上的环境变动
 ****************************************/
 
 using Common;
@@ -40,6 +41,11 @@ namespace Model.WeChatModel
         /// 微信服务器地址
         /// </summary>
         public static string WeChatHome => ConfigurationManager.AppSettings["WeChatHome"];
+
+        /// <summary>
+        /// 价格变更的模板
+        /// </summary>
+        public static string TemplatePrice => ConfigurationManager.AppSettings["TemplatePrice"];
 
         /// <summary>
         /// 获取 AccessToken  api 地址
@@ -86,11 +92,6 @@ namespace Model.WeChatModel
         /// 获取预支付Id Url
         /// </summary>
         public const string PrepayInfoUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-
-        /// <summary>
-        /// 价格变更的模板
-        /// </summary>
-        public const string TemplatePrice = "k9tbEwbpXtySIOJLUb9l7YPeJhFUQKlwVwmHI6D6G1U";
 
         /// <summary>
         /// AccessToken 的存放位置, 每次使用之前需要验证的 token 是否过期
