@@ -9,7 +9,7 @@
         <el-row>
             <el-col :span="21">
                 <el-button type="primary" icon="edit" @@click="submitPrice()">保存修改</el-button>
-                <el-button type="primary" icon="upload" @@click="sendMsg">发布价格</el-button>
+                <el-button type="primary" icon="upload" @@click="templateVisible = true">发布价格</el-button>
                 <el-button type="primary" icon="date" @@click="selectLast">价格历史</el-button>
             </el-col>
 
@@ -142,7 +142,34 @@
             <el-button @@click="planDialog = false">关 闭</el-button>
         </span>
     </el-dialog>
-
+    <el-dialog title="模板编辑" :visible.sync="templateVisible" size="tiny">
+        <el-form :model="templateInfo"  ref="templateInfo" label-width="100px" >
+            <el-form-item label="副标题：" required>
+                <el-input v-model="templateInfo.first.value"></el-input>
+            </el-form-item>
+            <el-form-item label="产品类型：" required>
+                <el-input v-model="templateInfo.keyword1.value"></el-input>
+            </el-form-item>
+            <el-form-item label="产品名称：" required>
+                <el-input v-model="templateInfo.keyword2.value"></el-input>
+            </el-form-item>
+            <el-form-item label="时间：" required>
+                <el-form-item>
+                    <el-date-picker type="date" placeholder="选择日期" v-model="templateInfo.keyword3.value" style="width: 100%;"></el-date-picker>
+                </el-form-item>
+            </el-form-item>
+            <el-form-item label="状态：" required>
+                <el-input v-model="templateInfo.keyword4.value"></el-input>
+            </el-form-item>
+            <el-form-item label="描述：" required>
+                <el-input type="textarea" v-model="templateInfo.remark.value"></el-input>
+            </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @@click="templateVisible = false">取 消</el-button>
+            <el-button type="primary" @@click="sendMsg()">发 送</el-button>
+        </span>
+    </el-dialog>
 </div>
 
 @section script{
