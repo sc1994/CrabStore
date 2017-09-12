@@ -108,6 +108,14 @@ var vm = new Vue({
         },
         submitInfo: function () {
             var that = this
+            if (!that.info.SysUserName || !that.info.SysUserPassword) {
+                that.$notify({
+                    title: '请注意',
+                    message: "请填写必要信息",
+                    type: 'error'
+                })
+                return;
+            }
             that.dialogLoading = true
             if (that.oldInfo.SysUserPassword != that.info.SysUserPassword) {
                 that.info.SysUserPassword = md5(that.info.SysUserPassword)

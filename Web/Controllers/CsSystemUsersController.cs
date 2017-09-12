@@ -59,10 +59,20 @@ namespace Web.Controllers
 
         public ActionResult SubmitCsSystemUsers(CsSystemUsers model)
         {
-            var admin = _csSystemUsersBll.GetModelList(" AND SysUserType = 1 AND SysUserState = 1");
+            if (_csSystemUsersBll.GetModelList($" AND SysUserName = '{model.SysUserName}' ").Any()
+                && model.SysUserId == 0)
+            {
+                return Json(new ResModel
+                {
+                    ResStatus = ResStatue.Warn,
+                    Data = "已存在的用户名,请重新设置"
+                });
+            }
+
+            var admin = _csSystemUsersBll.GetModelList(" AND SysUserType = 1 AND SysUserState = 1").FirstOrDefault();
             if (model.SysUserType == SysUserType.管理员.GetHashCode()
-                && admin.Any()
-                && admin.FirstOrDefault()?.SysUserName != model.SysUserName)
+                && admin != null
+                && admin.SysUserId != model.SysUserId)
             {
 
                 return Json(new ResModel
@@ -71,9 +81,8 @@ namespace Web.Controllers
                     Data = "最多只能存在一个管理员, 请勿重复设置管理员"
                 });
             }
-            if ((model.SysUserType != SysUserType.管理员.GetHashCode() &&
-                 admin.FirstOrDefault()?.SysUserName == model.SysUserName)
-                 || model.SysUserState == RowStatus.无效.GetHashCode())
+            if (model.SysUserType == SysUserType.普通用户.GetHashCode()
+                && model.SysUserId == admin?.SysUserId)
             {
                 return Json(new ResModel
                 {
