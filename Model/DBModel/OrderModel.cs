@@ -16,11 +16,7 @@ namespace Model.DBModel
         /// 总金额
         /// </summary>
         public decimal totalmoney { get; set; }
-        /// <summary>
-        /// 优惠金额
-        /// </summary>
-        public decimal balance { get; set; }
-
+       
         /// <summary>
         /// 实际支付金额
         /// </summary>
@@ -65,16 +61,6 @@ namespace Model.DBModel
         /// 购买必须配件列表
         /// </summary>
         public List<PartItem> partList { get; set; }
-
-        /// <summary>
-        /// 返利金额
-        /// </summary>
-        public decimal balancePrice { get; set; }
-
-        /// <summary>
-        /// 已使用余额数
-        /// </summary>
-        public  decimal usebalance { get; set; }
 
         /// <summary>
         /// 快递费用
