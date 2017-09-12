@@ -41,8 +41,8 @@ namespace Web.Controllers
             strJson.Append(",\"priceList1\":[");
             for (int i = 0; i < (product1.Count / 2); i++)
             {
-                strJson.Append("{\"pn1\":\"" + product1[i].ProductName + "\",\"pv1\":" +(product1[i].ProductState==1? product1[i].ProductPrice:'-') + ",");
-                strJson.Append("\"pn2\":\"" + product1[i + 6].ProductName + "\",\"pv2\":" + (product1[i+6].ProductState==1?product1[i + 6].ProductPrice:'-') + "}");
+                strJson.Append("{\"pn1\":\"" + product1[i].ProductName + "\",\"pv1\":" +(product1[i].ProductState==1? product1[i].ProductPrice.ToString():"\"-\"") + ",");
+                strJson.Append("\"pn2\":\"" + product1[i + 6].ProductName + "\",\"pv2\":" + (product1[i+6].ProductState==1?product1[i + 6].ProductPrice.ToString():"\"-\"") + "}");
                 if (i != (product1.Count() / 2 - 1))
                 {
                     strJson.Append(",");
@@ -55,8 +55,8 @@ namespace Web.Controllers
                                          select product).ToList();
             for (int j = 0; j < (product2.Count() / 2); j++)
             {
-                strJson.Append("{\"pn1\":\"" + product2[j].ProductName + "\",\"pv1\":" +(product2[j].ProductState==1? product2[j].ProductPrice:'-') + ",");
-                strJson.Append("\"pn2\":\"" + product2[j + 6].ProductName + "\",\"pv2\":" + (product2[j].ProductState==1? product2[j + 6].ProductPrice:'-') + "}");
+                strJson.Append("{\"pn1\":\"" + product2[j].ProductName + "\",\"pv1\":" +(product2[j].ProductState==1? product2[j].ProductPrice.ToString():"\"-\"") + ",");
+                strJson.Append("\"pn2\":\"" + product2[j + 6].ProductName + "\",\"pv2\":" + (product2[j].ProductState==1? product2[j + 6].ProductPrice.ToString():"\"-\"") + "}");
                 if (j != (product2.Count() / 2 - 1))
                 {
                     strJson.Append(",");
@@ -296,6 +296,32 @@ namespace Web.Controllers
                 firstPrice = 0,
                 fllowPrice = 0
             });
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetAddressList(int userId)
+        {
+            List<CsAddress> addressList = _csAddressBll.GetModelList($" and UserId={userId}");
+            CsDistrictBll districtBll = new CsDistrictBll();
+            //所有省会列表 获取对于首发总量价格与续重价格
+            List<CsDistrict> districtList = districtBll.GetModelList(" and ParentId=0");
+            var list = addressList.Select(x=>new {
+                x.Consignee,
+                x.TelPhone,
+                x.ConSex,
+                Province =x.Details.Split('&')[0],
+                City = x.Details.Split('&')[1],
+                District=x.Details.Split('&')[2],
+                Detail =x.Details.Split('&')[3],
+                FirstPrice = districtList.FirstOrDefault(y=>y.Name==x.Details.Split('&')[0])?.FirstPrice??12,
+                FllowPrice =districtList.FirstOrDefault(y=>y.Name==x.Details.Split('&')[0])?.FllowPrice??2
+            });
+            return Json(new
+            {
+                status=true,
+                list
+            });
+
         }
 
         /// <summary>
