@@ -21,10 +21,10 @@ var vm = new Vue({
     templateVisible: false, // 模板编辑弹窗
     templateInfo: {
       first: {
-        value: "商品降价通知"
+        value: "大闸蟹价格更新啦！"
       },
       keyword1: {
-        value: "蟹"
+        value: "大闸蟹"
       },
       keyword2: {
         value: "高淳大闸蟹"
@@ -33,10 +33,10 @@ var vm = new Vue({
         value: new Date().Format("yyyy-M-d")
       },
       keyword4: {
-        value: "部分商品降价"
+        value: "大闸蟹价格有变动，赶紧去看看吧~"
       },
       remark: {
-        value: "大闸蟹降价啦,赶紧去看看吧~"
+        value: "高淳螃蟹线上服务市场为您提供最新价格信息。微商、分销商一键代发，全程无忧。"
       }
     }
   },

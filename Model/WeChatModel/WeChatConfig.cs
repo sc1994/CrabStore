@@ -32,6 +32,16 @@ namespace Model.WeChatModel
         public static string PayKey => ConfigurationManager.AppSettings["PayKey"];
 
         /// <summary>
+        /// 微信服务器地址
+        /// </summary>
+        public static string WeChatHost => ConfigurationManager.AppSettings["WeChatHost"];
+
+        /// <summary>
+        /// 微信服务器地址
+        /// </summary>
+        public static string WeChatHome => ConfigurationManager.AppSettings["WeChatHome"];
+
+        /// <summary>
         /// 获取 AccessToken  api 地址
         /// @param appid
         /// @param secret
@@ -76,16 +86,6 @@ namespace Model.WeChatModel
         /// 获取预支付Id Url
         /// </summary>
         public const string PrepayInfoUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-
-        /// <summary>
-        /// 微信服务器地址
-        /// </summary>
-        public const string WeChatHost = "http://test.osintell.cn";
-
-        /// <summary>
-        /// 微信服务器地址
-        /// </summary>
-        public const string WeChatHome = "http://dzx.osintell.cn";
 
         /// <summary>
         /// 价格变更的模板

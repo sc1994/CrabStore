@@ -97,7 +97,15 @@ var vm = new Vue({
                 that.dialogVisible = true
                 if (data.code === 1) {
                     that.info = data.data
-                    that.oldInfo = data.data
+                    that.oldInfo = {
+                        SysUserName: data.data.SysUserName,
+                        SysUserPassword: data.data.SysUserPassword,
+                        SysUserType: data.data.SysUserType,
+                        SysUserState: data.data.SysUserState,
+                        DeleteDate: data.data.DeleteDate,
+                        DeleteDescribe: data.data.DeleteDescribe,
+                        SysUserId: data.data.SysUserId
+                    }
                 } else {
                     that.$notify.error({
                         title: '错误',
@@ -117,7 +125,7 @@ var vm = new Vue({
                 return;
             }
             that.dialogLoading = true
-            if (that.oldInfo.SysUserPassword != that.info.SysUserPassword) {
+            if (that.oldInfo.SysUserPassword !== that.info.SysUserPassword) {
                 that.info.SysUserPassword = md5(that.info.SysUserPassword)
             }
             ajax('/CsSystemUsers/SubmitCsSystemUsers', that.info, function (data) {
