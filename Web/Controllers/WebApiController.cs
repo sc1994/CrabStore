@@ -41,8 +41,8 @@ namespace Web.Controllers
             strJson.Append(",\"priceList1\":[");
             for (int i = 0; i < (product1.Count / 2); i++)
             {
-                strJson.Append("{\"pn1\":\"" + product1[i].ProductName + "\",\"pv1\":" +(product1[i].ProductState==1? product1[i].ProductPrice.ToString():"\"-\"") + ",");
-                strJson.Append("\"pn2\":\"" + product1[i + 6].ProductName + "\",\"pv2\":" + (product1[i+6].ProductState==1?product1[i + 6].ProductPrice.ToString():"\"-\"") + "}");
+                strJson.Append("{\"pn1\":\"" + product1[i].ProductName + "\",\"pv1\":" + (product1[i].ProductState == 1 ? product1[i].ProductPrice.ToString() : "\"-\"") + ",");
+                strJson.Append("\"pn2\":\"" + product1[i + 6].ProductName + "\",\"pv2\":" + (product1[i + 6].ProductState == 1 ? product1[i + 6].ProductPrice.ToString() : "\"-\"") + "}");
                 if (i != (product1.Count() / 2 - 1))
                 {
                     strJson.Append(",");
@@ -55,8 +55,8 @@ namespace Web.Controllers
                                          select product).ToList();
             for (int j = 0; j < (product2.Count() / 2); j++)
             {
-                strJson.Append("{\"pn1\":\"" + product2[j].ProductName + "\",\"pv1\":" +(product2[j].ProductState==1? product2[j].ProductPrice.ToString():"\"-\"") + ",");
-                strJson.Append("\"pn2\":\"" + product2[j + 6].ProductName + "\",\"pv2\":" + (product2[j].ProductState==1? product2[j + 6].ProductPrice.ToString():"\"-\"") + "}");
+                strJson.Append("{\"pn1\":\"" + product2[j].ProductName + "\",\"pv1\":" + (product2[j].ProductState == 1 ? product2[j].ProductPrice.ToString() : "\"-\"") + ",");
+                strJson.Append("\"pn2\":\"" + product2[j + 6].ProductName + "\",\"pv2\":" + (product2[j].ProductState == 1 ? product2[j + 6].ProductPrice.ToString() : "\"-\"") + "}");
                 if (j != (product2.Count() / 2 - 1))
                 {
                     strJson.Append(",");
@@ -305,20 +305,23 @@ namespace Web.Controllers
             CsDistrictBll districtBll = new CsDistrictBll();
             //所有省会列表 获取对于首发总量价格与续重价格
             List<CsDistrict> districtList = districtBll.GetModelList(" and ParentId=0");
-            var list = addressList.Select(x=>new {
+            var list = addressList.Select(x => new
+            {
+                x.AddressId,
                 x.Consignee,
                 x.TelPhone,
                 x.ConSex,
-                Province =x.Details.Split('&')[0],
+                Province = x.Details.Split('&')[0],
                 City = x.Details.Split('&')[1],
-                District=x.Details.Split('&')[2],
-                Detail =x.Details.Split('&')[3],
-                FirstPrice = districtList.FirstOrDefault(y=>y.Name==x.Details.Split('&')[0])?.FirstPrice??12,
-                FllowPrice =districtList.FirstOrDefault(y=>y.Name==x.Details.Split('&')[0])?.FllowPrice??2
+                District = x.Details.Split('&')[2],
+                Detail = x.Details.Split('&')[3],
+                FirstPrice = districtList.FirstOrDefault(y => y.Name == x.Details.Split('&')[0])?.FirstPrice ?? 12,
+                FllowPrice = districtList.FirstOrDefault(y => y.Name == x.Details.Split('&')[0])?.FllowPrice ?? 2,
+                x.IsDefault
             });
             return Json(new
             {
-                status=true,
+                status = true,
                 list
             });
 
@@ -367,7 +370,8 @@ namespace Web.Controllers
                 {
                     number = oldUser.UserId;
                 }
-            }else
+            }
+            else
             {
                 number = _csUsersBll.Add(user);
             }
@@ -442,12 +446,14 @@ namespace Web.Controllers
         /// </summary>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public IHttpActionResult GetCsOrderList(string openId,int num,int size)
+        public IHttpActionResult GetCsOrderList(string openId, int num, int size)
         {
             int total = 0;
             var list = _csOrderBll.GetModelListByOpenId(openId, num, size, out total);
-            return Json(new {
-              list= list.Select(x => new {
+            return Json(new
+            {
+                list = list.Select(x => new
+                {
                     x.OrderId,
                     x.OrderNumber,
                     x.UserId,
@@ -508,7 +514,7 @@ namespace Web.Controllers
         public IHttpActionResult UpdateOrderState(CsOrder order)
         {
 
-             int number = _csOrderBll.UpdateOrderState(order.OrderId,order.OrderState);            
+            int number = _csOrderBll.UpdateOrderState(order.OrderId, order.OrderState);
             //int number = 0;
             if (number > 0)
             {
@@ -541,11 +547,13 @@ namespace Web.Controllers
 
         public IHttpActionResult FinshOrder(CsOrder order)
         {
-            int number = _csOrderBll.FinshOrder(order.OrderId,order.UserId,order.TotalWeight,order.OrderCopies);
+            int number = _csOrderBll.FinshOrder(order.OrderId, order.UserId, order.TotalWeight, order.OrderCopies);
             if (number > 0)
             {
-                return Json(new {
-                status=true});
+                return Json(new
+                {
+                    status = true
+                });
             }
             else
             {
@@ -560,28 +568,28 @@ namespace Web.Controllers
         /// <returns></returns>
         public IHttpActionResult GetOrderInfoByOrderId(int id)
         {
-            CsOrder order= _csOrderBll.GetModel(id);
+            CsOrder order = _csOrderBll.GetModel(id);
             List<CsOrderDetail> orderList = _csOrderDetailBll.GetModelList($" and OrderId={id}");
             List<CsProducts> productList = _csProductsBll.GetModelList("");
             List<CsParts> partList = _csPartsBll.GetModelList("");
             //螃蟹列表
-            var crabList = orderList.Where(x=>x.ChoseType==1).Select(x => new
+            var crabList = orderList.Where(x => x.ChoseType == 1).Select(x => new
             {
                 x.OrderId,
                 x.ProductId,
-                ProductName =productList.FirstOrDefault(y=>y.ProductId==x.ProductId).ProductName,
-                ProductType =((ProductType)productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductType).ToString(),
+                ProductName = productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductName,
+                ProductType = ((ProductType)productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductType).ToString(),
                 x.ProductNumber,
                 x.UnitPrice,
                 x.TotalPrice
             });
             //必选配件列表
-            var partMustList = orderList.Where(x => x.ChoseType == 2 && x.ProductId < 10005).Select(x => new
+            var partMustList = orderList.Where(x => x.ChoseType == 2 && x.ProductId < 10005&&x.ProductId>10000).Select(x => new
             {
                 x.OrderId,
                 x.ProductId,
-                PartName=partList.FirstOrDefault(y=>y.PartId==x.ProductId).PartName,
-                PartType="必选配件",
+                PartName = partList.FirstOrDefault(y => y.PartId == x.ProductId).PartName,
+                PartType = "必选配件",
                 x.ProductNumber,
                 x.UnitPrice,
                 x.TotalPrice
@@ -597,12 +605,43 @@ namespace Web.Controllers
                 x.UnitPrice,
                 x.TotalPrice
             });
-            return Json(new {
+            return Json(new
+            {
                 order,
                 crabList,
                 partMustList,
                 partOptList
             });
-        }        
+        }
+
+        /// <summary>
+        /// 修改用户默认收货地址
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IHttpActionResult ChooseDefault([FromBody] int addressId)
+        {
+            CsAddress address = _csAddressBll.GetModel(addressId);
+            int number = _csAddressBll.ChooseAddress(address);
+            bool status = false;
+            if (number > 0)
+            {
+                status = true;
+            }
+
+            return Json(new { status });
+        }
+
+        /// <summary>
+        /// 删除收获地址
+        /// </summary>
+        /// <param name="addressId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IHttpActionResult DeleteAddress([FromBody] int id)
+        {
+            bool status = _csAddressBll.Delete(id);
+            return Json(status);
+        }
     }
 }
