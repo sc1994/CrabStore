@@ -461,7 +461,7 @@ namespace Web.Controllers
                     x.DiscountMoney,
                     x.ActualMoney,
                     OrderDate = x.OrderDate.ToString("yyyy-MM-dd"),
-                    OrderState = ((OrderState)x.OrderState).ToString(),
+                    OrderStateStr = ((OrderState)x.OrderState).ToString(),
                     consignee = x.OrderAddress.Split('$')[1],
                     telphone = x.OrderAddress.Split('$')[3],
                     address = x.OrderAddress.Split('$')[4],
@@ -471,7 +471,9 @@ namespace Web.Controllers
                     x.TotalWeight,
                     x.BillWeight,
                     x.ExpressMoney,
-                    x.ServiceMoney
+                    x.ServiceMoney,
+                    x.PrepaymentId,
+                    x.OrderState
                 }),
                 total
             });
@@ -579,6 +581,7 @@ namespace Web.Controllers
                 x.ProductId,
                 ProductName = productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductName,
                 ProductType = ((ProductType)productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductType).ToString(),
+                ProductWeight =(ProductType)productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductWeight,
                 x.ProductNumber,
                 x.UnitPrice,
                 x.TotalPrice
@@ -642,6 +645,39 @@ namespace Web.Controllers
         {
             bool status = _csAddressBll.Delete(id);
             return Json(status);
+        }
+
+        /// <summary>
+        /// 完成订单支付2
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public IHttpActionResult FinshOrder2([FromBody] int orderId)
+        {
+            CsOrder order = _csOrderBll.GetModel(orderId);
+            List<CsProducts> productList = _csProductsBll.GetModelList("");
+            var proList = _csOrderDetailBll.GetModelList(" and OrderId=" + orderId+" and ChoseType=1").Select(x=> new{
+                x.ProductId,
+                ProductWeight=productList.FirstOrDefault(y=>y.ProductId==x.ProductId).ProductWeight*x.ProductNumber
+            });
+            decimal totalWeight = 0;
+            foreach (var pro in proList)
+            {
+                totalWeight += pro.ProductWeight;
+            }
+            
+            int number = _csOrderBll.FinshOrder(order.OrderId, order.UserId, totalWeight, order.OrderCopies);
+            if (number > 0)
+            {
+                return Json(new
+                {
+                    status = true
+                });
+            }
+            else
+            {
+                return Json(new { status = false });
+            }
         }
     }
 }

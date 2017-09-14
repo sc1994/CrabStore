@@ -136,7 +136,7 @@ namespace DAL
                                 orderDetail.ProductId = cart.id;
                                 orderDetail.UnitPrice = cart.price;
                                 orderDetail.ProductNumber = cart.num;
-                                orderDetail.TotalPrice = (cart.price * cart.num);
+                                orderDetail.TotalPrice = (cart.price *cart.weight*2* cart.num);
                                 orderDetail.ChoseType = 1;
                                 //weight += (cart.weight * cart.num);
                                 totalNumber++;
@@ -261,10 +261,10 @@ namespace DAL
             strSql.Append($"SELECT top ({size}) * FROM ( SELECT ");
             strSql.Append($"ROW_NUMBER() OVER ( ORDER BY OrderId DESC ) AS ROWNUMBER,b.* ");
             strSql.Append(" FROM  CsOrder b inner join CsUsers c on b.UserId = c.UserId ");
-            strSql.Append($" WHERE 1 = 1 and c.OpenId='{openId}' ");
+            strSql.Append($" WHERE 1 = 1 and RowStatus=1 and c.OpenId='{openId}' ");
             strSql.Append(" ) A");
             strSql.Append($" WHERE ROWNUMBER BETWEEN {(num - 1) * size + 1} AND {num * size}; ");
-            total = DbClient.ExecuteScalar<int>($"SELECT COUNT(1) FROM CsOrder b inner join CsUsers c on b.UserId = c.UserId WHERE 1 = 1 and c.OpenId='{openId}';");
+            total = DbClient.ExecuteScalar<int>($"SELECT COUNT(1) FROM CsOrder b inner join CsUsers c on b.UserId = c.UserId WHERE 1 = 1 and RowStatus=1 and c.OpenId='{openId}';");
             return DbClient.Query<CsOrder>(strSql.ToString()).ToList();
         }
 
