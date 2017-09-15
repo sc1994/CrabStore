@@ -48,12 +48,17 @@ namespace Model.ViewModel
             public string RowStatusDescribe { get; set; } = string.Empty;
             public string UserName { get; set; } = string.Empty;
             public string UserPhone { get; set; } = string.Empty;
-            public string OrderAddress { get; set; } = string.Empty;
+            public string OrderAddress { get; set; } = string.Empty;//收件地址
+            public string OrderConsignee { get; set; } = string.Empty;//收件联系人
+            public string OrderTelPhone { get; set; } = string.Empty;//收件人联系方式           
+            public string OrderDetails { get; set; } = string.Empty;//收件人详细地址
             public string OrderDelivery { get; set; } = string.Empty;
             public string OrderCopies { get; set; } = string.Empty;
             public string TotalWeight { get; set; } = string.Empty;
             public string BillWeight { get; set; } = string.Empty;
             public string SendAddress { get; set; } = string.Empty;
+            public string SendConsignee { get; set; } = string.Empty;//发件联系人
+            public string SendTelPhone { get; set; } = string.Empty;//发件人联系方式
             public List<CsOrderDetailExtend> CsOrderDetails { get; set; } = new List<CsOrderDetailExtend>();
         }
 

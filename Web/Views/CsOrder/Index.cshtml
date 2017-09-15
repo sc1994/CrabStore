@@ -164,11 +164,40 @@
                 </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">寄件信息：</el-col>
-                    <el-col :span="20">{{oldInfo.SendAddress}}</el-col>
+                    <el-col :span="4">
+                        <el-input v-model="newInfo.SendConsignee" size="mini" placeholder="输入寄件人姓名">
+                        </el-input>
+                    </el-col>
+                    <el-col :span="1" style="text-align:center;">
+                        -
+                    </el-col>
+                    <el-col :span="4">
+                        <el-input v-model="newInfo.SendTelPhone" size="mini" placeholder="输入寄件人联系方式">
+                        </el-input>
+                    </el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">地址信息：</el-col>
-                    <el-col :span="20">{{oldInfo.OrderAddress}}</el-col>
+                    <el-col :span="4">
+                        <el-input v-model="newInfo.OrderConsignee" size="mini" placeholder="输入收件人姓名">
+                        </el-input>
+                    </el-col>
+                    <el-col :span="1" style="text-align:center;">
+                        -
+                    </el-col>
+                    <el-col :span="4">
+                        <el-input v-model="newInfo.OrderTelPhone" size="mini" placeholder="输入寄件人联系方式">
+                        </el-input>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="4">
+                        &nbsp;
+                    </el-col>
+                    <el-col :span="14">
+                        <el-input v-model="newInfo.OrderDetails" size="mini" placeholder="输入详细收件地址">
+                        </el-input>
+                    </el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">下单时间：</el-col>

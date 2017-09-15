@@ -71,7 +71,7 @@ namespace Web.Controllers
                 products = _csProductsBll.GetModelList($" AND ProductId IN ({string.Join(",", csOrderDetails.Where(x => x.ChoseType == ChoseType.螃蟹.GetHashCode()).Select(x => x.ProductId))})");
             }
             #endregion
-
+            #region 订单详细列表
             var csOrderDetailExtends = new List<CsOrderView.CsOrderDetailExtend>();
             foreach (var csOrderDetail in csOrderDetails)
             {
@@ -103,7 +103,9 @@ namespace Web.Controllers
                 }
                 csOrderDetailExtends.Add(csOrderDetailExtend);
             }
-
+            #endregion
+            var sendInfo = csOrder.SendAddress.Split('$');
+            var putInfo = csOrder.OrderAddress.Split('$');
             return Json(new CsOrderView.CsOrderInfo
             {
                 RowStatus = csOrder.RowStatus.ToString(),
@@ -126,6 +128,11 @@ namespace Web.Controllers
                 CsOrderDetails = csOrderDetailExtends,
                 OrderDelivery = csOrder.OrderDelivery,
                 OrderAddress = csOrder.OrderAddress.Trim('$').Replace("$$", "$").Replace("$", "//"),
+                OrderConsignee = putInfo.Length > 1 ? putInfo[1] : "-",
+                OrderTelPhone = putInfo.Length > 3 ? putInfo[3] : "-",
+                OrderDetails = putInfo.Length > 4 ? putInfo[4] : "-",
+                SendConsignee = sendInfo.Length > 0 ? sendInfo[0] : "-",
+                SendTelPhone = sendInfo.Length >  1 ? sendInfo[1]:"",
                 SendAddress = csOrder.SendAddress.Trim('$').Replace("$$", "$").Replace("$", "//")
             });
         }
@@ -135,7 +142,12 @@ namespace Web.Controllers
                                           DateTime deleteDate,
                                           string deleteDescribe,
                                           int orderState,
-                                          string delivery)
+                                          string delivery,
+                                          string sendConsignee,
+                                          string sendTelphone,
+                                          string orderConsignee,
+                                          string orderTelPhone,
+                                          string orderDetails)
         {
             if (id < 1)
             {
@@ -175,6 +187,8 @@ namespace Web.Controllers
             {
                 model.OrderDelivery = "";
             }
+            model.SendAddress = sendConsignee + "$" + sendTelphone;
+            model.OrderAddress = "$" + orderConsignee + "$$" + sendTelphone + "$" + orderDetails;
             var line = _csOrderBll.Update(model);
 
             if (line)
@@ -639,12 +653,12 @@ namespace Web.Controllers
                     continue;
                 }
                 var item = new StatisticView.StatisticList
-                           {
-                               ProductId = product.ProductId,
-                               ProductName = product.ProductName,
-                               ProductType = ((ProductType) product.ProductType).ToString(),
-                               Total = $"{total} 只 / 计 {total * product.ProductWeight} 斤",
-                           };
+                {
+                    ProductId = product.ProductId,
+                    ProductName = product.ProductName,
+                    ProductType = ((ProductType)product.ProductType).ToString(),
+                    Total = $"{total} 只 / 计 {total * product.ProductWeight} 斤",
+                };
                 var stock = orders
                     .Where(x => x.ProductId == product.ProductId && x.OrderState == OrderState.配货中.GetHashCode())
                     .Sum(x => x.ProductNumber);

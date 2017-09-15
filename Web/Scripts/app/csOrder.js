@@ -17,12 +17,22 @@ var vm = new Vue({
         oldInfo: {
             OrderState: "",
             RowStatus: "",
-            DeleteDescribe: ""
+            DeleteDescribe: "",
+            SendConsignee: "",
+            SendTelPhone: "",
+            OrderConsignee: "",
+            OrderTelPhone: "",
+            orderDetails:""
         },
         newInfo: {
             OrderState: "",
             RowStatus: "",
-            DeleteDescribe: ""
+            DeleteDescribe: "",
+            SendConsignee: "",
+            SendTelPhone: "",
+            OrderConsignee: "",
+            OrderTelPhone: "",
+            orderDetails: ""
         },
         fileList: [],
         btnLoading: false,
@@ -86,7 +96,12 @@ var vm = new Vue({
                 deleteDate: that.newInfo.DeleteDate,
                 deleteDescribe: that.newInfo.DeleteDescribe,
                 orderState: that.newInfo.OrderState,
-                delivery: that.newInfo.OrderDelivery
+                delivery: that.newInfo.OrderDelivery,
+                sendConsignee: that.newInfo.SendConsignee,
+                sendTelphone: that.newInfo.SendTelphone,
+                orderConsignee: that.newInfo.OrderConsignee,
+                orderTelphone: that.newInfo.OrderTelPhone,
+                orderDetails:that.newInfo.OrderDetails
             },
               function (data) {
                   var type, title;
@@ -238,7 +253,12 @@ var vm = new Vue({
             return this.oldInfo.OrderState !== this.newInfo.OrderState ||
             this.oldInfo.RowStatus !== this.newInfo.RowStatus ||
             this.oldInfo.DeleteDescribe !== this.newInfo.DeleteDescribe ||
-            this.oldInfo.OrderDelivery !== this.newInfo.OrderDelivery
+            this.oldInfo.OrderDelivery  !== this.newInfo.OrderDelivery||
+            this.oldInfo.OrderConsignee !== this.newInfo.OrderConsignee||
+            this.oldInfo.OrderTelPhone  !== this.newInfo.OrderTelPhone||
+            this.oldInfo.OrderDetails   !== this.newInfo.OrderDetails||
+            this.oldInfo.SendConsignee  !== this.newInfo.SendConsignee||
+            this.oldInfo.SendTelPhone   !== this.newInfo.SendTelPhone
         }
     },
     watch: {
