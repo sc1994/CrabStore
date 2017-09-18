@@ -73,7 +73,7 @@ namespace Web.Controllers
                     OperationDate = model.OperationDate.ToString("yyyy-M-d"),
                     PartState = model.PartState.ToString(),
                     PartType = model.PartType.ToString(),
-                    PartWeight = model.PartWeight.ToString("0.00"),
+                    PartWeight = model.PartWeight.ToString("0.000"),
                     PartPrice = model.PartPrice.ToString("0.00")
                 }
             });

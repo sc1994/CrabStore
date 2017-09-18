@@ -51,7 +51,7 @@ namespace DAL
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        public int AddOrder(OrderModel order)
+        public int AddOrder(OrderModel order,out string orderNumber)
         {
             int number = 0;//实际操作影响行数
             using (SqlConnection conn = (SqlConnection)DataSource.GetConnection())
@@ -61,9 +61,10 @@ namespace DAL
                 {
                     try
                     {
+                        orderNumber= DateTime.Now.ToString("yyyyMMddHHmmssffff");
                         //添加订单表 获取订单编号
                         CsOrder _csOrder = new CsOrder();
-                        _csOrder.OrderNumber = DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                        _csOrder.OrderNumber = orderNumber;
                         _csOrder.UserId = order.userid;
                         _csOrder.TotalMoney = order.totalmoney;
                         _csOrder.DiscountMoney = 0;
@@ -149,6 +150,10 @@ namespace DAL
                             {
                                 foreach (CartItem cart in order.partNumList)
                                 {
+                                    if (cart.id == 0)
+                                    {
+                                        continue;
+                                    }
                                     CsOrderDetail orderDetail = new CsOrderDetail();
                                     orderDetail.OrderId = orderid;
                                     orderDetail.ProductId = cart.id;
@@ -216,6 +221,7 @@ namespace DAL
                     {
                         LogHelper.Log(ex.Message);
                         trans.Rollback();
+                        orderNumber = "";
                         return 0;
                     }
                 }

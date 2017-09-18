@@ -56,7 +56,7 @@ namespace Web.Controllers
             for (int j = 0; j < (product2.Count() / 2); j++)
             {
                 strJson.Append("{\"pn1\":\"" + product2[j].ProductName + "\",\"pv1\":" + (product2[j].ProductState == 1 ? product2[j].ProductPrice.ToString() : "\"-\"") + ",");
-                strJson.Append("\"pn2\":\"" + product2[j + 6].ProductName + "\",\"pv2\":" + (product2[j].ProductState == 1 ? product2[j + 6].ProductPrice.ToString() : "\"-\"") + "}");
+                strJson.Append("\"pn2\":\"" + product2[j + 6].ProductName + "\",\"pv2\":" + (product2[j+6].ProductState == 1 ? product2[j + 6].ProductPrice.ToString() : "\"-\"") + "}");
                 if (j != (product2.Count() / 2 - 1))
                 {
                     strJson.Append(",");
@@ -486,13 +486,15 @@ namespace Web.Controllers
         [HttpPost]
         public IHttpActionResult AddOrder(OrderModel order)
         {
-            int orderId = _csOrderBll.AddOrder(order);//获得生成订单编号
+            string orderNumber = "";
+            int orderId = _csOrderBll.AddOrder(order,out orderNumber);//获得生成订单编号
             if (orderId > 0)
             {
                 return Json(new
                 {
                     status = true,
-                    orderid = orderId
+                    orderid = orderId,
+                    orderNumber
                 });
             }
             else
@@ -500,7 +502,8 @@ namespace Web.Controllers
                 return Json(new
                 {
                     status = false,
-                    orderid = orderId
+                    orderid = orderId,
+                    orderNumber
                 });
             }
 

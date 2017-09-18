@@ -49,9 +49,9 @@ namespace BLL
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        public int AddOrder(OrderModel order)
+        public int AddOrder(OrderModel order,out string orderNumber)
         {
-            return _dal.AddOrder(order);
+            return _dal.AddOrder(order,out orderNumber);
         }
 
         /// <summary>

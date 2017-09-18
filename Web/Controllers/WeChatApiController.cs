@@ -226,7 +226,7 @@ namespace Web.Controllers
             {
                 return Json(new
                 {
-                    code = 1,
+                    code = 0,
                     data,
                     msg = "请求成功但是返回并非预期值,请检查日志(预支付请求参数/预支付响应参数)"
                 });

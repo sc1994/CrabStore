@@ -28,7 +28,7 @@ namespace Web.Controllers
                 ProductImage = x.ProductImage,
                 ProductPrice = x.ProductPrice.ToString("N2").ToDecimal(),
                 ProductStock = x.ProductStock,
-                ProductWeight = x.ProductWeight.ToString("0.00")
+                ProductWeight = x.ProductWeight.ToString("0.000")
             }));
         }
 
