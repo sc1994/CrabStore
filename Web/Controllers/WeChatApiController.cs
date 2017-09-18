@@ -16,7 +16,6 @@ namespace Web.Controllers
         {
             var url = string.Format(WeChatConfig.WeChatCodeUrl, WeChatConfig.AppId, HttpUtility.UrlEncode($"http://{Request.Url?.Authority}/WeChatApi/RedirectUrL?currentPage={currentPage}"));
             ViewBag.CodeUrl = url;
-            LogHelper.Log(ViewBag.CodeUrl, "url");
             return View();
         }
 
@@ -197,14 +196,14 @@ namespace Web.Controllers
                             <trade_type>JSAPI</trade_type> 
                             <sign>{sign}</sign> 
                         </xml>";
-            LogHelper.Log(xml, "预支付请求参数");
             var data = HttpHelper.HttpPost(WeChatConfig.PrepayInfoUrl, xml);
-            LogHelper.Log(data, "预支付响应参数");
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(data);
             var rootNode = xmlDoc.SelectSingleNode("xml");
             if (rootNode == null) // 可能发生请求不通的错误
             {
+                LogHelper.Log(xml, "预支付请求参数");
+                LogHelper.Log(data, "预支付响应参数");
                 return Json(new
                 {
                     code = 0,
@@ -216,6 +215,8 @@ namespace Web.Controllers
             var prepayId = string.Empty;
             for (var i = 0; i < childs.Count; i++)
             {
+                LogHelper.Log(xml, "预支付请求参数");
+                LogHelper.Log(data, "预支付响应参数");
                 if (childs[i].Name == "prepay_id")
                 {
                     prepayId = childs[i].InnerText;
@@ -224,6 +225,8 @@ namespace Web.Controllers
             }
             if (prepayId.IsNullOrEmpty())
             {
+                LogHelper.Log(xml, "预支付请求参数");
+                LogHelper.Log(data, "预支付响应参数");
                 return Json(new
                 {
                     code = 0,
@@ -254,7 +257,6 @@ namespace Web.Controllers
         /// <returns></returns>
         public ActionResult SendTemplateMsg(string body, string openId)
         {
-            LogHelper.Log(body);
             var access = GetAccessToken();
             var url = string.Format(WeChatConfig.SendTemplateUrl, access);
             var res = HttpHelper.HttpPost(url, body);
@@ -277,15 +279,16 @@ namespace Web.Controllers
                     data = $"成功消息发送给{openId}"
                 });
             }
-            LogHelper.Log(res, "模板消息发送失败");
             if (data.errcode.ToInt() == -1)
             {
+                LogHelper.Log(res, "模板消息发送失败");
                 return Json(new
                 {
                     code = 0,
                     data = $"消息发送给{openId}时发生异常, 系统繁忙"
                 });
             }
+            LogHelper.Log(res, "模板消息发送失败");
             return Json(new
             {
                 code = 0,
