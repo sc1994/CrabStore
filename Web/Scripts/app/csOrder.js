@@ -245,6 +245,7 @@ var vm = new Vue({
     mounted: function () {
         if (req["userId"] > 0) {
             this.where.UserName = req["userId"]
+            this.where.Status = ''
         }
         this.getpage(1);
     },
