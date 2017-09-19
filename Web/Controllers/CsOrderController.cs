@@ -19,6 +19,7 @@ namespace Web.Controllers
         private readonly CsPartsBll _csPartsBll = new CsPartsBll();
         private readonly CsProductsBll _csProductsBll = new CsProductsBll();
         private readonly CsUsersBll _csUsersBll = new CsUsersBll();
+        private readonly CsPackageBll _csPackageBll = new CsPackageBll();
 
         // GET: CsOrder
         public ActionResult Index()
@@ -29,6 +30,18 @@ namespace Web.Controllers
         public ActionResult GetCsOrderPage(CsOrderView.CsOrderWhere para)
         {
             var data = GetList(para);
+
+            if (!data.Data.Any())
+            {
+                return Json(new
+                {
+                    data = data.Data,
+                    sql = data.Sql,
+                    total = data.Total
+                });
+            }
+
+            var ds = _csOrderDetailBll.GetModelList($" AND OrderId IN ({string.Join(",", data.Data.Select(x => x.OrderId))}) ");
 
             var list = data.Data.Select(x => new
             {
@@ -41,8 +54,11 @@ namespace Web.Controllers
                 x.DeleteDescribe,
                 UserName = x.UserName + $"({x.UserSex}) / " + x.UserId,
                 x.UserPhone,
-                TotalMoney = "￥" + x.TotalMoney.ToString("N2")
+                TotalMoney = "￥" + x.TotalMoney.ToString("N2"),
+                OrderSource = ds.Any(d => d.OrderId == x.OrderId && d.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发"
             });
+
+
 
             return Json(new
             {
@@ -60,8 +76,9 @@ namespace Web.Controllers
 
             var parts = new List<CsParts>();
             var products = new List<CsProducts>();
+            var packages = new List<CsPackage>();
 
-            #region 相关配件和蟹
+            #region 相关 套餐/配件和蟹
             if (csOrderDetails.Any(x => x.ChoseType == ChoseType.配件.GetHashCode()))
             {
                 parts = _csPartsBll.GetModelList($" AND PartId IN ({string.Join(",", csOrderDetails.Where(x => x.ChoseType == ChoseType.配件.GetHashCode()).Select(x => x.ProductId))})");
@@ -70,7 +87,13 @@ namespace Web.Controllers
             {
                 products = _csProductsBll.GetModelList($" AND ProductId IN ({string.Join(",", csOrderDetails.Where(x => x.ChoseType == ChoseType.螃蟹.GetHashCode()).Select(x => x.ProductId))})");
             }
+            if (csOrderDetails.Any(x => x.ChoseType == ChoseType.套餐.GetHashCode()))
+            {
+                packages = _csPackageBll.GetModelList($" AND PackageId IN ({string.Join(",", csOrderDetails.Where(x => x.ChoseType == ChoseType.套餐.GetHashCode()).Select(x => x.ProductId))})");
+            }
+
             #endregion
+
             #region 订单详细列表
             var csOrderDetailExtends = new List<CsOrderView.CsOrderDetailExtend>();
             foreach (var csOrderDetail in csOrderDetails)
@@ -87,19 +110,25 @@ namespace Web.Controllers
                 // 计算商品名称
                 if (csOrderDetailExtend.ChoseType == ChoseType.配件.ToString())
                 {
-                    csOrderDetailExtend.ProductName = $"配件/{parts.FirstOrDefault(x => x.PartId == csOrderDetailExtend.ProductId)?.PartName ?? "暂无名称"}({csOrderDetailExtend.ProductId})";
+                    var part = parts.FirstOrDefault(x => x.PartId == csOrderDetailExtend.ProductId);
+                    csOrderDetailExtend.ProductName = $"配件/{part?.PartName ?? "暂无名称"}({part?.PartNumber})";
                 }
-                else
+                else if (csOrderDetailExtend.ChoseType == ChoseType.螃蟹.ToString())
                 {
                     var product = products.FirstOrDefault(x => x.ProductId == csOrderDetailExtend.ProductId);
                     if (product != null)
                     {
-                        csOrderDetailExtend.ProductName = $"{(ProductType)product.ProductType}/{product.ProductName}({csOrderDetailExtend.ProductId})";
+                        csOrderDetailExtend.ProductName = $"{(ProductType)product.ProductType}/{product.ProductName}({product.ProductNumber})";
                     }
                     else
                     {
                         csOrderDetailExtend.ProductName = "暂无名称";
                     }
+                }
+                else
+                {
+                    var package = packages.FirstOrDefault(x => x.PackageId == csOrderDetailExtend.ProductId);
+                    csOrderDetailExtend.ProductName = $"套餐/{package?.PackageName ?? "暂无名称"}({package?.PackageNumber})";
                 }
                 csOrderDetailExtends.Add(csOrderDetailExtend);
             }
@@ -132,8 +161,9 @@ namespace Web.Controllers
                 OrderTelPhone = putInfo.Length > 3 ? putInfo[3] : "-",
                 OrderDetails = putInfo.Length > 4 ? putInfo[4] : "-",
                 SendConsignee = sendInfo.Length > 0 ? sendInfo[0] : "-",
-                SendTelPhone = sendInfo.Length >  1 ? sendInfo[1]:"",
-                SendAddress = csOrder.SendAddress.Trim('$').Replace("$$", "$").Replace("$", "//")
+                SendTelPhone = sendInfo.Length > 1 ? sendInfo[1] : "",
+                SendAddress = csOrder.SendAddress.Trim('$').Replace("$$", "$").Replace("$", "//"),
+                OrderSource = csOrderDetails.Any(x => x.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发"
             });
         }
 
@@ -219,36 +249,44 @@ namespace Web.Controllers
             }
             var list = new List<CsOrderView.CsOrderExcel>();
             var detail = _csOrderDetailBll.GetModelList($" AND OrderId IN ({string.Join(",", data.Data.Select(x => x.OrderId))})");
-            if (detail.All(x => x.ChoseType != ChoseType.配件.GetHashCode()))
-            {
-                return Json(new ResModel
-                {
-                    Data = "当前条件下的订单有误(存在未购买任何配件订单), 请检查数据",
-                    ResStatus = ResStatue.No
-                });
-            }
+
+            // 配件/螃蟹/套餐
             var parts = _csPartsBll.GetModelList($" AND PartId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.配件.GetHashCode()).Select(x => x.ProductId))}) AND PartType = {PartType.可选配件.GetHashCode()}");
-            if (detail.All(x => x.ChoseType != ChoseType.螃蟹.GetHashCode()))
-            {
-                return Json(new ResModel
-                {
-                    Data = "当前条件下的订单有误(存在未购买任何螃蟹订单), 请检查数据",
-                    ResStatus = ResStatue.No
-                });
-            }
             var products = _csProductsBll.GetModelList($" AND ProductId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.螃蟹.GetHashCode()).Select(x => x.ProductId))})");
+            IEnumerable<CsPackage> packages = null;
+            if (detail.Any(x => x.ChoseType == ChoseType.套餐.GetHashCode()))
+            {
+                packages = _csPackageBll.GetModelList($" AND PackageId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.套餐.GetHashCode()).Select(x => x.ProductId))})");
+            }
             foreach (var order in data.Data)
             {
+                if (detail.All(x => x.OrderId == order.OrderId && x.ChoseType != ChoseType.套餐.GetHashCode()))
+                {
+                    if (detail.All(x => x.OrderId == order.OrderId && x.ChoseType != ChoseType.螃蟹.GetHashCode()) ||
+                        detail.All(x => x.OrderId == order.OrderId && x.ChoseType != ChoseType.配件.GetHashCode()))
+                    {
+                        return Json(new ResModel
+                        {
+                            Data = "当前条件下的订单有误(存在未购买任何 配件/螃蟹/套餐 订单), 请检查数据",
+                            ResStatus = ResStatue.No
+                        });
+                    }
+                }
                 var total = string.Empty;
                 foreach (var d in detail.Where(x => x.OrderId == order.OrderId).OrderBy(x => x.ChoseType))
                 {
+                    if (d.ChoseType == ChoseType.套餐.GetHashCode())
+                    {
+                        total += packages?.FirstOrDefault(x => x.PackageId == d.ProductId)?.PackageNumber + "" + d.ProductNumber;
+                        continue;
+                    }
                     if (d.ChoseType == ChoseType.螃蟹.GetHashCode())
                     {
                         total += products.FirstOrDefault(x => x.ProductId == d.ProductId)?.ProductNumber + "" + d.ProductNumber;
                         continue;
                     }
-                    if (total.IndexOf("P", StringComparison.Ordinal) < 0
-                        && total.IndexOf("-", StringComparison.Ordinal) < 0)
+                    if (total.IndexOf("P", StringComparison.Ordinal) < 0 &&
+                        total.IndexOf("-", StringComparison.Ordinal) < 0)
                     {
                         total += "-";
                     }
@@ -256,7 +294,7 @@ namespace Web.Controllers
                 }
                 var sendInfo = order.SendAddress.Split('$');
                 var putInfo = order.OrderAddress.Split('$');
-                var item = new CsOrderView.CsOrderExcel
+                list.Add(new CsOrderView.CsOrderExcel
                 {
                     用户订单号 = order.OrderNumber,
                     寄件公司 = "-",
@@ -271,16 +309,15 @@ namespace Web.Controllers
                     付款方式 = "寄付月结",
                     第三方付月结卡号 = "",
                     寄托物品 = "其他",
-                    寄托物内容 = $"{total.TrimEnd('-')}-T{detail.Where(x => x.OrderId == order.OrderId).Sum(x => x.ProductNumber)}",
+                    寄托物内容 = total.TrimEnd('-').IsNullOrEmpty() ? "" : $"{total.TrimEnd('-')}-T{detail.Where(x => x.OrderId == order.OrderId).Sum(x => x.ProductNumber)}",
                     寄托物编号 = "",
                     寄托物数量 = order.CargoNumber.ToString(),
                     件数 = order.OrderCopies.ToString(),
                     实际重量单位KG = "-",
                     计费重量单位KG = "-",
                     业务类型 = "大闸蟹专递",
-                    寄方客户备注 = ""
-                };
-                list.Add(item);
+                    扩展字段1 = detail.Any(x => x.OrderId == order.OrderId && x.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发"
+                });
             }
             var path = $"excel/{DateTime.Now:yyyyMMddHHmmssffff}.xls";
             try
@@ -337,7 +374,7 @@ namespace Web.Controllers
             var lastType = ExcelRow.Other; // 记录上一行状态
             var endEmpty = new List<int>(); // 记录尾部空行
             var overEndEmpty = false; // 尾部空行是否结束
-            for (int i = orders.Count - 1; i >= 0; i--)
+            for (var i = orders.Count - 1; i >= 0; i--)
             {
                 var type = ExcelRowType(orders[i]);
                 if (type == ExcelRow.Empty &&
@@ -690,12 +727,12 @@ namespace Web.Controllers
                 {
                     PageIndex = isPage ? para.CurrentPage : 0,
                     PageSize = isPage ? PageSize : 0,
-                    PageSortField = CsOrderEnum.OrderId.ToString(),
+                    PageSortField = "co." + CsOrderEnum.OrderId.ToString(),
                     SortEnum = SortEnum.Desc
                 },
                 Alia = "co"
             };
-            sh.AddShow(CsOrderEnum.OrderId);
+            sh.AddShow("co." + CsOrderEnum.OrderId);
             sh.AddShow(CsOrderEnum.OrderAddress);
             sh.AddShow(CsOrderEnum.OrderNumber);
             sh.AddShow("co." + CsOrderEnum.UserId);
@@ -749,6 +786,14 @@ namespace Web.Controllers
             }
             if (!para.UserPhone.IsNullOrEmpty())
                 sh.AddWhere("cu." + CsUsersEnum.UserPhone, para.UserPhone, RelationEnum.Like);
+
+            //#region 订单来源条件
+            //if (!para.OrderSource.IsNullOrEmpty() && para.OrderSource.ToInt() == ChoseType.套餐.GetHashCode()) // 电商代发
+            //{
+            //    sh.AddJoin(JoinEnum.LeftJoin, "CsOrderDetail", "cod", "OrderId", "OrderId", $" AND cod.ChoseType = {ChoseType.套餐.GetHashCode()} ");
+            //}
+            //#endregion
+
             if (para.Time.Count > 0)
             {
                 if (!para.Time[0].IsNullOrEmpty())

@@ -19,14 +19,14 @@
     {
         大宗采购 = 1,
         蟹塘直采 = 2,
-        套餐=3
+        套餐 = 3
     }
 
     public enum ChoseType
     {
         螃蟹 = 1,
         配件 = 2,
-        套餐=3
+        套餐 = 3
     }
 
     public enum ResStatue

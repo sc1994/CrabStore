@@ -58,6 +58,7 @@
     <Compile Include="DBModel\CsDistrict.cs" />
     <Compile Include="ViewModel\CsOrderView.cs" />
     <Compile Include="DBModel\CsSystemUsers.cs" />
+    <Compile Include="ViewModel\CsPackageView.cs" />
     <Compile Include="ViewModel\CsPartsView.cs" />
     <Compile Include="ViewModel\CsPriceView.cs" />
     <Compile Include="ViewModel\CsProductsView.cs" />

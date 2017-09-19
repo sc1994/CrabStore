@@ -21,6 +21,12 @@ namespace Model.ViewModel
             public string UserName { get; set; } = string.Empty;
             public string UserPhone { get; set; } = string.Empty;
             public string OrderId { get; set; } = string.Empty;
+            /// <summary>
+            /// 订单源
+            /// </summary>
+            public string OrderSource { get; set; } = string.Empty;
+
+            public string OrderNumber { get; set; } = string.Empty;
         }
 
         public class CsOrderPage : CsOrder
@@ -48,18 +54,40 @@ namespace Model.ViewModel
             public string RowStatusDescribe { get; set; } = string.Empty;
             public string UserName { get; set; } = string.Empty;
             public string UserPhone { get; set; } = string.Empty;
-            public string OrderAddress { get; set; } = string.Empty;//收件地址
-            public string OrderConsignee { get; set; } = string.Empty;//收件联系人
-            public string OrderTelPhone { get; set; } = string.Empty;//收件人联系方式           
-            public string OrderDetails { get; set; } = string.Empty;//收件人详细地址
+            /// <summary>
+            /// 收件地址
+            /// </summary>
+            public string OrderAddress { get; set; } = string.Empty;
+            /// <summary>
+            /// 收件联系人
+            /// </summary>
+            public string OrderConsignee { get; set; } = string.Empty;
+            /// <summary>
+            /// 收件人联系方式     
+            /// </summary>
+            public string OrderTelPhone { get; set; } = string.Empty;
+            /// <summary>
+            /// 收件人详细地址
+            /// </summary>
+            public string OrderDetails { get; set; } = string.Empty;
             public string OrderDelivery { get; set; } = string.Empty;
             public string OrderCopies { get; set; } = string.Empty;
             public string TotalWeight { get; set; } = string.Empty;
             public string BillWeight { get; set; } = string.Empty;
             public string SendAddress { get; set; } = string.Empty;
-            public string SendConsignee { get; set; } = string.Empty;//发件联系人
-            public string SendTelPhone { get; set; } = string.Empty;//发件人联系方式
+            /// <summary>
+            /// 发件联系人
+            /// </summary>
+            public string SendConsignee { get; set; } = string.Empty;
+            /// <summary>
+            /// 发件人联系方式
+            /// </summary>
+            public string SendTelPhone { get; set; } = string.Empty;
             public List<CsOrderDetailExtend> CsOrderDetails { get; set; } = new List<CsOrderDetailExtend>();
+            /// <summary>
+            /// 订单源
+            /// </summary>
+            public string OrderSource { get; set; } = string.Empty;
         }
 
         public class CsOrderExcel

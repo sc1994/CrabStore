@@ -5,7 +5,8 @@ var vm = new Vue({
             RowStatus: "1",
             Time: [],
             Status: "2",
-            UserName: ""
+            UserName: "",
+            OrderSource: ''
         },
         currentPage: 1,
         list: [],
@@ -22,7 +23,7 @@ var vm = new Vue({
             SendTelPhone: "",
             OrderConsignee: "",
             OrderTelPhone: "",
-            orderDetails:""
+            orderDetails: ""
         },
         newInfo: {
             OrderState: "",
@@ -49,13 +50,13 @@ var vm = new Vue({
             var that = this;
             that.where.CurrentPage = currentPage;
             if (
-              that.where.Time.length > 1 &&
-              that.where.Time[0] != null &&
-              that.where.Time[1] != null
+                that.where.Time.length > 1 &&
+                that.where.Time[0] != null &&
+                that.where.Time[1] != null
             ) {
                 that.where.Time = [
-                  new Date(that.where.Time[0]).Format("yyyy-MM-dd hh:mm:ss"),
-                  new Date(that.where.Time[1]).Format("yyyy-MM-dd hh:mm:ss")
+                    new Date(that.where.Time[0]).Format("yyyy-MM-dd hh:mm:ss"),
+                    new Date(that.where.Time[1]).Format("yyyy-MM-dd hh:mm:ss")
                 ];
             }
             that.loading = true;
@@ -75,12 +76,12 @@ var vm = new Vue({
                 return;
             }
             that.dialogLoading = true;
-            ajax("CsOrder/GetCsOrderInfo", { id},
-              function (data) {
-                  that.oldInfo = clone(data);
-                  that.newInfo = clone(data);
-                  that.dialogLoading = false;
-              }
+            ajax("CsOrder/GetCsOrderInfo", { id },
+                function (data) {
+                    that.oldInfo = clone(data);
+                    that.newInfo = clone(data);
+                    that.dialogLoading = false;
+                }
             );
         },
         closeInfo: function () {
@@ -101,46 +102,46 @@ var vm = new Vue({
                 sendTelphone: that.newInfo.SendTelphone,
                 orderConsignee: that.newInfo.OrderConsignee,
                 orderTelphone: that.newInfo.OrderTelPhone,
-                orderDetails:that.newInfo.OrderDetails
+                orderDetails: that.newInfo.OrderDetails
             },
-              function (data) {
-                  var type, title;
-                  if (data.code === 1) {
-                      type = "success";
-                      title = "更新成功";
-                  } else if (data.code === 2) {
-                      type = "warning";
-                      title = "更新无结果";
-                  } else {
-                      that.$notify.error({
-                          title: "错误",
-                          message: data.data
-                      });
-                      return;
-                  }
-                  that.$notify({
-                      title: title,
-                      message: data.data,
-                      type: type
-                  });
-                  that.oldInfo = {};
-                  that.newInfo = {};
-                  that.getpage(that.currentPage);
-                  that.dialogVisible = false;
-                  that.dialogLoading = false;
-              }
+                function (data) {
+                    var type, title;
+                    if (data.code === 1) {
+                        type = "success";
+                        title = "更新成功";
+                    } else if (data.code === 2) {
+                        type = "warning";
+                        title = "更新无结果";
+                    } else {
+                        that.$notify.error({
+                            title: "错误",
+                            message: data.data
+                        });
+                        return;
+                    }
+                    that.$notify({
+                        title: title,
+                        message: data.data,
+                        type: type
+                    });
+                    that.oldInfo = {};
+                    that.newInfo = {};
+                    that.getpage(that.currentPage);
+                    that.dialogVisible = false;
+                    that.dialogLoading = false;
+                }
             );
         },
         exportExcel: function () {
             var that = this
             if (
-              that.where.Time.length > 1 &&
-              that.where.Time[0] != null &&
-              that.where.Time[1] != null
+                that.where.Time.length > 1 &&
+                that.where.Time[0] != null &&
+                that.where.Time[1] != null
             ) {
                 that.where.Time = [
-                  new Date(that.where.Time[0]).Format("yyyy-MM-dd hh:mm:ss"),
-                  new Date(that.where.Time[1]).Format("yyyy-MM-dd hh:mm:ss")
+                    new Date(that.where.Time[0]).Format("yyyy-MM-dd hh:mm:ss"),
+                    new Date(that.where.Time[1]).Format("yyyy-MM-dd hh:mm:ss")
                 ];
             }
             that.loading = true;
@@ -169,40 +170,40 @@ var vm = new Vue({
 
             // 当前事件是批量发货将事件重新定向到批量发货
             ajax(that.excelVisibleType === 0
-                    ? "/CsOrder/ImportCsOrder"
-                    : "/CsOrder/BatchDis", { path: that.fileList[0].path },
-              function (data) {
-                  if (data.code === 1) {
-                      that.$notify({
-                          title: "成功",
-                          message: data.data,
-                          type: "success"
-                      });
-                      that.excelVisible = false;
-                      that.getpage(that.currentPage);
-                  } else {
-                      that.$notify.error({
-                          title: "错误",
-                          message: data.data
-                      });
-                  }
-                  if (data.code === 2) {
-                      that.msg.msgVisible = true
-                      that.msg.msgOrderIds = data.orderIds
-                      that.msg.msgTitle = data.data
-                      that.excelVisible = false
-                  }
-                  that.btnLoading = false;
-              }
+                ? "/CsOrder/ImportCsOrder"
+                : "/CsOrder/BatchDis", { path: that.fileList[0].path },
+                function (data) {
+                    if (data.code === 1) {
+                        that.$notify({
+                            title: "成功",
+                            message: data.data,
+                            type: "success"
+                        });
+                        that.excelVisible = false;
+                        that.getpage(that.currentPage);
+                    } else {
+                        that.$notify.error({
+                            title: "错误",
+                            message: data.data
+                        });
+                    }
+                    if (data.code === 2) {
+                        that.msg.msgVisible = true
+                        that.msg.msgOrderIds = data.orderIds
+                        that.msg.msgTitle = data.data
+                        that.excelVisible = false
+                    }
+                    that.btnLoading = false;
+                }
             );
         },
         uploadSuccess: function (file, obj) {
             this.fileList = [
-              {
-                  name: obj.name,
-                  url: "../excelicon.png",
-                  path: file.Data
-              }
+                {
+                    name: obj.name,
+                    url: "../excelicon.png",
+                    path: file.Data
+                }
             ];
         },
         uploadRemove: function () {
@@ -252,14 +253,14 @@ var vm = new Vue({
     computed: {
         infoIsChange: function () {
             return this.oldInfo.OrderState !== this.newInfo.OrderState ||
-            this.oldInfo.RowStatus !== this.newInfo.RowStatus ||
-            this.oldInfo.DeleteDescribe !== this.newInfo.DeleteDescribe ||
-            this.oldInfo.OrderDelivery  !== this.newInfo.OrderDelivery||
-            this.oldInfo.OrderConsignee !== this.newInfo.OrderConsignee||
-            this.oldInfo.OrderTelPhone  !== this.newInfo.OrderTelPhone||
-            this.oldInfo.OrderDetails   !== this.newInfo.OrderDetails||
-            this.oldInfo.SendConsignee  !== this.newInfo.SendConsignee||
-            this.oldInfo.SendTelPhone   !== this.newInfo.SendTelPhone
+                this.oldInfo.RowStatus !== this.newInfo.RowStatus ||
+                this.oldInfo.DeleteDescribe !== this.newInfo.DeleteDescribe ||
+                this.oldInfo.OrderDelivery !== this.newInfo.OrderDelivery ||
+                this.oldInfo.OrderConsignee !== this.newInfo.OrderConsignee ||
+                this.oldInfo.OrderTelPhone !== this.newInfo.OrderTelPhone ||
+                this.oldInfo.OrderDetails !== this.newInfo.OrderDetails ||
+                this.oldInfo.SendConsignee !== this.newInfo.SendConsignee ||
+                this.oldInfo.SendTelPhone !== this.newInfo.SendTelPhone
         }
     },
     watch: {
@@ -268,7 +269,7 @@ var vm = new Vue({
                 this.newInfo.DeleteDate = new Date().Format("yyyy-MM-dd hh:mm:ss")
             } else {
                 this.newInfo.DeleteDate = new Date(this.oldInfo.DeleteDate).Format(
-                  "yyyy-MM-dd hh:mm:ss"
+                    "yyyy-MM-dd hh:mm:ss"
                 );
             }
         },
@@ -276,11 +277,11 @@ var vm = new Vue({
             if (newValue) {
                 setTimeout(function () {
                     document
-                      .getElementsByName("file")[0]
-                      .setAttribute(
+                        .getElementsByName("file")[0]
+                        .setAttribute(
                         "accept",
                         "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                      );
+                        );
                 }, 500);
             }
             this.fileList = [];

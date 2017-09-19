@@ -1,0 +1,94 @@
+﻿@{
+	ViewBag.Title = "套餐管理";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="app">
+	<div class="table-where">
+		<el-row :gutter="20">
+			<el-col :span="2" class="layout-right layout-where">
+				套餐名称：
+			</el-col>
+			<el-col :span="6">
+				<el-input v-model="where.PackageName" placeholder="请输入套餐名称"></el-input>
+			</el-col>
+			<el-col :span="2" class="layout-right layout-where">
+				套餐编号：
+			</el-col>
+			<el-col :span="6">
+				<el-input v-model="where.PackageNumber" placeholder="请输入编号"></el-input>
+			</el-col>
+			<el-col :span="2" class="layout-right layout-where">
+				状态：
+			</el-col>
+			<el-col :span="6">
+				<el-select v-model="where.PackageState" placeholder="请选择套餐状态" :clearable='true' @@change="getList()">
+					<el-option key="1" label="在售" value="1">
+					</el-option>
+					<el-option key="0" label="已下架" value="0">
+					</el-option>
+				</el-select>
+			</el-col>
+		</el-row>
+		<div class="table-btn">
+        	<el-button type="primary" icon="search" @@click="getList()">搜索</el-button>
+    	</div>
+	</div>
+	<div class="table-content">
+        <el-table v-loading.body="loading"
+            :data="list"
+            style="width: 100%">
+            <el-table-column label="Id" prop="PackageId" width="120">
+            </el-table-column>
+            <el-table-column label="名称" prop="PackageName">
+            </el-table-column>
+			<el-table-column label="编号" prop="PackageNumber">
+            </el-table-column>
+            <el-table-column label="价格/元" prop="PackagePrice">
+			</el-table-column>
+			<el-table-column label="上次操作时间" prop="OperationDate">
+			</el-table-column>
+			<el-table-column label="状态" prop="PackageState">
+			</el-table-column>
+            <el-table-column label="操作" width="80px">
+                <template scope="scope">
+                    <el-button size="small" class="table-detail-btn"
+                        @@click="getInfo(scope.row.PackageId)">详细</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+	<el-dialog title="套餐修改" :visible.sync="dialogVisible" size="tiny">
+		<el-form :model="info" label-width="120px">
+			<el-form-item label="套餐名称：">
+    			<el-input v-model="info.PackageName"></el-input>
+  			</el-form-item>
+			<el-form-item label="套餐编号：">
+    			<el-input v-model="info.PackageNumber" style="width:65%"></el-input>
+  			</el-form-item>
+			<el-form-item label="套餐价格：">
+    			<el-input v-model="info.PackagePrice" type="number" style="width:55%"></el-input>
+				元
+  			</el-form-item>
+			<el-form-item label="套餐状态：">
+				<el-select v-model="info.PackageState" placeholder="请选择套餐状态">
+					<el-option key="1" label="在售" value="1">
+					</el-option>
+					<el-option key="0" label="已下架" value="0">
+					</el-option>
+				</el-select>
+			</el-form-item>
+		</el-form>
+	<span slot="footer" class="dialog-footer">
+		<el-button @@click="dialogVisible = false">取 消</el-button>
+		<el-button type="primary" @@click="subInfo()" :loading="submitLoad">确 定</el-button>
+	</span>
+	</el-dialog>
+</div>
+
+@section script{
+	<script src="../../Scripts/app/csPackage.js"></script>
+}
+
+
+

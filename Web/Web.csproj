@@ -209,6 +209,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CsOrderController.cs" />
+    <Compile Include="Controllers\CsPackageController.cs" />
     <Compile Include="Controllers\CsPartsController.cs" />
     <Compile Include="Controllers\CsPriceController.cs" />
     <Compile Include="Controllers\CsProductsController.cs" />
@@ -259,6 +260,7 @@
     <Content Include="Images\m3.gif" />
     <Content Include="Images\m4.gif" />
     <Content Include="Scripts\app\csOrder.js" />
+    <Content Include="Scripts\app\csPackage.js" />
     <Content Include="Scripts\app\csParts.js" />
     <Content Include="Scripts\app\csPrice.js" />
     <Content Include="Scripts\app\csSystemUsers.js" />
@@ -307,6 +309,7 @@
     <Content Include="Views\WeChatApi\GetOpenId.cshtml" />
     <Content Include="Views\WeChatApi\RedirectUrL.cshtml" />
     <Content Include="Views\WeChatApi\PayTest.cshtml" />
+    <Content Include="Views\CsPackage\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj">

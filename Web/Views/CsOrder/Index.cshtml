@@ -83,6 +83,17 @@
             </el-col>
         </el-row> 
         <el-row :gutter="20">
+            <!-- <el-col :span="2" class="layout-right layout-where">
+                订单来源：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="where.OrderSource" placeholder="请选择订单来源" :clearable='true' @@change="getpage(1)">
+                    <el-option key="0" label="电商代发" value="0">
+                    </el-option>
+                    <el-option key="3" label="企业团购" value="3">
+                    </el-option>
+                </el-select>
+            </el-col> -->
             <el-col :span="2" class="layout-right layout-where">
                 下单时间：
             </el-col>
@@ -90,7 +101,6 @@
                 <el-date-picker v-model="where.Time" type="datetimerange" placeholder="选择时间范围" @@change="getpage(1)">
                 </el-date-picker>
             </el-col>
-            
         </el-row>
         <div class="table-btn">
             <el-button type="primary" icon="search" @@click="batchDising()">批量配送</el-button>
@@ -115,6 +125,8 @@
             <el-table-column label="订单状态" prop="OrderState">
             </el-table-column>
             <el-table-column label="总金额" prop="TotalMoney">
+            </el-table-column>
+            <el-table-column label="订单源" prop="OrderSource">
             </el-table-column>
             <el-table-column label="数据状态" prop="RowStatus">
             </el-table-column>
@@ -143,9 +155,9 @@
                 <el-row>
                     <el-col :span="4" class="layout-right">总金额：</el-col>
                     <el-col :span="3">{{oldInfo.TotalMoney}}</el-col>
-                    @*<el-col :span="3" class="layout-right">优惠金额：</el-col>
-                    <el-col :span="3">{{oldInfo.DiscountMoney}}</el-col>
-                    <el-col :span="3" class="layout-right">实际金额：</el-col>
+                    <el-col :span="3" class="layout-right">订单源：</el-col>
+                    <el-col :span="3">{{oldInfo.OrderSource}}</el-col>
+                    @*<el-col :span="3" class="layout-right">实际金额：</el-col>
                     <el-col :span="3">{{oldInfo.ActualMoney}}</el-col>*@
                 </el-row>
                 <el-row>
@@ -253,7 +265,7 @@
                 </el-row>
                 <div class="table-content">
                     <el-table :data="oldInfo.CsOrderDetails" style="width: 100%">
-                        <el-table-column label="商品名称(编号)" prop="ProductName" width="240">
+                        <el-table-column label="商品名称(编号)" prop="ProductName" width="340">
                         </el-table-column>
                         <el-table-column label="商品类型" prop="ChoseType">
                         </el-table-column>
