@@ -250,6 +250,44 @@ namespace Web.Controllers
         }
 
         /// <summary>
+        /// 获取套餐列表
+        /// </summary>
+        /// <returns></returns>
+        public IHttpActionResult GetPackageList()
+        {
+            CsPackageBll packageBll = new CsPackageBll();
+            var packAgeList = packageBll.GetModelList(" and PackageState=1 ").Select(x=>new
+            {
+                x.PackageId,
+                x.PackageNumber,
+                x.PackageType,
+                TypeName = ((ProductType)x.PackageType).ToString(),
+                x.PackageName,
+                x.PackageImage,
+                x.PackageWeight,
+                x.PackagePrice,
+                x.PackageState,
+                OperationDate =x.OperationDate.ToString("yyyy-MM-dd"),
+                number=0,
+                x.PackageStock
+            }).ToList();
+            if (packAgeList.Count > 0)
+            {
+                return Json(new {
+                    status = true,
+                    packagelist = packAgeList
+                });
+            }
+            else
+            {
+                return Json(new {
+                    status = false
+                });
+            }
+            
+        }
+
+        /// <summary>
         /// 根据openId查询该用户的发货信息和收货信息
         /// </summary>
         /// <param name="openId"></param>
