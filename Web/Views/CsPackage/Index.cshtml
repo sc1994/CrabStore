@@ -31,6 +31,7 @@
 			</el-col>
 		</el-row>
 		<div class="table-btn">
+            <el-button type="primary" icon="plus" @@click="add()">新增</el-button>
         	<el-button type="primary" icon="search" @@click="getList()">搜索</el-button>
     	</div>
 	</div>
@@ -58,19 +59,19 @@
             </el-table-column>
         </el-table>
     </div>
-	<el-dialog title="套餐修改" :visible.sync="dialogVisible" size="tiny">
-		<el-form :model="info" label-width="120px">
-			<el-form-item label="套餐名称：">
+	<el-dialog :title="info.PackageId>0?'套餐修改':'套餐新增'" :visible.sync="dialogVisible" size="tiny">
+		<el-form :model="info" :rules="rules" ref="info" label-width="120px">
+			<el-form-item prop="PackageName" label="套餐名称：">
     			<el-input v-model="info.PackageName"></el-input>
   			</el-form-item>
 			<el-form-item label="套餐编号：">
     			<el-input v-model="info.PackageNumber" style="width:65%"></el-input>
   			</el-form-item>
-			<el-form-item label="套餐价格：">
-    			<el-input v-model="info.PackagePrice" type="number" style="width:55%"></el-input>
+			<el-form-item prop="PackagePrice" label="套餐价格：">
+    			<el-input v-model="info.PackagePrice" type="number" :min="0" style="width:55%"></el-input>
 				元
   			</el-form-item>
-			<el-form-item label="套餐状态：">
+			<el-form-item prop="PackageState" label="套餐状态：">
 				<el-select v-model="info.PackageState" placeholder="请选择套餐状态">
 					<el-option key="1" label="在售" value="1">
 					</el-option>

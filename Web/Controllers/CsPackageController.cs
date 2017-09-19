@@ -12,6 +12,7 @@ namespace Web.Controllers
     public class CsPackageController : BaseController
     {
         // GET: CsPackage
+        private readonly CsPackageBll _csPackageBll = new CsPackageBll();
         public ActionResult Index()
         {
             return View();
@@ -74,34 +75,34 @@ namespace Web.Controllers
 
         public ActionResult SubmitCsPackageInfo(CsPackage model)
         {
-            if (model.PackageId <= 0)
-            {
-                return Json(new ResModel
-                {
-                    Data = "错误的参数,请刷新页面重试",
-                    ResStatus = ResStatue.No
-                });
-            }
             var sh = new SqlHelper<CsPackage>();
-            sh.AddWhere(CsPackageEnum.PackageId, model.PackageId);
-            sh.AddUpdate("PackageName", model.PackageName);
-            sh.AddUpdate("PackagePrice", model.PackagePrice);
-            sh.AddUpdate("PackageNumber", model.PackageNumber);
-            sh.AddUpdate("PackageState", model.PackageState);
-            sh.AddUpdate("OperationDate", DateTime.Now);
-            var line = sh.Update();
-            if (line > 0)
+            if (_csPackageBll.GetModelList($" and PackageName ='{model.PackageName}'").Any()&& model.PackageId == 0)
             {
                 return Json(new ResModel
                 {
-                    Data = "更新成功",
-                    ResStatus = ResStatue.Yes
+                    Data = "已存在该套餐，请重新设置",
+                    ResStatus = ResStatue.Warn
                 });
             }
+            ResStatue code;
+            var msg = string.Empty;
+            if (model.PackageId > 0)
+            {
+                code = _csPackageBll.Update(model) ? ResStatue.Yes : ResStatue.No;
+            }else
+            {
+                model.PackageWeight = 0;
+                model.PackageStock = 1000;
+                model.PackageImage = "Images/10007.jpg";
+                model.OperationDate = DateTime.Now;
+                model.PackageType = 1;
+                code = _csPackageBll.Add(model)>0 ? ResStatue.Yes : ResStatue.No;
+            }
+
             return Json(new ResModel
             {
-                Data = "数据执行成功但是没有受影响行数",
-                ResStatus = ResStatue.Warn
+                ResStatus = code,
+                Data =msg
             });
         }
     }

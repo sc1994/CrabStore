@@ -268,7 +268,8 @@ namespace Web.Controllers
                 x.PackagePrice,
                 x.PackageState,
                 OperationDate =x.OperationDate.ToString("yyyy-MM-dd"),
-                number=0,
+                TotalNumber = _csOrderBll.TotalNumber(x.PackageId, DateTime.Now),
+                number =0,
                 x.PackageStock
             }).ToList();
             if (packAgeList.Count > 0)
