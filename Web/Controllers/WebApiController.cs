@@ -720,5 +720,59 @@ namespace Web.Controllers
                 return Json(new { status = false });
             }
         }
+
+        #region 套餐订单操作
+        /// <summary>
+        /// 添加套餐订单
+        /// </summary>
+        /// <param name="order">套餐订单</param>
+        /// <returns></returns>
+        [HttpPost]
+        public IHttpActionResult AddPackageOrder(OrderModel order)
+        {
+            string orderNumber = "";
+            int orderId = _csOrderBll.AddPackageOrder(order, out orderNumber);//获得生成订单编号
+            if (orderId > 0)
+            {
+                return Json(new
+                {
+                    status = true,
+                    orderid = orderId,
+                    orderNumber
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = false,
+                    orderid = orderId,
+                    orderNumber
+                });
+            }
+        }
+
+        /// <summary>
+        /// 完成套餐订单支付操作
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IHttpActionResult FinshPackageOrder([FromBody] int orderId)
+        {
+            int number = _csOrderBll.FinshPackageOrder(orderId);
+            if (number > 0)
+            {
+                return Json(new
+                {
+                    status = true
+                });
+            }
+            else
+            {
+                return Json(new { status = false });
+            }
+        }
+        #endregion
     }
 }

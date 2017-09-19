@@ -95,5 +95,29 @@ namespace BLL
         {
             return _dal.FinshOrder(orderId, userId, totalWeight, orderCopies);
         }
+
+        #region 套餐订单处理
+        /// <summary>
+        /// 添加套餐订单
+        /// </summary>
+        /// <param name="order">订单数据</param>
+        /// <param name="orderNumber">返回订单编号</param>
+        /// <returns></returns>
+        public int AddPackageOrder(OrderModel order,out string orderNumber)
+        {
+            return _dal.AddPackageOrder(order, out orderNumber);
+        }
+
+        /// <summary>
+        /// 完成套餐订单支付操作
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        public int FinshPackageOrder(int orderId)
+        {
+            return _dal.FinshPackageOrder(orderId);
+        }
+
+        #endregion
     }
 }
