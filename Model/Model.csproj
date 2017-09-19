@@ -68,6 +68,7 @@
     <Compile Include="DBModel\CsSend.cs" />
     <Compile Include="ViewModel\UserRebateView.cs" />
     <Compile Include="WeChatModel\WeChatConfig.cs" />
+    <Compile Include="DBModel\CsPackage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
