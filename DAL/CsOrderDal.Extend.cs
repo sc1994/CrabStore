@@ -519,7 +519,7 @@ namespace DAL
                         //decimal total = totalWeight * orderCopies;
                         //string strSql3 = $"update CsUsers set TotalWight=TotalWight+{total} where UserId={userId}";
                         //number += DbClient.ExecuteSql(conn, trans, strSql3, null);
-                        if (number == (DetailList.Count + 2))
+                        if (number == (DetailList.Count + 1))
                         {
                             trans.Commit();
                             return number;

@@ -32,27 +32,29 @@ namespace Web.Controllers
             products = _csProductsBll.GetModelList("");
             StringBuilder strJson = new StringBuilder();
             strJson.Append("{");
-            strJson.Append("\"priceDate\":\"" + products.FirstOrDefault().OperationDate.ToString("MM-dd") + "\"");
+            strJson.Append("\"priceDate\":\"" + products.FirstOrDefault().OperationDate.ToString("MM-dd") + "\",");
             //大宗采购蟹
-            List<CsProducts> product1 = (from product in products
-                                         where product.ProductType == 1
-                                         select product).ToList();
+            //List<CsProducts> product1 = (from product in products
+            //                             where product.ProductType == 1
+            //                             select product).ToList();
 
-            strJson.Append(",\"priceList1\":[");
-            for (int i = 0; i < (product1.Count / 2); i++)
-            {
-                strJson.Append("{\"pn1\":\"" + product1[i].ProductName + "\",\"pv1\":" + (product1[i].ProductState == 1 ? product1[i].ProductPrice.ToString() : "\"-\"") + ",");
-                strJson.Append("\"pn2\":\"" + product1[i + 6].ProductName + "\",\"pv2\":" + (product1[i + 6].ProductState == 1 ? product1[i + 6].ProductPrice.ToString() : "\"-\"") + "}");
-                if (i != (product1.Count() / 2 - 1))
-                {
-                    strJson.Append(",");
-                }
-            }
-            strJson.Append("],\"priceList2\":[");
+            //strJson.Append(",\"priceList1\":[");
+            //for (int i = 0; i < (product1.Count / 2); i++)
+            //{
+            //    strJson.Append("{\"pn1\":\"" + product1[i].ProductName + "\",\"pv1\":" + (product1[i].ProductState == 1 ? product1[i].ProductPrice.ToString() : "\"-\"") + ",");
+            //    strJson.Append("\"pn2\":\"" + product1[i + 6].ProductName + "\",\"pv2\":" + (product1[i + 6].ProductState == 1 ? product1[i + 6].ProductPrice.ToString() : "\"-\"") + "}");
+            //    if (i != (product1.Count() / 2 - 1))
+            //    {
+            //        strJson.Append(",");
+            //    }
+            //}
+            //strJson.Append("],");
+            strJson.Append("\"priceList2\":[");
             //蟹塘采购
-            List<CsProducts> product2 = (from product in products
-                                         where product.ProductType == 2
-                                         select product).ToList();
+            //List<CsProducts> product2 = (from product in products
+            //                             where product.ProductType == 2
+            //                             select product).ToList();
+            List<CsProducts> product2 = products.Where(x=>x.ProductType==3).ToList();
             for (int j = 0; j < (product2.Count() / 2); j++)
             {
                 strJson.Append("{\"pn1\":\"" + product2[j].ProductName + "\",\"pv1\":" + (product2[j].ProductState == 1 ? product2[j].ProductPrice.ToString() : "\"-\"") + ",");
@@ -67,13 +69,9 @@ namespace Web.Controllers
             var parts = new List<CsParts>();
             parts = _csPartsBll.GetModelList("");
             //必须配件
-            List<CsParts> parts1 = (from part in parts
-                                    where part.PartType == 1
-                                    select part).ToList();
+            List<CsParts> parts1 = parts.Where(x=>x.PartType==1).ToList();
             //可选配件
-            List<CsParts> parts2 = (from part in parts
-                                    where part.PartType == 2
-                                    select part).ToList();
+            List<CsParts> parts2 = parts.Where(x => x.PartType == 2).ToList();
             int number1 = parts1.Count;
             int number2 = parts2.Count;
             int number = number1 > number2 ? number1 : number2;
@@ -616,6 +614,8 @@ namespace Web.Controllers
             List<CsOrderDetail> orderList = _csOrderDetailBll.GetModelList($" and OrderId={id}");
             List<CsProducts> productList = _csProductsBll.GetModelList("");
             List<CsParts> partList = _csPartsBll.GetModelList("");
+            CsPackageBll _cspackageBll = new CsPackageBll();
+            List<CsPackage> packageList = _cspackageBll.GetModelList("");
             //螃蟹列表
             var crabList = orderList.Where(x => x.ChoseType == 1).Select(x => new
             {
@@ -650,12 +650,25 @@ namespace Web.Controllers
                 x.UnitPrice,
                 x.TotalPrice
             });
+            //套餐列表
+            var packList = orderList.Where(x => x.ChoseType == 3).Select(x => new
+            {
+                x.OrderId,
+                x.ProductId,
+                ProductName = packageList.FirstOrDefault(y => y.PackageId == x.ProductId).PackageName,
+                ProductType = ((ProductType)packageList.FirstOrDefault(y => y.PackageId == x.ProductId).PackageType).ToString(),
+                ProductWeight = (ProductType)packageList.FirstOrDefault(y => y.PackageId == x.ProductId).PackageWeight,
+                x.ProductNumber,
+                x.UnitPrice,
+                x.TotalPrice
+            });
             return Json(new
             {
                 order,
                 crabList,
                 partMustList,
-                partOptList
+                partOptList,
+                packList
             });
         }
 
