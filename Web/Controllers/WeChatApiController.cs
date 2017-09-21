@@ -215,8 +215,6 @@ namespace Web.Controllers
             var prepayId = string.Empty;
             for (var i = 0; i < childs.Count; i++)
             {
-                LogHelper.Log(xml, "预支付请求参数");
-                LogHelper.Log(data, "预支付响应参数");
                 if (childs[i].Name == "prepay_id")
                 {
                     prepayId = childs[i].InnerText;
