@@ -46,7 +46,8 @@
     public enum PartType
     {
         必选配件 = 1,
-        可选配件 = 2
+        可选配件 = 2,
+        未知 = 0
     }
 
     public enum ProductState

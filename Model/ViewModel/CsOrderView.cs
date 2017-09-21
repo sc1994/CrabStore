@@ -88,6 +88,10 @@ namespace Model.ViewModel
             /// 订单源
             /// </summary>
             public string OrderSource { get; set; } = string.Empty;
+            /// <summary>
+            /// 预支付编号
+            /// </summary>
+            public  string PrepaymentId { get; set; } = string.Empty;
         }
 
         public class CsOrderExcel

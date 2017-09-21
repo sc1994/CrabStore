@@ -157,8 +157,8 @@
                     <el-col :span="3">{{oldInfo.TotalMoney}}</el-col>
                     <el-col :span="3" class="layout-right">订单源：</el-col>
                     <el-col :span="3">{{oldInfo.OrderSource}}</el-col>
-                    @*<el-col :span="3" class="layout-right">实际金额：</el-col>
-                    <el-col :span="3">{{oldInfo.ActualMoney}}</el-col>*@
+                    <el-col :span="3" class="layout-right">预支付编号：</el-col>
+                    <el-col :span="3">{{oldInfo.PrepaymentId}}</el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">份数：</el-col>
@@ -170,9 +170,9 @@
                 </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">下单用户：</el-col>
-                    <el-col :span="8">{{oldInfo.UserName}}</el-col>
-                    <el-col :span="4" class="layout-right">联系方式：</el-col>
-                    <el-col :span="8">{{oldInfo.UserPhone}}</el-col>
+                    <el-col :span="3">{{oldInfo.UserName}}</el-col>
+                    <el-col :span="3" class="layout-right">联系方式：</el-col>
+                    <el-col :span="3">{{oldInfo.UserPhone}}</el-col>
                 </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">寄件信息：</el-col>

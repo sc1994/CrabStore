@@ -111,7 +111,7 @@ namespace Web.Controllers
                 if (csOrderDetailExtend.ChoseType == ChoseType.配件.ToString())
                 {
                     var part = parts.FirstOrDefault(x => x.PartId == csOrderDetailExtend.ProductId);
-                    csOrderDetailExtend.ProductName = $"配件/{part?.PartName ?? "暂无名称"}({part?.PartNumber})";
+                    csOrderDetailExtend.ProductName = $"{(PartType)(part?.PartType ?? 0)}/{part?.PartName ?? "暂无名称"}({part?.PartNumber})";
                 }
                 else if (csOrderDetailExtend.ChoseType == ChoseType.螃蟹.ToString())
                 {
@@ -128,7 +128,7 @@ namespace Web.Controllers
                 else
                 {
                     var package = packages.FirstOrDefault(x => x.PackageId == csOrderDetailExtend.ProductId);
-                    csOrderDetailExtend.ProductName = $"套餐/{package?.PackageName ?? "暂无名称"}({package?.PackageNumber})";
+                    csOrderDetailExtend.ProductName = $"{package?.PackageName ?? "暂无名称"}({package?.PackageNumber})";
                 }
                 csOrderDetailExtends.Add(csOrderDetailExtend);
             }
@@ -163,7 +163,8 @@ namespace Web.Controllers
                 SendConsignee = sendInfo.Length > 0 ? sendInfo[0] : "-",
                 SendTelPhone = sendInfo.Length > 1 ? sendInfo[1] : "",
                 SendAddress = csOrder.SendAddress.Trim('$').Replace("$$", "$").Replace("$", "//"),
-                OrderSource = csOrderDetails.Any(x => x.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发"
+                OrderSource = csOrderDetails.Any(x => x.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发",
+                PrepaymentId = csOrder.PrepaymentId.IsNullOrEmpty() ? "未生成预支付编号" : csOrder.PrepaymentId
             });
         }
 
@@ -727,7 +728,7 @@ namespace Web.Controllers
                 {
                     PageIndex = isPage ? para.CurrentPage : 0,
                     PageSize = isPage ? PageSize : 0,
-                    PageSortField = "co." + CsOrderEnum.OrderId.ToString(),
+                    PageSortField = "co." + CsOrderEnum.OrderId,
                     SortEnum = SortEnum.Desc
                 },
                 Alia = "co"
