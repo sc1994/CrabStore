@@ -32,7 +32,7 @@ namespace Web.Controllers
             products = _csProductsBll.GetModelList("");
             StringBuilder strJson = new StringBuilder();
             strJson.Append("{");
-            strJson.Append("\"priceDate\":\"" + products.FirstOrDefault().OperationDate.ToString("MM-dd") + "\"");
+            strJson.Append("\"priceDate\":\"" + DateTime.Now.ToString("MM-dd") + "\"");
             //大宗采购蟹
             //List<CsProducts> product1 = (from product in products
             //                             where product.ProductType == 1
