@@ -32,7 +32,7 @@ namespace Web.Controllers
             products = _csProductsBll.GetModelList("");
             StringBuilder strJson = new StringBuilder();
             strJson.Append("{");
-            strJson.Append("\"priceDate\":\"" + products.FirstOrDefault().OperationDate.ToString("MM-dd") + "\",");
+            strJson.Append("\"priceDate\":\"" + DateTime.Now.ToString("MM-dd") + "\"");
             //大宗采购蟹
             //List<CsProducts> product1 = (from product in products
             //                             where product.ProductType == 1
@@ -49,12 +49,12 @@ namespace Web.Controllers
             //    }
             //}
             //strJson.Append("],");
-            strJson.Append("\"priceList2\":[");
+            strJson.Append(",\"priceList2\":[");
             //蟹塘采购
             //List<CsProducts> product2 = (from product in products
             //                             where product.ProductType == 2
             //                             select product).ToList();
-            List<CsProducts> product2 = products.Where(x=>x.ProductType==3).ToList();
+            List<CsProducts> product2 = products.Where(x=>x.ProductType==2).ToList();
             for (int j = 0; j < (product2.Count() / 2); j++)
             {
                 strJson.Append("{\"pn1\":\"" + product2[j].ProductName + "\",\"pv1\":" + (product2[j].ProductState == 1 ? product2[j].ProductPrice.ToString() : "\"-\"") + ",");
