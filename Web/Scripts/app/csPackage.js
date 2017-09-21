@@ -6,7 +6,7 @@
             PackageState: ''
         },
         list: [],
-        loading:false,
+        loading: false,
         info: {
 
         },
@@ -18,21 +18,10 @@
                 message: '请输入套餐名称',
                 trigge: 'blur'
             }],
-            //PackagePrice: [{
-            //    required: true,
-            //    message: '请输入套餐价格',
-            //    trigger: 'blur'
-            //},{
-            //    min: 0,
-            //    message: '套餐价格必须大于0',
-            //    trigger: 'blur'
-            //}
-            //],
-            PackageState: [{
-                required: true,
-                message: '请是否上架',
-                trigger: 'blur'
-            }]
+            PackagePrice: [
+                { required: true, message: '价格不能为空' },
+                { type: 'number', message: '价格必须为数字值' }
+            ]
         }
 
     },
@@ -51,16 +40,7 @@
             this.info = {
                 PackageName: '',
                 PackageNumber: '',
-                PackagePrice: '0',
-                OperationDate: '',
-                PackageState: '1',
-                DeleteDescribe: '',
-                PackageId: 0
-            }
-            this.oldInfo = {
-                PackageName: '',
-                PackageNumber: '',
-                PackagePrice: '0',
+                PackagePrice: 0,
                 OperationDate: '',
                 PackageState: '1',
                 DeleteDescribe: '',
@@ -91,7 +71,6 @@
             that.submitLoad = true
             that.$refs['info'].validate((valid) => {
                 if (valid) {
-                    console.info('验证成功');
                     //验证成功
                     ajax('CsPackage/SubmitCsPackageInfo', that.info, function (data) {
                         that.submitLoad = false
@@ -124,11 +103,10 @@
                         message: '请按要求填写表单',
                         type: 'error'
                     });
-                    //console.info('验证失败');
                     that.submitLoad = false;
                 }
             });
-            
+
         }
     },
     mounted: function () {

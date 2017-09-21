@@ -13,6 +13,7 @@ namespace Web.Controllers
     {
         // GET: CsPackage
         private readonly CsPackageBll _csPackageBll = new CsPackageBll();
+
         public ActionResult Index()
         {
             return View();
@@ -66,6 +67,7 @@ namespace Web.Controllers
                     ResStatus = ResStatue.No
                 });
             }
+
             return Json(new ResModel
             {
                 Data = model,
@@ -75,8 +77,8 @@ namespace Web.Controllers
 
         public ActionResult SubmitCsPackageInfo(CsPackage model)
         {
-            var sh = new SqlHelper<CsPackage>();
-            if (_csPackageBll.GetModelList($" and PackageName ='{model.PackageName}'").Any()&& model.PackageId == 0)
+            if (_csPackageBll.GetModelList($" and PackageName ='{model.PackageName}'").Any() &&
+                model.PackageId == 0)
             {
                 return Json(new ResModel
                 {
@@ -85,24 +87,25 @@ namespace Web.Controllers
                 });
             }
             ResStatue code;
-            var msg = string.Empty;
             if (model.PackageId > 0)
             {
-                code = _csPackageBll.Update(model) ? ResStatue.Yes : ResStatue.No;
-            }else
+                model.OperationDate = DateTime.Now;
+                code = _csPackageBll.Update(model) ? ResStatue.Yes : ResStatue.Warn;
+            }
+            else
             {
                 model.PackageWeight = 0;
                 model.PackageStock = 1000;
                 model.PackageImage = "Images/10007.jpg";
                 model.OperationDate = DateTime.Now;
                 model.PackageType = 1;
-                code = _csPackageBll.Add(model)>0 ? ResStatue.Yes : ResStatue.No;
+                code = _csPackageBll.Add(model) > 0 ? ResStatue.Yes : ResStatue.Warn;
             }
 
             return Json(new ResModel
             {
                 ResStatus = code,
-                Data =msg
+                Data = code == ResStatue.Yes ? "更新成功" : "执行完成,但是没有数据受影响"
             });
         }
     }

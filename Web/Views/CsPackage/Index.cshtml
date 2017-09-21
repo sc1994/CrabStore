@@ -68,7 +68,7 @@
     			<el-input v-model="info.PackageNumber" style="width:65%"></el-input>
   			</el-form-item>
 			<el-form-item prop="PackagePrice" label="套餐价格：">
-    			<el-input v-model="info.PackagePrice" type="number" :min="0" style="width:55%"></el-input>
+    			<el-input v-model.number="info.PackagePrice" style="width:55%"></el-input>
 				元
   			</el-form-item>
 			<el-form-item prop="PackageState" label="套餐状态：">
