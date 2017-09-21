@@ -111,24 +111,19 @@ namespace Web.Controllers
                 if (csOrderDetailExtend.ChoseType == ChoseType.配件.ToString())
                 {
                     var part = parts.FirstOrDefault(x => x.PartId == csOrderDetailExtend.ProductId);
-                    csOrderDetailExtend.ProductName = $"{(PartType)(part?.PartType ?? 0)}/{part?.PartName ?? "暂无名称"}({part?.PartNumber})";
+                    csOrderDetailExtend.ProductName = $"{(part?.PartName).ShowNullOrEmpty()}({(part?.PartNumber).ShowNullOrEmpty()})";
+                    csOrderDetailExtend.ChoseType = ((PartType)(part?.PartType ?? 0)).ToString();
                 }
                 else if (csOrderDetailExtend.ChoseType == ChoseType.螃蟹.ToString())
                 {
                     var product = products.FirstOrDefault(x => x.ProductId == csOrderDetailExtend.ProductId);
-                    if (product != null)
-                    {
-                        csOrderDetailExtend.ProductName = $"{(ProductType)product.ProductType}/{product.ProductName}({product.ProductNumber})";
-                    }
-                    else
-                    {
-                        csOrderDetailExtend.ProductName = "暂无名称";
-                    }
+                    csOrderDetailExtend.ProductName = $"{(product?.ProductName).ShowNullOrEmpty()}({(product?.ProductNumber).ShowNullOrEmpty()})";
+                    csOrderDetailExtend.ChoseType = ((ProductType)(product?.ProductType ?? 0)).ToString();
                 }
                 else
                 {
                     var package = packages.FirstOrDefault(x => x.PackageId == csOrderDetailExtend.ProductId);
-                    csOrderDetailExtend.ProductName = $"{package?.PackageName ?? "暂无名称"}({package?.PackageNumber})";
+                    csOrderDetailExtend.ProductName = $"{(package?.PackageName).ShowNullOrEmpty()}({(package?.PackageNumber).ShowNullOrEmpty()})";
                 }
                 csOrderDetailExtends.Add(csOrderDetailExtend);
             }

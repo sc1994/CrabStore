@@ -20,6 +20,13 @@ namespace Common
             return false;
         }
 
+        public static string ShowNullOrEmpty(this string s, string show = null)
+        {
+            if (s == null) return show ?? "未知";
+            if (s.Trim() == string.Empty) return show ?? "未知";
+            return s;
+        }
+
         public static string ToJson(this object obj)
         {
             return JsonConvert.SerializeObject(obj);
