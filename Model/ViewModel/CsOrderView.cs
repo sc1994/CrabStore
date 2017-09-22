@@ -243,13 +243,13 @@ namespace Model.ViewModel
             // ReSharper disable once InconsistentNaming
             public string orderConsignee { get; set; } = string.Empty;
             // ReSharper disable once InconsistentNaming
-            public string orderTelPhone { get; set; } = string.Empty;
+            public string orderTelphone { get; set; } = string.Empty;
             // ReSharper disable once InconsistentNaming
             public string orderDetails { get; set; } = string.Empty;
             // ReSharper disable once InconsistentNaming
             public int isInvoice { get; set; } = 0;
             // ReSharper disable once InconsistentNaming
             public string orderRemarks { get; set; } = string.Empty;
-        }
+    }
     }
 }

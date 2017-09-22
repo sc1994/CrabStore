@@ -210,7 +210,7 @@ namespace Web.Controllers
                 model.OrderDelivery = "";
             }
             model.SendAddress = para.sendConsignee + "$" + para.sendTelphone;
-            model.OrderAddress = "$" + para.orderConsignee + "$$" + para.sendTelphone + "$" + para.orderDetails;
+            model.OrderAddress = "$" + para.orderConsignee + "$$" + para.orderTelphone + "$" + para.orderDetails;
             var line = _csOrderBll.Update(model);
 
             if (line)
