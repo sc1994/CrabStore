@@ -70,6 +70,16 @@ namespace Model.DBModel
         /// 服务费
         /// </summary>
         public decimal servicemoney { get; set; }
+
+        /// <summary>
+        /// 是否开票
+        /// </summary>
+        public bool isInvoice { get; set; }
+
+        /// <summary>
+        /// 订单备注
+        /// </summary>
+        public string remarks { get; set; }
     }
 
     public class CartItem
