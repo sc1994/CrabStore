@@ -225,7 +225,7 @@ namespace DAL
                     }
                     catch (Exception ex)
                     {
-                        LogHelper.Log(ex.Message);
+                        LogHelper.Log(ex.Message,"订单添加异常");
                         trans.Rollback();
                         orderNumber = "";
                         return 0;
