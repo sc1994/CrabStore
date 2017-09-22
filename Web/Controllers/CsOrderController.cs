@@ -112,13 +112,13 @@ namespace Web.Controllers
                 {
                     var part = parts.FirstOrDefault(x => x.PartId == csOrderDetailExtend.ProductId);
                     csOrderDetailExtend.ProductName = $"{(part?.PartName).ShowNullOrEmpty()}({(part?.PartNumber).ShowNullOrEmpty()})";
-                    csOrderDetailExtend.ChoseType = ((PartType)(part?.PartType ?? 0)).ToString();
+                    csOrderDetailExtend.ChoseType = ((PartType?)part?.PartType).ShowNullOrEmpty();
                 }
                 else if (csOrderDetailExtend.ChoseType == ChoseType.螃蟹.ToString())
                 {
                     var product = products.FirstOrDefault(x => x.ProductId == csOrderDetailExtend.ProductId);
                     csOrderDetailExtend.ProductName = $"{(product?.ProductName).ShowNullOrEmpty()}({(product?.ProductNumber).ShowNullOrEmpty()})";
-                    csOrderDetailExtend.ChoseType = ((ProductType)(product?.ProductType ?? 0)).ToString();
+                    csOrderDetailExtend.ChoseType = ((ProductType?)product?.ProductType).ShowNullOrEmpty();
                 }
                 else
                 {

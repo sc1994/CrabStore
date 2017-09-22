@@ -20,7 +20,6 @@
         大宗采购 = 1,
         蟹塘直采 = 2,
         套餐 = 3,
-        未知 = 0
     }
 
     public enum ChoseType
@@ -48,7 +47,6 @@
     {
         必选配件 = 1,
         可选配件 = 2,
-        未知 = 0
     }
 
     public enum ProductState
