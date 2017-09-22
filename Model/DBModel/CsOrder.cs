@@ -118,7 +118,7 @@ namespace Model.DBModel
         /// <summary>
         /// 是否开票 0 不开票 1开票
         /// </summary>
-        public int isInvoice { get; set; } = ToInt("0");
+        public int IsInvoice { get; set; } = ToInt("0");
 
         /// <summary>
         /// 订单备注
@@ -217,7 +217,7 @@ namespace Model.DBModel
         /// <summary>
         /// 是否开票 0 不开票 1开票
         /// </summary>
-        isInvoice,
+        IsInvoice,
         /// <summary>
         /// 订单备注
         /// </summary>
