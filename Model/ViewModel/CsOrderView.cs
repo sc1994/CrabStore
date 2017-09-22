@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using Model.DBModel;
 
@@ -27,6 +28,7 @@ namespace Model.ViewModel
             public string OrderSource { get; set; } = string.Empty;
 
             public string OrderNumber { get; set; } = string.Empty;
+            public string IsInvoice { get; set; } = string.Empty;
         }
 
         public class CsOrderPage : CsOrder
@@ -91,7 +93,9 @@ namespace Model.ViewModel
             /// <summary>
             /// 预支付编号
             /// </summary>
-            public  string PrepaymentId { get; set; } = string.Empty;
+            public string PrepaymentId { get; set; } = string.Empty;
+            public string IsInvoice { get; set; } = string.Empty;
+            public string OrderRemarks { get; set; } = string.Empty;
         }
 
         public class CsOrderExcel
@@ -216,6 +220,36 @@ namespace Model.ViewModel
         {
             public string 订单编号 { get; set; } = string.Empty;
             public string 运单号 { get; set; } = string.Empty;
+        }
+
+        public class CsOrderUpdate
+        {
+            // ReSharper disable once InconsistentNaming
+            public int id { get; set; } = 0;
+            // ReSharper disable once InconsistentNaming
+            public int rowStatus { get; set; } = 0;
+            // ReSharper disable once InconsistentNaming
+            public DateTime deleteDate { get; set; } = DateTime.Now;
+            // ReSharper disable once InconsistentNaming
+            public string deleteDescribe { get; set; } = string.Empty;
+            // ReSharper disable once InconsistentNaming
+            public int orderState { get; set; } = 0;
+            // ReSharper disable once InconsistentNaming
+            public string delivery { get; set; } = string.Empty;
+            // ReSharper disable once InconsistentNaming
+            public string sendConsignee { get; set; } = string.Empty;
+            // ReSharper disable once InconsistentNaming
+            public string sendTelphone { get; set; } = string.Empty;
+            // ReSharper disable once InconsistentNaming
+            public string orderConsignee { get; set; } = string.Empty;
+            // ReSharper disable once InconsistentNaming
+            public string orderTelPhone { get; set; } = string.Empty;
+            // ReSharper disable once InconsistentNaming
+            public string orderDetails { get; set; } = string.Empty;
+            // ReSharper disable once InconsistentNaming
+            public int isInvoice { get; set; } = 0;
+            // ReSharper disable once InconsistentNaming
+            public string orderRemarks { get; set; } = string.Empty;
         }
     }
 }

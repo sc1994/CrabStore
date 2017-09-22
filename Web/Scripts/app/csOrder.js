@@ -6,7 +6,7 @@ var vm = new Vue({
             Time: [],
             Status: "2",
             UserName: "",
-            OrderSource: ''
+            IsInvoice: ''
         },
         currentPage: 1,
         list: [],
@@ -23,6 +23,8 @@ var vm = new Vue({
             SendTelPhone: "",
             OrderConsignee: "",
             OrderTelPhone: "",
+            IsInvoice: "",
+            OrderRemarks: "",
             orderDetails: ""
         },
         newInfo: {
@@ -33,6 +35,8 @@ var vm = new Vue({
             SendTelPhone: "",
             OrderConsignee: "",
             OrderTelPhone: "",
+            IsInvoice: "",
+            OrderRemarks: "",
             orderDetails: ""
         },
         fileList: [],
@@ -102,6 +106,8 @@ var vm = new Vue({
                 sendTelphone: that.newInfo.SendTelphone,
                 orderConsignee: that.newInfo.OrderConsignee,
                 orderTelphone: that.newInfo.OrderTelPhone,
+                isInvoice: that.newInfo.IsInvoice,
+                orderRemarks: that.newInfo.OrderRemarks,
                 orderDetails: that.newInfo.OrderDetails
             },
                 function (data) {
@@ -260,7 +266,9 @@ var vm = new Vue({
                 this.oldInfo.OrderTelPhone !== this.newInfo.OrderTelPhone ||
                 this.oldInfo.OrderDetails !== this.newInfo.OrderDetails ||
                 this.oldInfo.SendConsignee !== this.newInfo.SendConsignee ||
-                this.oldInfo.SendTelPhone !== this.newInfo.SendTelPhone
+                this.oldInfo.SendTelPhone !== this.newInfo.SendTelPhone ||
+                this.oldInfo.IsInvoice !== this.newInfo.IsInvoice ||
+                this.oldInfo.OrderRemarks !== this.newInfo.OrderRemarks
         }
     },
     watch: {

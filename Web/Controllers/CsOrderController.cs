@@ -55,7 +55,8 @@ namespace Web.Controllers
                 UserName = x.UserName + $"({x.UserSex}) / " + x.UserId,
                 x.UserPhone,
                 TotalMoney = "￥" + x.TotalMoney.ToString("N2"),
-                OrderSource = ds.Any(d => d.OrderId == x.OrderId && d.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发"
+                OrderSource = ds.Any(d => d.OrderId == x.OrderId && d.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发",
+                IsInvoice = x.IsInvoice == 0 ? "否" : "是"
             });
 
 
@@ -128,6 +129,7 @@ namespace Web.Controllers
                 csOrderDetailExtends.Add(csOrderDetailExtend);
             }
             #endregion
+
             var sendInfo = csOrder.SendAddress.Split('$');
             var putInfo = csOrder.OrderAddress.Split('$');
             return Json(new CsOrderView.CsOrderInfo
@@ -159,23 +161,15 @@ namespace Web.Controllers
                 SendTelPhone = sendInfo.Length > 1 ? sendInfo[1] : "",
                 SendAddress = csOrder.SendAddress.Trim('$').Replace("$$", "$").Replace("$", "//"),
                 OrderSource = csOrderDetails.Any(x => x.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发",
-                PrepaymentId = csOrder.PrepaymentId.IsNullOrEmpty() ? "未生成预支付编号" : csOrder.PrepaymentId
+                PrepaymentId = csOrder.PrepaymentId.IsNullOrEmpty() ? "未生成预支付编号" : csOrder.PrepaymentId,
+                IsInvoice = csOrder.IsInvoice.ToString(),
+                OrderRemarks = csOrder.OrderRemarks
             });
         }
 
-        public ActionResult UpdateCsOrder(int id,
-                                          int rowStatus,
-                                          DateTime deleteDate,
-                                          string deleteDescribe,
-                                          int orderState,
-                                          string delivery,
-                                          string sendConsignee,
-                                          string sendTelphone,
-                                          string orderConsignee,
-                                          string orderTelPhone,
-                                          string orderDetails)
+        public ActionResult UpdateCsOrder(CsOrderView.CsOrderUpdate para)
         {
-            if (id < 1)
+            if (para.id < 1)
             {
                 return Json(new ResModel
                 {
@@ -184,7 +178,7 @@ namespace Web.Controllers
                 });
             }
 
-            var model = _csOrderBll.GetModel(id);
+            var model = _csOrderBll.GetModel(para.id);
             if (model == null)
             {
                 return Json(new ResModel
@@ -193,28 +187,30 @@ namespace Web.Controllers
                     Data = "Id 未能查询到对应订单, 请刷新页面再试"
                 });
             }
-            model.RowStatus = rowStatus;
-            if (rowStatus == RowStatus.无效.GetHashCode())
+            model.RowStatus = para.rowStatus;
+            model.IsInvoice = para.isInvoice;
+            model.OrderRemarks = para.orderRemarks;
+            if (para.rowStatus == RowStatus.无效.GetHashCode())
             {
-                model.DeleteDate = deleteDate;
-                model.DeleteDescribe = deleteDescribe;
+                model.DeleteDate = para.deleteDate;
+                model.DeleteDescribe = para.deleteDescribe;
             }
             else
             {
                 model.DeleteDate = "1900-1-1".ToDate();
                 model.DeleteDescribe = "";
             }
-            model.OrderState = orderState;
-            if (orderState == OrderState.已发货.GetHashCode())
+            model.OrderState = para.orderState;
+            if (para.orderState == OrderState.已发货.GetHashCode())
             {
-                model.OrderDelivery = delivery;
+                model.OrderDelivery = para.delivery;
             }
             else
             {
                 model.OrderDelivery = "";
             }
-            model.SendAddress = sendConsignee + "$" + sendTelphone;
-            model.OrderAddress = "$" + orderConsignee + "$$" + sendTelphone + "$" + orderDetails;
+            model.SendAddress = para.sendConsignee + "$" + para.sendTelphone;
+            model.OrderAddress = "$" + para.orderConsignee + "$$" + para.sendTelphone + "$" + para.orderDetails;
             var line = _csOrderBll.Update(model);
 
             if (line)
@@ -247,8 +243,8 @@ namespace Web.Controllers
             var detail = _csOrderDetailBll.GetModelList($" AND OrderId IN ({string.Join(",", data.Data.Select(x => x.OrderId))})");
 
             // 配件/螃蟹/套餐
-            var parts = _csPartsBll.GetModelList($" AND PartId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.配件.GetHashCode()).Select(x => x.ProductId))}) AND PartType = {PartType.可选配件.GetHashCode()}");
-            var products = _csProductsBll.GetModelList($" AND ProductId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.螃蟹.GetHashCode()).Select(x => x.ProductId))})");
+            var parts = _csPartsBll.GetModelList($" AND PartId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.配件.GetHashCode()).Select(x => x.ProductId)).ShowNullOrEmpty("0")}) AND PartType = {PartType.可选配件.GetHashCode()}");
+            var products = _csProductsBll.GetModelList($" AND ProductId IN ({string.Join(",", detail.Where(x => x.ChoseType == ChoseType.螃蟹.GetHashCode()).Select(x => x.ProductId)).ShowNullOrEmpty("0")})");
             IEnumerable<CsPackage> packages = null;
             if (detail.Any(x => x.ChoseType == ChoseType.套餐.GetHashCode()))
             {
@@ -256,18 +252,6 @@ namespace Web.Controllers
             }
             foreach (var order in data.Data)
             {
-                if (detail.All(x => x.OrderId == order.OrderId && x.ChoseType != ChoseType.套餐.GetHashCode()))
-                {
-                    if (detail.All(x => x.OrderId == order.OrderId && x.ChoseType != ChoseType.螃蟹.GetHashCode()) ||
-                        detail.All(x => x.OrderId == order.OrderId && x.ChoseType != ChoseType.配件.GetHashCode()))
-                    {
-                        return Json(new ResModel
-                        {
-                            Data = "当前条件下的订单有误(存在未购买任何 配件/螃蟹/套餐 订单), 请检查数据",
-                            ResStatus = ResStatue.No
-                        });
-                    }
-                }
                 var total = string.Empty;
                 foreach (var d in detail.Where(x => x.OrderId == order.OrderId).OrderBy(x => x.ChoseType))
                 {
@@ -312,7 +296,8 @@ namespace Web.Controllers
                     实际重量单位KG = "-",
                     计费重量单位KG = "-",
                     业务类型 = "大闸蟹专递",
-                    扩展字段1 = detail.Any(x => x.OrderId == order.OrderId && x.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发"
+                    扩展字段1 = detail.Any(x => x.OrderId == order.OrderId && x.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发",
+                    扩展字段2 = order.OrderRemarks
                 });
             }
             var path = $"excel/{DateTime.Now:yyyyMMddHHmmssffff}.xls";
@@ -733,6 +718,8 @@ namespace Web.Controllers
             sh.AddShow(CsOrderEnum.OrderNumber);
             sh.AddShow("co." + CsOrderEnum.UserId);
             sh.AddShow(CsOrderEnum.TotalMoney);
+            sh.AddShow(CsOrderEnum.IsInvoice);
+            sh.AddShow(CsOrderEnum.OrderRemarks);
             sh.AddShow(CsOrderEnum.DiscountMoney);
             sh.AddShow(CsOrderEnum.ActualMoney);
             sh.AddShow(CsOrderEnum.OrderDate);
@@ -801,6 +788,8 @@ namespace Web.Controllers
                     sh.AddWhere(CsOrderEnum.OrderDate, para.Time[1], RelationEnum.LessEqual);
                 }
             }
+            if (!para.IsInvoice.IsNullOrEmpty())
+                sh.AddWhere(CsOrderEnum.IsInvoice, para.IsInvoice.ToInt());
 
             return new PageInfo<CsOrderView.CsOrderPage>
             {

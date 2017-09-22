@@ -83,24 +83,24 @@
             </el-col>
         </el-row> 
         <el-row :gutter="20">
-            <!-- <el-col :span="2" class="layout-right layout-where">
-                订单来源：
-            </el-col>
-            <el-col :span="6">
-                <el-select v-model="where.OrderSource" placeholder="请选择订单来源" :clearable='true' @@change="getpage(1)">
-                    <el-option key="0" label="电商代发" value="0">
-                    </el-option>
-                    <el-option key="3" label="企业团购" value="3">
-                    </el-option>
-                </el-select>
-            </el-col> -->
             <el-col :span="2" class="layout-right layout-where">
                 下单时间：
             </el-col>
-            <el-col :span="6">
-                <el-date-picker v-model="where.Time" type="datetimerange" placeholder="选择时间范围" @@change="getpage(1)">
-                </el-date-picker>
-            </el-col>
+	        <el-col :span="6">
+		        <el-date-picker v-model="where.Time" type="datetimerange" placeholder="选择时间范围" @@change="getpage(1)">
+		        </el-date-picker>
+	        </el-col>
+	        <el-col :span="2" class="layout-right layout-where">
+		        是否开票：
+	        </el-col>
+	        <el-col :span="6">
+		        <el-select v-model="where.IsInvoice" placeholder="请选择是否开票" :clearable='true' @@change="getpage(1)">
+			        <el-option key="0" label="否" value="0">
+			        </el-option>
+			        <el-option key="1" label="是" value="1">
+			        </el-option>
+		        </el-select>
+	        </el-col> 
         </el-row>
         <div class="table-btn">
             <el-button type="primary" icon="search" @@click="batchDising()">批量配送</el-button>
@@ -122,15 +122,17 @@
             </el-table-column>
             <el-table-column label="订购时间" prop="OrderDate">
             </el-table-column>
-            <el-table-column label="订单状态" prop="OrderState">
+            <el-table-column label="订单状态" prop="OrderState" width="120px">
             </el-table-column>
-            <el-table-column label="总金额" prop="TotalMoney">
+            <el-table-column label="总金额" prop="TotalMoney" width="110px">
             </el-table-column>
-            <el-table-column label="订单源" prop="OrderSource">
+	        <el-table-column label="订单源" prop="OrderSource" width="120px">
+	        </el-table-column>
+	        <el-table-column label="是否开票" prop="IsInvoice" width="110px">
+	        </el-table-column>
+            <el-table-column label="数据状态" prop="RowStatus" width="120px">
             </el-table-column>
-            <el-table-column label="数据状态" prop="RowStatus">
-            </el-table-column>
-            <el-table-column label="操作" width="80px">
+            <el-table-column label="操作" width="70px">
                 <template scope="scope">
                     <el-button size="small" class="table-detail-btn"
                         @@click="detailRow(scope.row.OrderId)">详细</el-button>
@@ -211,34 +213,52 @@
                         </el-input>
                     </el-col>
                 </el-row>
-                <el-row>
-                    <el-col :span="4" class="layout-right">下单时间：</el-col>
-                    <el-col :span="4">{{oldInfo.OrderDate}}</el-col>
-                    <el-col :span="2" class="layout-right">订单状态：</el-col>
-                    <el-col :span="3">
-                        <el-select v-model="newInfo.OrderState" size="mini">
-                            <el-option key="0" label="取消订单" value="0" :disabled="true">
-                            </el-option>
-                            <el-option key="1" label="已下单未支付" value="1" :disabled="true">
-                            </el-option>
-                            <el-option key="2" label="支付成功" value="2" :disabled="true">
-                            </el-option>
-                            <el-option key="3" label="配货中" value="3">
-                            </el-option>
-                            <el-option key="4" label="已发货" value="4">
-                            </el-option>
-                        </el-select>
-                    </el-col>
-                    <el-col :span="3" class="layout-right">货运单号：</el-col>
-                    <el-col :span="6">
-                        <el-input v-model="newInfo.OrderDelivery" 
-                            placeholder="输入货运单号" size="mini" v-if="newInfo.OrderState == 4">
-                        </el-input>
-                        <span v-else>
-                            还未发货
-                        </span>
-                    </el-col>
-                </el-row>
+	            <el-row>
+		            <el-col :span="4" class="layout-right">下单时间：</el-col>
+		            <el-col :span="4">{{oldInfo.OrderDate}}</el-col>
+		            <el-col :span="2" class="layout-right">订单状态：</el-col>
+		            <el-col :span="3">
+			            <el-select v-model="newInfo.OrderState" size="mini">
+				            <el-option key="0" label="取消订单" value="0" :disabled="true">
+				            </el-option>
+				            <el-option key="1" label="已下单未支付" value="1" :disabled="true">
+				            </el-option>
+				            <el-option key="2" label="支付成功" value="2" :disabled="true">
+				            </el-option>
+				            <el-option key="3" label="配货中" value="3">
+				            </el-option>
+				            <el-option key="4" label="已发货" value="4">
+				            </el-option>
+			            </el-select>
+		            </el-col>
+		            <el-col :span="3" class="layout-right">货运单号：</el-col>
+		            <el-col :span="6">
+			            <el-input v-model="newInfo.OrderDelivery" 
+			                      placeholder="输入货运单号" size="mini" v-if="newInfo.OrderState == 4">
+			            </el-input>
+			            <span v-else>
+				            还未发货
+			            </span>
+		            </el-col>
+	            </el-row>
+	            <el-row>
+		            <el-col :span="4" class="layout-right">是否开票：</el-col>
+		            <el-col :span="4">
+			            <el-select v-model="newInfo.IsInvoice" size="mini" class="mini-width">
+				            <el-option key="0" label="否" value="0">
+				            </el-option>
+				            <el-option key="1" label="是" value="1">
+				            </el-option>
+			            </el-select>
+		            </el-col>
+		            <el-col :span="2" class="layout-right">订单描述：</el-col>
+		            <el-col :span="12">
+			            <el-input type="textarea" autosize size="mini" style="margin-top: -6px"
+			                      placeholder="填写订单描述"
+			                      v-model="newInfo.OrderRemarks">
+			            </el-input>
+		            </el-col>
+	            </el-row>
                 <el-row>
                     <el-col :span="4" class="layout-right">数据状态：</el-col>
                     <el-col :span="8">
