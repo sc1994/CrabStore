@@ -26,9 +26,9 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("INSERT INTO CrabShop.dbo.[CsOrder] (");
-            strSql.Append("OrderNumber,UserId,TotalMoney,DiscountMoney,ActualMoney,OrderDate,OrderState,OrderAddress,SendAddress,OrderDelivery,CargoNumber,OrderCopies,TotalWeight,BillWeight,RowStatus,DeleteDate,DeleteDescribe,PrepaymentId,ExpressMoney,ServiceMoney");
+            strSql.Append("OrderNumber,UserId,TotalMoney,DiscountMoney,ActualMoney,OrderDate,OrderState,OrderAddress,SendAddress,OrderDelivery,CargoNumber,OrderCopies,TotalWeight,BillWeight,RowStatus,DeleteDate,DeleteDescribe,PrepaymentId,ExpressMoney,ServiceMoney,isInvoice,OrderRemarks");
             strSql.Append(") VALUES (");
-            strSql.Append("@OrderNumber,@UserId,@TotalMoney,@DiscountMoney,@ActualMoney,@OrderDate,@OrderState,@OrderAddress,@SendAddress,@OrderDelivery,@CargoNumber,@OrderCopies,@TotalWeight,@BillWeight,@RowStatus,@DeleteDate,@DeleteDescribe,@PrepaymentId,@ExpressMoney,@ServiceMoney);");
+            strSql.Append("@OrderNumber,@UserId,@TotalMoney,@DiscountMoney,@ActualMoney,@OrderDate,@OrderState,@OrderAddress,@SendAddress,@OrderDelivery,@CargoNumber,@OrderCopies,@TotalWeight,@BillWeight,@RowStatus,@DeleteDate,@DeleteDescribe,@PrepaymentId,@ExpressMoney,@ServiceMoney,@isInvoice,@OrderRemarks);");
             strSql.Append("SELECT @@IDENTITY");
             return DbClient.ExecuteScalar<int>(strSql.ToString(), model);
         }
@@ -37,7 +37,7 @@ namespace DAL
         {
             var strSql = new StringBuilder();
             strSql.Append("UPDATE CrabShop.dbo.[CsOrder] SET ");
-            strSql.Append("OrderNumber = @OrderNumber,UserId = @UserId,TotalMoney = @TotalMoney,DiscountMoney = @DiscountMoney,ActualMoney = @ActualMoney,OrderDate = @OrderDate,OrderState = @OrderState,OrderAddress = @OrderAddress,SendAddress = @SendAddress,OrderDelivery = @OrderDelivery,CargoNumber = @CargoNumber,OrderCopies = @OrderCopies,TotalWeight = @TotalWeight,BillWeight = @BillWeight,RowStatus = @RowStatus,DeleteDate = @DeleteDate,DeleteDescribe = @DeleteDescribe,PrepaymentId = @PrepaymentId,ExpressMoney = @ExpressMoney,ServiceMoney = @ServiceMoney");
+            strSql.Append("OrderNumber = @OrderNumber,UserId = @UserId,TotalMoney = @TotalMoney,DiscountMoney = @DiscountMoney,ActualMoney = @ActualMoney,OrderDate = @OrderDate,OrderState = @OrderState,OrderAddress = @OrderAddress,SendAddress = @SendAddress,OrderDelivery = @OrderDelivery,CargoNumber = @CargoNumber,OrderCopies = @OrderCopies,TotalWeight = @TotalWeight,BillWeight = @BillWeight,RowStatus = @RowStatus,DeleteDate = @DeleteDate,DeleteDescribe = @DeleteDescribe,PrepaymentId = @PrepaymentId,ExpressMoney = @ExpressMoney,ServiceMoney = @ServiceMoney,isInvoice = @isInvoice,OrderRemarks = @OrderRemarks");
             strSql.Append(" WHERE OrderId = @OrderId");
             return DbClient.Excute(strSql.ToString(), model) > 0;
         }

@@ -68,7 +68,7 @@ namespace Model.DBModel
         /// <summary>
         /// 寄托物数量
         /// </summary>
-        public int CargoNumber { get; set; } = ToInt("");
+        public int CargoNumber { get; set; } = ToInt("1");
 
         /// <summary>
         /// 份数 默认值1
@@ -114,6 +114,16 @@ namespace Model.DBModel
         /// 服务费
         /// </summary>
         public decimal ServiceMoney { get; set; } = ToDecimal("0");
+
+        /// <summary>
+        /// 是否开票 0 不开票 1开票
+        /// </summary>
+        public int isInvoice { get; set; } = ToInt("0");
+
+        /// <summary>
+        /// 订单备注
+        /// </summary>
+        public string OrderRemarks { get; set; } = string.Empty;
 
     }
 
@@ -204,5 +214,13 @@ namespace Model.DBModel
         /// 服务费
         /// </summary>
         ServiceMoney,
+        /// <summary>
+        /// 是否开票 0 不开票 1开票
+        /// </summary>
+        isInvoice,
+        /// <summary>
+        /// 订单备注
+        /// </summary>
+        OrderRemarks,
     }
 }
