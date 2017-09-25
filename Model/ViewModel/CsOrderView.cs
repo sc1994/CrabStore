@@ -26,9 +26,9 @@ namespace Model.ViewModel
             /// 订单源
             /// </summary>
             public string OrderSource { get; set; } = string.Empty;
-
             public string OrderNumber { get; set; } = string.Empty;
             public string IsInvoice { get; set; } = string.Empty;
+            public string OrderAddress { get; set; } = string.Empty;
         }
 
         public class CsOrderPage : CsOrder
@@ -250,6 +250,6 @@ namespace Model.ViewModel
             public int isInvoice { get; set; } = 0;
             // ReSharper disable once InconsistentNaming
             public string orderRemarks { get; set; } = string.Empty;
-    }
+        }
     }
 }

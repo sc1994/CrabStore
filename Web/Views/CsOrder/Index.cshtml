@@ -43,33 +43,12 @@
                     </el-option>
                 </el-select>
             </el-col>
-            <el-col :span="2" class="layout-right layout-where">
-                总金额：
-            </el-col>
-            <el-col :span="2">
-                <el-input v-model="where.TotalStart" placeholder="最小金额"></el-input>
-            </el-col>
-            <el-col :span="4">
-                 <el-input v-model="where.TotalEnd" placeholder="最大金额" style="width:50%"></el-input> 
-            </el-col>
-            @*<el-col :span="2" class="layout-right layout-where">
-                优惠金额：
-            </el-col>
-            <el-col :span="2" class="number">
-                <el-input v-model="where.DiscountStart" placeholder="最小金额"></el-input>
-            </el-col>
-            <el-col :span="4">
-                 <el-input v-model="where.DiscountEnd" placeholder="最大金额" style="width:50%"></el-input> 
-            </el-col>*@
-            @*<el-col :span="2" class="layout-right layout-where">
-                实际金额：
-            </el-col>
-            <el-col :span="2">
-                <el-input v-model="where.ActualStart" placeholder="最小金额"></el-input>
-            </el-col>
-            <el-col :span="4">
-                 <el-input v-model="where.ActualEnd" placeholder="最大金额" style="width:50%"></el-input> 
-            </el-col>*@
+	        <el-col :span="2" class="layout-right layout-where">
+		        收件人信息：
+	        </el-col>
+	        <el-col :span="6">
+				<el-input v-model="where.OrderAddress" placeholder="可模糊查询收件人手机号码,地址,姓名信息中的某一样"></el-input>
+	        </el-col> 
             <el-col :span="2" class="layout-right layout-where">
                 数据状态：
             </el-col>
@@ -101,44 +80,74 @@
 			        </el-option>
 		        </el-select>
 	        </el-col> 
+	        <el-col :span="2" class="layout-right layout-where">
+		        总金额：
+	        </el-col>
+	        <el-col :span="2">
+		        <el-input v-model="where.TotalStart" placeholder="最小金额"></el-input>
+	        </el-col>
+	        <el-col :span="4">
+		        <el-input v-model="where.TotalEnd" placeholder="最大金额" style="width:50%"></el-input> 
+	        </el-col>
         </el-row>
         <div class="table-btn">
-            <el-button type="primary" icon="search" @@click="batchDising()">批量配送</el-button>
-            <el-button type="primary" icon="search" @@click="changeExcelVisible(1)">批量发货</el-button>
+            <el-button type="primary" icon="edit" @@click="batchDising()">批量配送</el-button>
+            <el-button type="primary" icon="upload" @@click="changeExcelVisible(1)">批量发货</el-button>
             <el-button type="primary" icon="upload" @@click="changeExcelVisible(0)">导入</el-button>
             <el-button type="primary" icon="upload2" @@click="exportExcel">导出</el-button>
             <el-button type="primary" icon="search" @@click="getpage(currentPage)">搜索</el-button>
         </div>
     </div>
     <div class="table-content">
-        <el-table v-loading.body="loading"
-            :data="list"
-            style="width: 100%">
-            <el-table-column label="订单编号" prop="OrderNumber">
-            </el-table-column>
-            <el-table-column label="订购用户/Id" prop="UserName">
-            </el-table-column>
-            <el-table-column label="联系电话" prop="UserPhone">
-            </el-table-column>
-            <el-table-column label="订购时间" prop="OrderDate">
-            </el-table-column>
-            <el-table-column label="订单状态" prop="OrderState" width="120px">
-            </el-table-column>
-            <el-table-column label="总金额" prop="TotalMoney" width="110px">
-            </el-table-column>
-	        <el-table-column label="订单源" prop="OrderSource" width="120px">
-	        </el-table-column>
-	        <el-table-column label="是否开票" prop="IsInvoice" width="110px">
-	        </el-table-column>
-            <el-table-column label="数据状态" prop="RowStatus" width="120px">
-            </el-table-column>
-            <el-table-column label="操作" width="70px">
-                <template scope="scope">
-                    <el-button size="small" class="table-detail-btn"
-                        @@click="detailRow(scope.row.OrderId)">详细</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+	    <el-table v-loading.body="loading"
+	              :data="list"
+	              ref="multipleTable"
+	              @@selection-change="handleSelectionChange"
+	              style="width: 100%">
+		    <el-table-column
+			    type="selection"
+			    width="55">
+		    </el-table-column>
+		    <el-table-column label="订单编号" prop="OrderNumber" width="200px">
+		    </el-table-column>
+		    <el-table-column label="Id/订购用户(性别)/联系电话" width="260px">
+			    <template scope="scope">
+				    <el-tooltip :content="scope.row.UserName" placement="top" effect="light">
+					    <el-button type="text">{{scope.row.ShortUserName}}</el-button>
+				    </el-tooltip>
+			    </template>
+		    </el-table-column>
+		    <el-table-column label="收件人姓名(性别)/联系电话/地址" width="300px">
+			    <template scope="scope">
+				    <el-tooltip :content="scope.row.OrderAddress" placement="top" effect="light">
+					    <el-button type="text">{{scope.row.ShortOrderAddress}}</el-button>
+				    </el-tooltip>
+			    </template>
+		    </el-table-column>
+		    <el-table-column label="订购时间" prop="OrderDate" width="180px">
+		    </el-table-column>
+		    <el-table-column label="订单状态" prop="OrderState" width="120px">
+		    </el-table-column>
+		    <el-table-column label="总金额" prop="TotalMoney" width="110px">
+		    </el-table-column>
+		    <el-table-column label="订单源" prop="OrderSource" width="120px">
+		    </el-table-column>
+		    <el-table-column label="是否开票" prop="IsInvoice" width="110px">
+		    </el-table-column>
+		    <el-table-column label="备注" width="150px">
+			    <template scope="scope">
+				    <el-tooltip :content="scope.row.OrderRemarks" placement="top" effect="light">
+					    <el-button type="text">{{scope.row.ShortOrderRemarks}}</el-button>
+				    </el-tooltip>
+			    </template>
+		    </el-table-column>
+		    <el-table-column label="操作" width="70px">
+			    <template scope="scope">
+				    <el-button size="small" class="table-detail-btn"
+				               @@click="detailRow(scope.row.OrderId)">详细</el-button>
+			    </template>
+		    </el-table-column>
+	    </el-table>
         <div class="table-page">
             <el-pagination
                 :current-page="currentPage"

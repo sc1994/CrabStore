@@ -52,14 +52,16 @@ namespace Web.Controllers
                 RowStatus = ((RowStatus)x.RowStatus).ToString(),
                 DeleteDate = x.DeleteDate.ToString("yyyy-M-d HH:mm:ss"),
                 x.DeleteDescribe,
-                UserName = x.UserName + $"({x.UserSex}) / " + x.UserId,
-                x.UserPhone,
+                UserName = x.UserId + " / " + x.UserName + $"({x.UserSex}) / " + x.UserPhone,
+                ShortUserName = (x.UserId + " / " + x.UserName + $"({x.UserSex}) / " + x.UserPhone).SubString(35),
+                OrderAddress = x.OrderAddress.Trim('$').Replace("$$$", " / ").Replace("$$", " / ").Replace("$", " / "),
+                ShortOrderAddress = x.OrderAddress.Trim('$').Replace("$$$", " / ").Replace("$$", " / ").Replace("$", " / ").SubString(30),
                 TotalMoney = "￥" + x.TotalMoney.ToString("N2"),
                 OrderSource = ds.Any(d => d.OrderId == x.OrderId && d.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发",
-                IsInvoice = x.IsInvoice == 0 ? "否" : "是"
+                IsInvoice = x.IsInvoice == 0 ? "否" : "是",
+                ShortOrderRemarks = x.OrderRemarks.SubString(20).ShowNullOrEmpty("-无-"),
+                OrderRemarks = x.OrderRemarks.ShowNullOrEmpty("-无-")
             });
-
-
 
             return Json(new
             {
@@ -289,7 +291,7 @@ namespace Web.Controllers
                     付款方式 = "寄付月结",
                     第三方付月结卡号 = "",
                     寄托物品 = "其他",
-                    寄托物内容 = total.TrimEnd('-').IsNullOrEmpty() ? "" : $"{total.TrimEnd('-')}-T{detail.Where(x => x.OrderId == order.OrderId).Sum(x => x.ProductNumber)}",
+                    寄托物内容 = total.TrimEnd('-').IsNullOrEmpty() ? "" : $"{total.TrimEnd('-')}-T{detail.Where(x => x.OrderId == order.OrderId && (x.ChoseType == ChoseType.螃蟹.GetHashCode() || x.ChoseType == ChoseType.套餐.GetHashCode())).Sum(x => x.ProductNumber)}",
                     寄托物编号 = "",
                     寄托物数量 = order.CargoNumber.ToString(),
                     件数 = order.OrderCopies.ToString(),
@@ -516,12 +518,11 @@ namespace Web.Controllers
         /// <summary>
         /// 批量更新配货中
         /// </summary>
-        /// <param name="para"></param>
+        /// <param name="ids"></param>
         /// <returns></returns>
-        public ActionResult BatchDising(CsOrderView.CsOrderWhere para)
+        public ActionResult BatchDising(List<int> ids)
         {
-            var data = GetList(para, false).Data.Where(x => x.OrderState == OrderState.支付成功.GetHashCode());
-            if (!data.Any())
+            if (!ids.Any())
             {
                 return Json(new ResModel
                 {
@@ -531,13 +532,14 @@ namespace Web.Controllers
             }
             var sh = new SqlHelper<CsOrder>();
             sh.AddUpdate(CsOrderEnum.OrderState.ToString(), OrderState.配货中.GetHashCode());
-            sh.AddWhere($" AND OrderId IN ({string.Join(",", data.Select(x => x.OrderId))})");
+            sh.AddWhere($" AND OrderId IN ({string.Join(",", ids)})");
             var count = sh.Update();
             return Json(new ResModel
             {
                 ResStatus = ResStatue.Yes,
                 Data = $"执行成功,更新{count}条数据."
             });
+            
         }
 
         /// <summary>
@@ -791,6 +793,9 @@ namespace Web.Controllers
             if (!para.IsInvoice.IsNullOrEmpty())
                 sh.AddWhere(CsOrderEnum.IsInvoice, para.IsInvoice.ToInt());
 
+            if (!para.OrderAddress.IsNullOrEmpty())
+                sh.AddWhere(CsOrderEnum.OrderAddress, para.OrderAddress, RelationEnum.Like);
+
             return new PageInfo<CsOrderView.CsOrderPage>
             {
                 Data = sh.Select().ToList(),
@@ -844,5 +849,52 @@ namespace Web.Controllers
             }
             return ExcelRow.Other;
         }
+
+
+        /*
+            清洗收货电话被搞没的情况 
+         */
+        //public ActionResult RinseData()
+        //{
+        //    var sh = new SqlHelper<CsOrder>();
+        //    var orders = sh.Select();
+        //    var ids = "";
+        //    foreach (var order in orders)
+        //    {
+        //        var putInfo = order.OrderAddress.Split('$');
+        //        var phone = string.Empty;
+        //        var sex = string.Empty;
+        //        var address = string.Empty;
+        //        var name = string.Empty;
+
+        //        try
+        //        {
+        //            phone = putInfo[3];
+        //            name = putInfo[1].Split('(')[0];
+        //            sex = putInfo[1].Split('(')[1].TrimEnd(')');
+        //            address = putInfo[4];
+        //        }
+        //        catch (Exception)
+        //        {
+        //            continue;
+        //        }
+
+        //        if (!phone.IsNullOrEmpty())
+        //        {
+        //            continue;
+        //        }
+        //        var shUpdate = new SqlHelper<CsAddress>();
+        //        shUpdate.AddWhere("Consignee", name);
+        //        shUpdate.AddWhere("ConSex", sex);
+        //        shUpdate.AddWhere("Details", address.Replace(" ", "&"));
+        //        //江苏&淮安&清河&长征路19号
+        //        var newPhone = shUpdate.Select().FirstOrDefault()?.TelPhone;
+        //        var shOrder = new SqlHelper<CsOrder>();
+        //        shOrder.AddWhere("OrderId", order.OrderId);
+        //        shOrder.AddUpdate("OrderAddress", $"${name}({sex})$${newPhone}${address}");
+        //        ids += shOrder.Update() + "/" + order.OrderId + ",";
+        //    }
+        //    return Content(ids);
+        //}
     }
 }

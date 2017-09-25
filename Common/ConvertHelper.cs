@@ -276,6 +276,15 @@ namespace Common
             return item;
         }
 
+        public static string SubString(this string str, int length)
+        {
+            if (str.Length > length)
+            {
+                return str.Substring(0, length) + "...";
+            }
+            return str;
+        }
+
     }
 
 }

@@ -46,8 +46,8 @@ var vm = new Vue({
             msgTitle: '',
             msgVisible: false,
             msgOrderIds: []
-        }
-
+        },
+        multipleSelection: []
     },
     methods: {
         getpage: function (currentPage) {
@@ -228,7 +228,13 @@ var vm = new Vue({
         batchDising: function () {
             // 批量更新成配货中
             var that = this;
-            ajax("../CsOrder/BatchDising", that.where, function (data) {
+            if (that.multipleSelection.length <= 0) {
+                that.$notify.error({
+                    title: "错误",
+                    message: "没有查询到需要更新的数据"
+                });
+            }
+            ajax("../CsOrder/BatchDising", that.multipleSelection, function (data) {
                 if (data.code === 1) {
                     that.$notify({
                         title: "成功",
@@ -247,6 +253,26 @@ var vm = new Vue({
         changeExcelVisible: function (type) {
             this.excelVisibleType = type
             this.excelVisible = !this.excelVisible
+        },
+        handleSelectionChange: function (val) {
+            var that = this
+            that.multipleSelection = []
+            var count = 0
+            val.forEach(v => {
+                if (v.OrderState !== "支付成功") {
+                    count++;
+                    that.$refs.multipleTable.toggleRowSelection(v, false)
+                } else {
+                    that.multipleSelection.push(v.OrderId)
+                }
+            })
+            if (count !== 0) {
+                that.$notify({
+                    title: "警告",
+                    message: "您只能勾选状态为支付成功的订单",
+                    type: "warning"
+                });
+            }
         }
     },
     mounted: function () {
