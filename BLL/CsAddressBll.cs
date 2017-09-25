@@ -1,6 +1,8 @@
 using DAL;
 using IDAL;
 using Model.DBModel;
+using System.Collections.Generic;
+
 namespace BLL
 {
     /// <summary>
@@ -12,6 +14,14 @@ namespace BLL
         public CsAddressBll() : base(new CsAddressDal()) { }
 
         public CsAddressBll(IBaseDal<CsAddress, CsAddressEnum, int> dal) : base(dal) { }
+
+        public bool UpdateState(int addressId)
+        {
+            Dictionary<CsAddressEnum, object> updates = new Dictionary<CsAddressEnum, object>();
+            updates.Add(CsAddressEnum.AddressState, 0);
+            return addressDal.Update(updates, " and AddressId =" + addressId);
+            
+        }
 
         /// <summary>
         /// 修改用户默认收货地址

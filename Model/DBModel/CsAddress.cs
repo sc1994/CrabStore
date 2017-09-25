@@ -13,12 +13,12 @@ namespace Model.DBModel
         /// <summary>
         /// 收货地址编号 主键 自动增长
         /// </summary>
-        public int AddressId { get; set; }
+        public int AddressId { get; set; } = ToInt("");
 
         /// <summary>
         /// 用户编号
         /// </summary>
-        public int UserId { get; set; }
+        public int UserId { get; set; } = ToInt("");
 
         /// <summary>
         /// 收件公司名称
@@ -53,7 +53,12 @@ namespace Model.DBModel
         /// <summary>
         /// 是否默认地址 1默认 2不默认
         /// </summary>
-        public int IsDefault { get; set; }
+        public int IsDefault { get; set; } = ToInt("");
+
+        /// <summary>
+        /// 地址状态 0 已删除 1正常
+        /// </summary>
+        public int AddressState { get; set; } = ToInt("1");
 
     }
 
@@ -96,5 +101,9 @@ namespace Model.DBModel
         /// 是否默认地址 1默认 2不默认
         /// </summary>
         IsDefault,
+        /// <summary>
+        /// 地址状态 0 已删除 1正常
+        /// </summary>
+        AddressState,
     }
 }
