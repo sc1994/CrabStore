@@ -299,7 +299,7 @@ namespace Web.Controllers
             {
                 //根据userId查询出发件信息和收获地址信息
                 List<CsSend> sendList = _csSendBll.GetModelList(" and UserId=" + user.UserId).OrderBy(x => x.IsDefault).ThenBy(x => x.SendId).ToList();
-                List<CsAddress> addressList = _csAddressBll.GetModelList(" and UserId=" + user.UserId).OrderBy(x => x.IsDefault).ThenBy(x => x.AddressId).ToList();
+                List<CsAddress> addressList = _csAddressBll.GetModelList(" and UserId=" + user.UserId+" and AddressState=1 ").OrderBy(x => x.IsDefault).ThenBy(x => x.AddressId).ToList();
                 CsDistrictBll disBLL = new CsDistrictBll();
                 int firstPrice = 0, fllowPrice = 0;
 
@@ -338,7 +338,7 @@ namespace Web.Controllers
         [HttpGet]
         public IHttpActionResult GetAddressList(int userId)
         {
-            List<CsAddress> addressList = _csAddressBll.GetModelList($" and UserId={userId}");
+            List<CsAddress> addressList = _csAddressBll.GetModelList($" and UserId={userId} and AddressState=1 ");
             CsDistrictBll districtBll = new CsDistrictBll();
             //所有省会列表 获取对于首发总量价格与续重价格
             List<CsDistrict> districtList = districtBll.GetModelList(" and ParentId=0");
@@ -456,6 +456,7 @@ namespace Web.Controllers
         {
             address.CompanyName = "-";
             address.Mobile = "-";
+            address.AddressState = 1;
             bool bl = _csAddressBll.ExistsByWhere($" And UserId={address.UserId}");
             address.IsDefault = bl ? 1 : 2;
             int addressId = _csAddressBll.Add(address);
@@ -698,7 +699,8 @@ namespace Web.Controllers
         [HttpPost]
         public IHttpActionResult DeleteAddress([FromBody] int id)
         {
-            bool status = _csAddressBll.Delete(id);
+            
+            bool status = _csAddressBll.UpdateState(id);
             return Json(status);
         }
 
