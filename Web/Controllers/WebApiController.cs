@@ -234,7 +234,7 @@ namespace Web.Controllers
         public IHttpActionResult GetPartList(int id)
         {
             //可选配件列表
-            var partList = _csPartsBll.GetModelList(" and PartType=" + id).Select(x => new
+            var partList = _csPartsBll.GetModelList(" and PartState=1 and PartType=" + id).Select(x => new
             {
                 x.PartId,
                 x.PartName,
