@@ -189,7 +189,7 @@ namespace Web.Controllers
             });
 
             //可选配件列表
-            var partList = _csPartsBll.GetModelList(" and PartType=2").Select(x => new
+            var partList = _csPartsBll.GetModelList(" and PartType=2 and PartState=1 ").Select(x => new
             {
                 x.PartId,
                 x.PartName,
@@ -202,7 +202,7 @@ namespace Web.Controllers
             }).ToList();
 
             //必须选配件列表
-            var partList1 = _csPartsBll.GetModelList(" and PartType=1").Select(x => new
+            var partList1 = _csPartsBll.GetModelList(" and PartType=1 and PartState=1 ").Select(x => new
             {
                 x.PartId,
                 x.PartName,
