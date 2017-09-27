@@ -53,17 +53,17 @@ namespace DAL
         /// <returns></returns>
         public int AddOrder(OrderModel order, out string orderNumber)
         {
-            int number = 0;//实际操作影响行数
-            using (SqlConnection conn = (SqlConnection)DataSource.GetConnection())
+            var number = 0;//实际操作影响行数
+            using (var conn = (SqlConnection)DataSource.GetConnection())
             {
                 conn.Open();
-                using (SqlTransaction trans = conn.BeginTransaction())
+                using (var trans = conn.BeginTransaction())
                 {
                     try
                     {
                         orderNumber = DateTime.Now.ToString("yyyyMMddHHmmssffff");
                         //添加订单表 获取订单编号
-                        CsOrder _csOrder = new CsOrder();
+                        var _csOrder = new CsOrder();
                         _csOrder.OrderNumber = orderNumber;
                         _csOrder.UserId = order.userid;
                         _csOrder.TotalMoney = order.totalmoney;
@@ -82,7 +82,7 @@ namespace DAL
                         _csOrder.RowStatus = 1;
                         _csOrder.IsInvoice = order.isInvoice ? 1 : 0;
                         _csOrder.OrderRemarks = order.remarks;
-                        StringBuilder strSql1 = new StringBuilder();
+                        var strSql1 = new StringBuilder();
                         strSql1.Append("insert into CsOrder (OrderNumber,UserId,TotalMoney,DiscountMoney,ActualMoney,OrderDate,OrderState,OrderAddress,");
                         strSql1.Append("SendAddress,CargoNumber,OrderCopies,TotalWeight,BillWeight,RowStatus,ExpressMoney,ServiceMoney,IsInvoice,OrderRemarks ) values (@OrderNumber,");
                         strSql1.Append("@UserId,@TotalMoney,@DiscountMoney,@ActualMoney,@OrderDate,@OrderState,@OrderAddress,@SendAddress,@CargoNumber,@OrderCopies,");
@@ -372,11 +372,13 @@ namespace DAL
                         _csOrder.ExpressMoney = order.expressmoney;
                         _csOrder.ServiceMoney = order.servicemoney;
                         _csOrder.RowStatus = 1;
+                        _csOrder.IsInvoice = order.isInvoice ? 1 : 0;
+                        _csOrder.OrderRemarks = order.remarks;
                         StringBuilder strSql1 = new StringBuilder();
                         strSql1.Append("insert into CsOrder (OrderNumber,UserId,TotalMoney,DiscountMoney,ActualMoney,OrderDate,OrderState,OrderAddress,");
-                        strSql1.Append("SendAddress,CargoNumber,OrderCopies,TotalWeight,BillWeight,RowStatus,ExpressMoney,ServiceMoney ) values (@OrderNumber,");
+                        strSql1.Append("SendAddress,CargoNumber,OrderCopies,TotalWeight,BillWeight,RowStatus,ExpressMoney,ServiceMoney,IsInvoice,OrderRemarks ) values (@OrderNumber,");
                         strSql1.Append("@UserId,@TotalMoney,@DiscountMoney,@ActualMoney,@OrderDate,@OrderState,@OrderAddress,@SendAddress,@CargoNumber,@OrderCopies,");
-                        strSql1.Append("@TotalWeight,@BillWeight,@RowStatus,@ExpressMoney,@ServiceMoney);select @@Identity;");
+                        strSql1.Append("@TotalWeight,@BillWeight,@RowStatus,@ExpressMoney,@ServiceMoney,@IsInvoice,@OrderRemarks);select @@Identity;");
                         SqlParameter[] parameter1 =
                         {
                             new SqlParameter("@OrderNumber",SqlDbType.VarChar,50),
@@ -394,7 +396,9 @@ namespace DAL
                             new SqlParameter("@BillWeight",SqlDbType.Decimal,18),
                             new SqlParameter("@RowStatus",SqlDbType.TinyInt,4),
                             new SqlParameter("@ExpressMoney",SqlDbType.Decimal,18),
-                            new SqlParameter("@ServiceMoney",SqlDbType.Decimal,18)
+                            new SqlParameter("@ServiceMoney",SqlDbType.Decimal,18),
+                            new SqlParameter("@IsInvoice",SqlDbType.Int,4),
+                            new SqlParameter("@OrderRemarks",SqlDbType.Text),  
                         };
                         parameter1[0].Value = _csOrder.OrderNumber;
                         parameter1[1].Value = _csOrder.UserId;
@@ -412,6 +416,8 @@ namespace DAL
                         parameter1[13].Value = _csOrder.RowStatus;
                         parameter1[14].Value = _csOrder.ExpressMoney;
                         parameter1[15].Value = _csOrder.ServiceMoney;
+                        parameter1[16].Value = _csOrder.IsInvoice;
+                        parameter1[17].Value = _csOrder.OrderRemarks;
                         object obj = DbClient.ExecuteScalar(conn, trans, strSql1.ToString(), parameter1);
                         if (obj != null)
                         {
