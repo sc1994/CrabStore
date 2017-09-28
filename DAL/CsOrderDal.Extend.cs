@@ -225,7 +225,7 @@ namespace DAL
                     }
                     catch (Exception ex)
                     {
-                        LogHelper.Log(ex.Message,"订单添加异常");
+                        LogHelper.Log(ex.Message, "订单添加异常");
                         trans.Rollback();
                         orderNumber = "";
                         return 0;
@@ -288,51 +288,44 @@ namespace DAL
         public int FinshOrder(int orderId, int userId, decimal totalWeight, int orderCopies)
         {
             int number = 0;//实际操作影响行数
-            using (SqlConnection conn = (SqlConnection)DataSource.GetConnection())
-            {
-                conn.Open();
-                using (SqlTransaction trans = conn.BeginTransaction())
-                {
-                    try
-                    {
-                        //第一步骤：修改订单状态为支付完成但未配货
-                        string strSql1 = $"update CsOrder set OrderState=2 where OrderId={orderId}";
-                        number += DbClient.ExecuteSql(conn, trans, strSql1, null);
-                        //第二步骤:修改螃蟹库存
-                        CsOrderDetailDal orderDetailDal = new CsOrderDetailDal();
-                        //查询出本次订单中购买螃蟹列表
-                        List<CsOrderDetail> DetailList = orderDetailDal.GetModelList(" and OrderId=" + orderId + " and ChoseType=1");
-                        if (DetailList.Count > 0)
-                        {
-                            foreach (CsOrderDetail OrderDetail in DetailList)
-                            {
-                                string strSql2 = $"update CsProducts set ProductStock=ProductStock-{OrderDetail.ProductNumber} where ProductId={OrderDetail.ProductId}";
-                                number += DbClient.ExecuteSql(conn, trans, strSql2, null);
-                            }
-                        }
-                        //第三步，修改用户的购买累计重量
-                        decimal total = totalWeight * orderCopies;
-                        string strSql3 = $"update CsUsers set TotalWight=TotalWight+{total} where UserId={userId}";
-                        number += DbClient.ExecuteSql(conn, trans, strSql3, null);
-                        if (number == (DetailList.Count + 2))
-                        {
-                            trans.Commit();
-                            return number;
-                        }
-                        else
-                        {
-                            trans.Rollback();
-                            return 0;
-                        }
 
-                    }
-                    catch (Exception ex)
+            try
+            {
+                //第一步骤：修改订单状态为支付完成但未配货
+                string strSql1 = $"update CsOrder set OrderState=2 where OrderId={orderId}";
+                number = DbClient.Excute(strSql1);
+                //第二步骤:修改螃蟹库存
+                CsOrderDetailDal orderDetailDal = new CsOrderDetailDal();
+                //查询出本次订单中购买螃蟹列表
+                List<CsOrderDetail> DetailList = orderDetailDal.GetModelList(" and OrderId=" + orderId + " and ChoseType=1");
+                if (DetailList.Count > 0)
+                {
+                    foreach (CsOrderDetail OrderDetail in DetailList)
                     {
-                        LogHelper.Log(ex.Message);
-                        trans.Rollback();
-                        return 0;
+                        string strSql2 = $"update CsProducts set ProductStock=ProductStock-{OrderDetail.ProductNumber} where ProductId={OrderDetail.ProductId}";
+                        DbClient.Excute(strSql2);
                     }
                 }
+                //第三步，修改用户的购买累计重量
+                decimal total = totalWeight * orderCopies;
+                string strSql3 = $"update CsUsers set TotalWight=TotalWight+{total} where UserId={userId}";
+                DbClient.Excute(strSql3);
+                if (number > 0)
+                {
+
+                    return number;
+                }
+                else
+                {
+
+                    return 0;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log(ex.Message,"完成支付出错");
+                return 0;
             }
         }
 
@@ -398,7 +391,7 @@ namespace DAL
                             new SqlParameter("@ExpressMoney",SqlDbType.Decimal,18),
                             new SqlParameter("@ServiceMoney",SqlDbType.Decimal,18),
                             new SqlParameter("@IsInvoice",SqlDbType.Int,4),
-                            new SqlParameter("@OrderRemarks",SqlDbType.Text),  
+                            new SqlParameter("@OrderRemarks",SqlDbType.Text),
                         };
                         parameter1[0].Value = _csOrder.OrderNumber;
                         parameter1[1].Value = _csOrder.UserId;
