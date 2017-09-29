@@ -134,14 +134,14 @@
 		    </el-table-column>
 		    <el-table-column label="是否开票" prop="IsInvoice" width="110px">
 		    </el-table-column>
-		    <el-table-column label="备注" width="150px">
+		    <el-table-column label="备注" width="270px">
 			    <template scope="scope">
 				    <el-tooltip :content="scope.row.OrderRemarks" placement="top" effect="light">
 					    <el-button type="text">{{scope.row.ShortOrderRemarks}}</el-button>
 				    </el-tooltip>
 			    </template>
 		    </el-table-column>
-		    <el-table-column label="操作" width="70px">
+		    <el-table-column label="操作" width="70px" fixed="right">
 			    <template scope="scope">
 				    <el-button size="small" class="table-detail-btn"
 				               @@click="detailRow(scope.row.OrderId)">详细</el-button>

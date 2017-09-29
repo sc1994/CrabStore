@@ -53,13 +53,13 @@ namespace Web.Controllers
                 DeleteDate = x.DeleteDate.ToString("yyyy-M-d HH:mm:ss"),
                 x.DeleteDescribe,
                 UserName = x.UserId + " / " + x.UserName + $"({x.UserSex}) / " + x.UserPhone,
-                ShortUserName = (x.UserId + " / " + x.UserName + $"({x.UserSex}) / " + x.UserPhone).SubString(35),
+                ShortUserName = (x.UserId + " / " + x.UserName + $"({x.UserSex}) / " + x.UserPhone).SubString(24),
                 OrderAddress = x.OrderAddress.Trim('$').Replace("$$$", " / ").Replace("$$", " / ").Replace("$", " / "),
                 ShortOrderAddress = x.OrderAddress.Trim('$').Replace("$$$", " / ").Replace("$$", " / ").Replace("$", " / ").SubString(30),
                 TotalMoney = "￥" + x.TotalMoney.ToString("N2"),
                 OrderSource = ds.Any(d => d.OrderId == x.OrderId && d.ChoseType == ChoseType.套餐.GetHashCode()) ? "企业团购" : "电商代发",
                 IsInvoice = x.IsInvoice == 0 ? "否" : "是",
-                ShortOrderRemarks = x.OrderRemarks.SubString(20).ShowNullOrEmpty("-无-"),
+                ShortOrderRemarks = x.OrderRemarks.SubString(16).ShowNullOrEmpty("-无-"),
                 OrderRemarks = x.OrderRemarks.ShowNullOrEmpty("-无-")
             });
 
