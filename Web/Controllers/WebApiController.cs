@@ -54,11 +54,11 @@ namespace Web.Controllers
             //List<CsProducts> product2 = (from product in products
             //                             where product.ProductType == 2
             //                             select product).ToList();
-            List<CsProducts> product2 = products.Where(x=>x.ProductType==2).ToList();
+            List<CsProducts> product2 = products.Where(x => x.ProductType == 2).ToList();
             for (int j = 0; j < (product2.Count() / 2); j++)
             {
                 strJson.Append("{\"pn1\":\"" + product2[j].ProductName + "\",\"pv1\":" + (product2[j].ProductState == 1 ? product2[j].ProductPrice.ToString() : "\"-\"") + ",");
-                strJson.Append("\"pn2\":\"" + product2[j + 6].ProductName + "\",\"pv2\":" + (product2[j+6].ProductState == 1 ? product2[j + 6].ProductPrice.ToString() : "\"-\"") + "}");
+                strJson.Append("\"pn2\":\"" + product2[j + 6].ProductName + "\",\"pv2\":" + (product2[j + 6].ProductState == 1 ? product2[j + 6].ProductPrice.ToString() : "\"-\"") + "}");
                 if (j != (product2.Count() / 2 - 1))
                 {
                     strJson.Append(",");
@@ -69,7 +69,7 @@ namespace Web.Controllers
             var parts = new List<CsParts>();
             parts = _csPartsBll.GetModelList("");
             //必须配件
-            List<CsParts> parts1 = parts.Where(x=>x.PartType==1).ToList();
+            List<CsParts> parts1 = parts.Where(x => x.PartType == 1).ToList();
             //可选配件
             List<CsParts> parts2 = parts.Where(x => x.PartType == 2).ToList();
             int number1 = parts1.Count;
@@ -254,7 +254,7 @@ namespace Web.Controllers
         public IHttpActionResult GetPackageList()
         {
             CsPackageBll packageBll = new CsPackageBll();
-            var packAgeList = packageBll.GetModelList(" and PackageState=1 ").Select(x=>new
+            var packAgeList = packageBll.GetModelList(" and PackageState=1 ").Select(x => new
             {
                 x.PackageId,
                 x.PackageNumber,
@@ -265,25 +265,27 @@ namespace Web.Controllers
                 x.PackageWeight,
                 x.PackagePrice,
                 x.PackageState,
-                OperationDate =x.OperationDate.ToString("yyyy-MM-dd"),
+                OperationDate = x.OperationDate.ToString("yyyy-MM-dd"),
                 TotalNumber = _csOrderBll.TotalNumber(x.PackageId, DateTime.Now),
-                number =0,
+                number = 0,
                 x.PackageStock
             }).ToList();
             if (packAgeList.Count > 0)
             {
-                return Json(new {
+                return Json(new
+                {
                     status = true,
                     packagelist = packAgeList
                 });
             }
             else
             {
-                return Json(new {
+                return Json(new
+                {
                     status = false
                 });
             }
-            
+
         }
 
         /// <summary>
@@ -299,7 +301,7 @@ namespace Web.Controllers
             {
                 //根据userId查询出发件信息和收获地址信息
                 List<CsSend> sendList = _csSendBll.GetModelList(" and UserId=" + user.UserId).OrderBy(x => x.IsDefault).ThenBy(x => x.SendId).ToList();
-                List<CsAddress> addressList = _csAddressBll.GetModelList(" and UserId=" + user.UserId+" and AddressState=1 ").OrderBy(x => x.IsDefault).ThenBy(x => x.AddressId).ToList();
+                List<CsAddress> addressList = _csAddressBll.GetModelList(" and UserId=" + user.UserId + " and AddressState=1 ").OrderBy(x => x.IsDefault).ThenBy(x => x.AddressId).ToList();
                 CsDistrictBll disBLL = new CsDistrictBll();
                 int firstPrice = 0, fllowPrice = 0;
 
@@ -324,6 +326,7 @@ namespace Web.Controllers
                     fllowPrice
                 });
             }
+            LogHelper.Log("public IHttpActionResult GetAddress", "openId 未能查询到用户信息");
             return Json(new
             {
                 status = false,
@@ -381,13 +384,11 @@ namespace Web.Controllers
                     user
                 });
             }
-            else
+            LogHelper.Log("public IHttpActionResult GetAddress", "openId 未能查询到用户信息");
+            return Json(new
             {
-                return Json(new
-                {
-                    status = false
-                });
-            }
+                status = false
+            });
         }
 
         [HttpPost]
@@ -525,7 +526,7 @@ namespace Web.Controllers
         public IHttpActionResult AddOrder(OrderModel order)
         {
             string orderNumber = "";
-            int orderId = _csOrderBll.AddOrder(order,out orderNumber);//获得生成订单编号
+            int orderId = _csOrderBll.AddOrder(order, out orderNumber);//获得生成订单编号
             if (orderId > 0)
             {
                 return Json(new
@@ -624,13 +625,13 @@ namespace Web.Controllers
                 x.ProductId,
                 ProductName = productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductName,
                 ProductType = ((ProductType)productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductType).ToString(),
-                ProductWeight =(ProductType)productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductWeight,
+                ProductWeight = (ProductType)productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductWeight,
                 x.ProductNumber,
                 x.UnitPrice,
                 x.TotalPrice
             });
             //必选配件列表
-            var partMustList = orderList.Where(x => x.ChoseType == 2 && x.ProductId < 10005&&x.ProductId>10000).Select(x => new
+            var partMustList = orderList.Where(x => x.ChoseType == 2 && x.ProductId < 10005 && x.ProductId > 10000).Select(x => new
             {
                 x.OrderId,
                 x.ProductId,
@@ -699,7 +700,7 @@ namespace Web.Controllers
         [HttpPost]
         public IHttpActionResult DeleteAddress([FromBody] int id)
         {
-            
+
             bool status = _csAddressBll.UpdateState(id);
             return Json(status);
         }
@@ -713,16 +714,17 @@ namespace Web.Controllers
         {
             CsOrder order = _csOrderBll.GetModel(orderId);
             List<CsProducts> productList = _csProductsBll.GetModelList("");
-            var proList = _csOrderDetailBll.GetModelList(" and OrderId=" + orderId+" and ChoseType=1").Select(x=> new{
+            var proList = _csOrderDetailBll.GetModelList(" and OrderId=" + orderId + " and ChoseType=1").Select(x => new
+            {
                 x.ProductId,
-                ProductWeight=productList.FirstOrDefault(y=>y.ProductId==x.ProductId).ProductWeight*x.ProductNumber
+                ProductWeight = productList.FirstOrDefault(y => y.ProductId == x.ProductId).ProductWeight * x.ProductNumber
             });
             decimal totalWeight = 0;
             foreach (var pro in proList)
             {
                 totalWeight += pro.ProductWeight;
             }
-            
+
             int number = _csOrderBll.FinshOrder(order.OrderId, order.UserId, totalWeight, order.OrderCopies);
             if (number > 0)
             {
