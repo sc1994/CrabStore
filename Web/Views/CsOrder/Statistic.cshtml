@@ -23,6 +23,17 @@
                     </el-option>
                 </el-select>
             </el-col>
+            <el-col :span="2" class="layout-right layout-where">
+                配件类型：
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="where.PartType" placeholder="请选择配件类型" :clearable='true' @@change="getList()">
+                    <el-option key="1" label="必选配件" value="1">
+                    </el-option>
+                    <el-option key="2" label="可选配件" value="2">
+                    </el-option>
+                </el-select>
+            </el-col>
         </el-row>
         <div class="table-btn">
             <el-button type="primary" icon="search" @@click="getList()">搜索</el-button>
@@ -35,7 +46,7 @@
             </el-table-column>
             <el-table-column label="商品名" prop="ProductName">
             </el-table-column>
-            <el-table-column label="蟹类型" prop="ProductType">
+            <el-table-column label="类型" prop="ProductType">
             </el-table-column>
             <el-table-column label="总数" prop="Total">
             </el-table-column>

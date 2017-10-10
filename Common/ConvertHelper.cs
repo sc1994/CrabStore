@@ -79,7 +79,6 @@ namespace Common
             }
             catch (Exception ex)
             {
-                LogHelper.Log(ex.Message, o + "int类型转换失败---VALUE:" + o);
                 return 0;
             }
         }

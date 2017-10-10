@@ -3,7 +3,8 @@
     data: {
         where: {
             ProductType: '',
-            ProductName: ''
+            ProductName: '',
+            PartType: ''
         },
         loading: false,
         list: [],

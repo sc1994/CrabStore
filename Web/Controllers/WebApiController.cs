@@ -326,7 +326,7 @@ namespace Web.Controllers
                     fllowPrice
                 });
             }
-            LogHelper.Log("public IHttpActionResult GetAddress", "openId 未能查询到用户信息");
+            LogHelper.Log("public IHttpActionResult GetAddress-------openId:" + openId, "openId 未能查询到用户信息");
             return Json(new
             {
                 status = false,

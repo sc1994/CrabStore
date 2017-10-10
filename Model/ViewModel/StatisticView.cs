@@ -5,13 +5,14 @@
         public class StatisticWhere
         {
             public int ProductType { get; set; } = 0;
+            public int PartType { get; set; } = 0;
             public string ProductName { get; set; } = string.Empty;
         }
 
         public class StatisticList
         {
             public int OrderState { get; set; }
-            public int ProductId { get; set; }
+            public int? ProductId { get; set; }
             public string ProductType { get; set; } = string.Empty;
             public string ProductName { get; set; } = string.Empty;
             public decimal ProductWeight { get; set; }

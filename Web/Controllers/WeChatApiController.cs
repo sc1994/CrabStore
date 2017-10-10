@@ -23,6 +23,10 @@ namespace Web.Controllers
         {
             var data = HttpHelper.HttpGet(string.Format(WeChatConfig.OpenIdUrl, WeChatConfig.AppId, WeChatConfig.AppSecret, code));
             var openId = data.JsonToObject<OpenIdModel>().openid;
+            if (openId.Length < 20)
+            {
+                LogHelper.Log(openId, "可能错误的openId");
+            }
             currentPage = HttpUtility.UrlDecode(currentPage);
             ViewBag.RedirectUrL = $"{currentPage}{(currentPage?.IndexOf("?", StringComparison.Ordinal) > -1 ? "&" : "?")}openId={openId}";
             return View();
@@ -243,7 +247,12 @@ namespace Web.Controllers
         public ActionResult GetAllOpenId()
         {
             var userList = new List<string>();
-            GetAllOpenId("", userList);
+            var url = string.Format(WeChatConfig.UserListUrl, GetAccessToken(), "");
+            var data = HttpHelper.HttpGet(url);
+            LogHelper.Log(data);
+            var model = data.JsonToObject<AllUser>();
+            LogHelper.Log(model.ToJson());
+            userList.AddRange(model.data.openid);
             return Json(userList);
         }
 
@@ -261,7 +270,7 @@ namespace Web.Controllers
             var data = res.JsonToObject<TemplateResponse>();
             if (data.errcode.IsNullOrEmpty())
             {
-                LogHelper.Log(res, "模板消息发送失败");
+                LogHelper.Log(res, "模板消息发送失败----data:" + data.ToJson());
                 return Json(new
                 {
                     code = 0,
@@ -279,14 +288,14 @@ namespace Web.Controllers
             }
             if (data.errcode.ToInt() == -1)
             {
-                LogHelper.Log(res, "模板消息发送失败");
+                LogHelper.Log(res, "模板消息发送失败----data:" + data.ToJson());
                 return Json(new
                 {
                     code = 0,
                     data = $"消息发送给{openId}时发生异常, 系统繁忙"
                 });
             }
-            LogHelper.Log(res, "模板消息发送失败");
+            LogHelper.Log(res, "模板消息发送失败----data:" + data.ToJson());
             return Json(new
             {
                 code = 0,
@@ -302,22 +311,6 @@ namespace Web.Controllers
         public ActionResult PayTest()
         {
             return View();
-        }
-
-        public void GetAllOpenId(string start, List<string> openIdList)
-        {
-            var url = string.Format(WeChatConfig.UserListUrl, GetAccessToken(), start);
-            var data = HttpHelper.HttpGet(url);
-            LogHelper.Log(data);
-            var model = data.JsonToObject<AllUser>();
-            if (model.count.ToInt() > 0 && model.total.ToInt() >= model.count.ToInt())
-            {
-                openIdList.AddRange(model.data.openid);
-                if (openIdList.Count < model.total.ToInt())
-                {
-                    GetAllOpenId(model.next_openid, openIdList);
-                }
-            }
         }
     }
 }

@@ -539,7 +539,7 @@ namespace Web.Controllers
                 ResStatus = ResStatue.Yes,
                 Data = $"执行成功,更新{count}条数据."
             });
-            
+
         }
 
         /// <summary>
@@ -634,20 +634,27 @@ namespace Web.Controllers
         {
             #region 获取符合条件商品
             var shProducts = new SqlHelper<CsProducts>();
+            var shParts = new SqlHelper<CsParts>();
+
             if (!para.ProductName.IsNullOrEmpty())
+            {
                 shProducts.AddWhere(CsProductsEnum.ProductName, para.ProductName, RelationEnum.Like);
+                shParts.AddWhere(CsPartsEnum.PartName, para.ProductName, RelationEnum.Like);
+            }
             if (para.ProductType != 0)
                 shProducts.AddWhere(CsProductsEnum.ProductType, para.ProductType);
-            var products = shProducts.Select();
-            if (!products.Any())
-            {
-                return Json(new
-                {
-                    data = new ArrayList(),
-                    msg = "没有满足当前条件的商品"
-                });
-            }
+            if (para.PartType != 0)
+                shParts.AddWhere(CsPartsEnum.PartType, para.PartType);
 
+            var products = shProducts.Select();
+            var parts = shParts.Select();
+
+            var coms = products.Select(x => x.ProductId).Union(parts.Select(x => x.PartId));
+
+            if (!coms.Any())
+            {
+                return Json(new ArrayList());
+            }
             #endregion
 
             #region 获取未发货订单数量
@@ -655,42 +662,57 @@ namespace Web.Controllers
             {
                 Alia = "cod"
             };
-            sh.AddJoin(JoinEnum.LeftJoin, "CsOrder", "co", "OrderId", "OrderId", $" AND ProductId IN ({string.Join(",", products.Select(x => x.ProductId))})");
-            sh.AddShow("OrderState,ProductId,co.OrderId,OrderDate,ProductNumber,ChoseType");
+            sh.AddJoin(JoinEnum.LeftJoin, "CsOrder", "co", "OrderId", "OrderId", $" AND ProductId IN ({string.Join(",", coms)})");
+            sh.AddShow("OrderState,ProductId,co.OrderId,OrderDate,(ProductNumber * co.OrderCopies) as ProductNumber,ChoseType,co.OrderCopies");
             sh.AddWhere($" AND OrderState IN ({OrderState.支付成功.GetHashCode()},{OrderState.配货中.GetHashCode()})");
+            sh.AddWhere(CsOrderEnum.RowStatus, RowStatus.有效.GetHashCode());
             var orders = sh.Select();
             #endregion
 
             #region 整合数据
             var data = new List<StatisticView.StatisticList>();
-            foreach (var product in products)
+            foreach (var com in coms)
             {
                 var total = orders
-                    .Where(x => x.ProductId == product.ProductId)
+                    .Where(x => x.ProductId == com)
                     .Sum(x => x.ProductNumber);
                 if (total <= 0)
                 {
                     continue;
                 }
-                var item = new StatisticView.StatisticList
-                {
-                    ProductId = product.ProductId,
-                    ProductName = product.ProductName,
-                    ProductType = ((ProductType)product.ProductType).ToString(),
-                    Total = $"{total} 只 / 计 {total * product.ProductWeight} 斤",
-                };
-                var stock = orders
-                    .Where(x => x.ProductId == product.ProductId && x.OrderState == OrderState.配货中.GetHashCode())
-                    .Sum(x => x.ProductNumber);
-                item.Stock = $"{stock} 只 / 计 {stock * product.ProductWeight} 斤";
-                var unStork = orders
-                    .Where(x => x.ProductId == product.ProductId && x.OrderState == OrderState.支付成功.GetHashCode())
-                    .Sum(x => x.ProductNumber);
-                item.UnStork = $"{unStork} 只 / 计 {unStork * product.ProductWeight} 斤";
-                item.UnStorkInt = unStork;
-                data.Add(item);
-            }
 
+                var product = products.FirstOrDefault(x => x.ProductId == com);
+                var part = parts.FirstOrDefault(x => x.PartId == com);
+
+                var stock = orders
+                    .Where(x => x.ProductId == com && x.OrderState == OrderState.配货中.GetHashCode())
+                    .Sum(x => x.ProductNumber);
+                var unStork = orders
+                    .Where(x => x.ProductId == com && x.OrderState == OrderState.支付成功.GetHashCode())
+                    .Sum(x => x.ProductNumber);
+
+                data.Add(com < 10000
+                             ? new StatisticView.StatisticList
+                             {
+                                 ProductId = product?.ProductId,
+                                 ProductName = product?.ProductName.ShowNullOrEmpty(),
+                                 ProductType = ((ProductType?)product?.ProductType).ShowNullOrEmpty("未知类型"),
+                                 Total = $"{total} 只 / 计 {total * product?.ProductWeight} 斤",
+                                 Stock = $"{stock} 只 / 计 {stock * product?.ProductWeight} 斤",
+                                 UnStork = $"{unStork} 只 / 计 {unStork * product?.ProductWeight} 斤",
+                                 UnStorkInt = unStork
+                             }
+                             : new StatisticView.StatisticList
+                             {
+                                 ProductId = part?.PartId,
+                                 ProductName = part?.PartName.ShowNullOrEmpty(),
+                                 ProductType = ((PartType?)part?.PartType).ShowNullOrEmpty("未知类型"),
+                                 Total = $"{total} 只 / 计 {total * part?.PartWeight} 斤",
+                                 Stock = $"{stock} 只 / 计 {stock * part?.PartWeight} 斤",
+                                 UnStork = $"{unStork} 只 / 计 {unStork * part?.PartWeight} 斤",
+                                 UnStorkInt = unStork
+                             });
+            }
             #endregion
 
             return Json(data.OrderByDescending(x => x.UnStorkInt));
