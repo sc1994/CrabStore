@@ -35,7 +35,7 @@ namespace Model.DBModel
         /// <summary>
         /// 购买份数
         /// </summary>
-        public int totalNumber { get; set; } = 1;
+        public int totalnumber { get; set; } = 1;
 
         /// <summary>
         /// 实际重量
@@ -117,6 +117,11 @@ namespace Model.DBModel
         /// 产品图片
         /// </summary>
         public string image { get; set; }
+
+        /// <summary>
+        /// 索引
+        /// </summary>
+        public  int index { get; set; }
     }
 
     public class PartItem

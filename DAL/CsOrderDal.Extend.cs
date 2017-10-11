@@ -74,7 +74,7 @@ namespace DAL
                         _csOrder.OrderAddress = order.orderaddress;
                         _csOrder.SendAddress = order.sendaddress;
                         _csOrder.CargoNumber = 1;
-                        _csOrder.OrderCopies = order.totalNumber;
+                        _csOrder.OrderCopies = order.totalnumber;
                         _csOrder.TotalWeight = order.totalweight;
                         _csOrder.BillWeight = order.sendweight;
                         _csOrder.ExpressMoney = order.expressmoney;
@@ -359,7 +359,7 @@ namespace DAL
                         _csOrder.OrderAddress = order.orderaddress;
                         _csOrder.SendAddress = order.sendaddress;
                         _csOrder.CargoNumber = 1;
-                        _csOrder.OrderCopies = order.totalNumber;
+                        _csOrder.OrderCopies = order.totalnumber;
                         _csOrder.TotalWeight = order.totalweight;
                         _csOrder.BillWeight = order.sendweight;
                         _csOrder.ExpressMoney = order.expressmoney;

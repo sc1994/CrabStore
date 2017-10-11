@@ -525,26 +525,40 @@ namespace Web.Controllers
         [HttpPost]
         public IHttpActionResult AddOrder(OrderModel order)
         {
-            string orderNumber = "";
-            int orderId = _csOrderBll.AddOrder(order, out orderNumber);//获得生成订单编号
-            if (orderId > 0)
-            {
-                return Json(new
+            //try
+            //{
+            //    LogHelper.Log("生成订单"+order.ToJson(),"订单测试");
+                string orderNumber = "";
+                int orderId = _csOrderBll.AddOrder(order, out orderNumber);//获得生成订单编号
+                if (orderId > 0)
                 {
-                    status = true,
-                    orderid = orderId,
-                    orderNumber
-                });
-            }
-            else
-            {
-                return Json(new
+                    return Json(new
+                    {
+                        status = true,
+                        orderid = orderId,
+                        orderNumber
+                    });
+                }
+                else
                 {
-                    status = false,
-                    orderid = orderId,
-                    orderNumber
-                });
-            }
+                    return Json(new
+                    {
+                        status = false,
+                        orderid = orderId,
+                        orderNumber
+                    });
+                }
+            //}
+            //catch (Exception ex)
+            //{
+            //    LogHelper.Log(ex.Message,"订单生成异常");
+            //    return Json(new
+            //                {
+            //                    status = false,
+            //                    orderid = 0,
+            //                    orderNumber=""
+            //                });
+            //}
 
         }
 
