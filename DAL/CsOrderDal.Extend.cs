@@ -57,7 +57,7 @@ namespace DAL
             using (var conn = (SqlConnection)DataSource.GetConnection())
             {
                 conn.Open();
-                using (var trans = conn.BeginTransaction())
+                using (var trans = conn.BeginTransaction(IsolationLevel.ReadUncommitted))
                 {
                     try
                     {
